@@ -8,8 +8,15 @@ Gruppo: Montin - Spanio - Zanin
 ### App in fase di sviluppo 🔨🔨🔨:
 il file `requirements.txt` è una fotografia dei pacchetti contenuti nel virtual enviroment, man mano che l'applicazione crescerà va aggiornato con i moduli (o package) importati
 
+## Contenuti
 
-### Istruzioni per l'uso
+- [come lanciare il server](#istruzioni)
+- [Struttura progetto](#struttura dell'applicazione)
+- Risorse esterne:
+    - [Flask](#Risorse da consultare per Flask)
+    - [SQL](#sql)
+
+### Istruzioni
 per lanciare l'applicazione da CLI eseguire i seguenti comandi:
 
 Windows CMD:
@@ -29,6 +36,26 @@ UNIX like os:
 $ export FLASK_APP=hello
 $ flask run
 ```
+
+## Struttura dell'applicazione
+
+```
+Progetto-BD-2021/
+    | sources/
+        | app/
+            | __init__.py
+            | auth.py
+            | errors.py
+            | views.py
+        | static/
+        | templates/
+        | __init__.py
+        | models.py
+    README.md
+    requirements.txt
+    runner.py
+```
+
 
 
 ## Risorse da consultare per Flask
