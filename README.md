@@ -42,9 +42,11 @@ $ flask run
 ```
 Progetto-BD-2021/
     | sources/
-        | app/
+        | auth/
             | __init__.py
-            | auth.py
+            | views.py
+        | main/
+            | __init__.py
             | errors.py
             | views.py
         | static/
