@@ -18,4 +18,8 @@ def logout():
 
 @auth.route('/signup')
 def sign_up():
+    """
+    TODO: creare pagina html corretta e gestire gli input salvandoli nel database,
+          eventualmente mandando email di conferma
+    """
     return render_template("index.html")
