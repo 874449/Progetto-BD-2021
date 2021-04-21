@@ -1,0 +1,6 @@
+# Project exclude paths
+/venv/
+
+# file creati da pycharm
+.idea
+__pycache__
