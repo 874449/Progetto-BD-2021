@@ -2,19 +2,21 @@
 il file __init__.py serve per python a trovare i package di cui fare import.
 Avendo fatto una cartella separata il file runner.py non può fare import create_app senza questo nome del file.
 """
-
+import os
 from flask import Flask
-# TODO: configurare il database
-# from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
-# db = SQLAlchemy()
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 def create_app():
     """crea il server con flask"""
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'secret string'
-    # db.init_app(auth)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.db')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db = SQLAlchemy()
+    db.init_app(app)
 
     # nelle seguenti linee stiamo creando le blueprint per dividere il progetto in più file
     from .main import main
