@@ -14,8 +14,10 @@ def create_app():
     # nelle seguenti linee stiamo creando le blueprint per dividere il progetto in più file
     from .views import views
     from .auth import auth
+    from .errors import errors
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth,  url_prefix='/')
+    app.register_blueprint(errors, url_prefix='/')
 
     return app
