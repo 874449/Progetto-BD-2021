@@ -1,8 +1,6 @@
 from sources import create_app
 
-
 app = create_app()
-
 
 # la seguente parte di programma viene eseguita solo se il nome del file a runtime è __main__
 if __name__ == "__main__":
