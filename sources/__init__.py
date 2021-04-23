@@ -7,7 +7,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-
+db = SQLAlchemy()
 
 def create_app():
     """crea il server con flask"""
@@ -15,7 +15,6 @@ def create_app():
     app.config['SECRET_KEY'] = 'secret string'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    db = SQLAlchemy()
     db.init_app(app)
 
     # nelle seguenti linee stiamo creando le blueprint per dividere il progetto in più file
