@@ -1,7 +1,7 @@
 """
 In questo modulo si trovano tutte le route riguardandi l'autenticazione nel sito
 """
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, session
 # from flask_login import login_user, logout_user, login_required, current_user
 from . import auth
 from .. import db
@@ -16,8 +16,9 @@ def login():
 # @login_required
 def logout():
     # logout_user()
-    # flash('You have been logged out.')
-    return redirect(url_for('main.index'))
+    session["email"] = None
+    flash('You have been logged out.')
+    return redirect('/')
 
 
 @auth.route('/signup')
@@ -33,5 +34,6 @@ def sign_up():
 def success():
     name = request.form.get("email")
     password = request.form.get("password")
-
-    return render_template("success.html", name=name, password=password)
+    session["email"] = name
+    return redirect('/')
+    #  return render_template("success.html", name=name, password=password)

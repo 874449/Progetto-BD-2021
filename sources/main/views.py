@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, session
 from . import main
 
 
