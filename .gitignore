@@ -7,3 +7,6 @@ __pycache__
 sources/__pycache__
 sources/auth/__pycache__
 sources/main/__pycache__
+
+# file creati da flask
+flask_session
