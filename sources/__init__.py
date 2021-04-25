@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 basedir = os.path.abspath(os.path.dirname(__file__))
 db = SQLAlchemy()
 
+
 def create_app():
     """crea il server con flask"""
     app = Flask(__name__)
