@@ -1,22 +1,12 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
 {% block title %}
-Login
+    Login
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <form class="row g-3" action = "http://localhost:5000/login" method = "post">
-            <div class="col-auto">
-                <label for="email" class="visually-hidden">Email</label>
-                <input type="email" readonly class="form-control-plaintext" id="email" value="email@example.com">
-            </div>
-            <div class="col-auto">
-                <label for="password" class="visually-hidden">Nome</label>
-                <input type="password" class="form-control" id="password" placeholder="Password">
-            </div>
-                <div class="col-auto">
-                <button type="submit" class="btn btn-primary mb-3">Submit</button>
-            </div>
+    <form action="/auth/success" method="post">
+        <input autocomplete="off" autofocus id="email" placeholder="email@example.com" type="email" name="email">
+        <input type="password" id="password" placeholder="Password" name="password">
+        <button type="submit" value="submit" class="btn btn-primary">Login</button>
     </form>
-</div>
 {% endblock %}
