@@ -1,6 +1,10 @@
 # Project exclude paths
 /venv/
 
+# vim session
+.vim
+.mypy_cache
+
 # file creati da pycharm
 .idea
 __pycache__
