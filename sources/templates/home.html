@@ -1,0 +1,7 @@
+{% extends 'layout.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+Benvenuto {{ session['email'].strip(@)[0] }}
+{% endblock %}

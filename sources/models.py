@@ -1,5 +1,6 @@
 from . import db
 
+
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
@@ -29,3 +30,4 @@ class Document(db.Model):
 
     def __repr__(self):
         return f'<Document: {self.name} with {self.id}, owned by: {self.owner_id}>'
+
