@@ -1,5 +1,12 @@
 from . import db
 
+'''
+Concept:
+
+TODO: la gestione del db è fatta in maniera da creare dei link tra
+la tabella documenti e le domande salvate nel server come file .json
+'''
+
 
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -30,4 +37,3 @@ class Document(db.Model):
 
     def __repr__(self):
         return f'<Document: {self.name} with {self.id}, owned by: {self.owner_id}>'
-
