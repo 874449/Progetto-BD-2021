@@ -4,12 +4,6 @@ from . import main
 
 @main.route('/')
 def index():
-    return render_template("index.html")
-
-
-@main.route('/<str:id>')
-def main_page(id):
-    if id == session['email']:
+    if session['email'] is not None:
         return render_template("home.html")
-    else:
-        return render_template("error.html", number=403, message='Something went wrong')
+    return render_template("index.html")
