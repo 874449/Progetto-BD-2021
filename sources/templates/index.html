@@ -3,13 +3,6 @@
 
 {% block page_content %}
 <div class="container">
-    {% for message in get_flashed_messages() %}
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">&times;</button>
-        {{ message }}
-    </div>
-    {% endfor %}
-
     <div class="row">
         {%  if current_user.is_authenticated %}
             <div class="page-header"><h1>Ciao {{ current_user.username }}</h1></div>

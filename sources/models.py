@@ -44,9 +44,8 @@ class User(UserMixin, db.Model):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def __init__(self, username, email):
-        self.username = username
-        self.email = email
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
 
     def __repr__(self):
         return f'<User: {self.username} with email: {self.email}>'
