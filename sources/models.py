@@ -1,6 +1,8 @@
 from . import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+from . import login_manager
 
 '''
 Concept:
@@ -25,8 +27,8 @@ class Role(db.Model):
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, nullable=False, index=True)
-    email = db.Column(db.String(255), unique=True, nullable=False, index=True)
+    username = db.Column(db.String(64), nullable=False, index=True)
+    email = db.Column(db.String(64), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     documents = db.relationship('Document', backref='owner', lazy='dynamic')
@@ -61,3 +63,9 @@ class Document(db.Model):
 
     def __repr__(self):
         return f'<Document: {self.name} with {self.id}, owned by: {self.owner_id}>'
+
+
+# callback function for flask_login
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
