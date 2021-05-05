@@ -24,7 +24,7 @@ class Role(db.Model):
         return f'<Role: {self.name}>'
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), nullable=False, index=True)
