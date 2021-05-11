@@ -36,6 +36,10 @@ UNIX like os:
 $ export FLASK_APP=runner
 $ flask run
 ```
+oppure
+```shell
+$ python runner.py
+```
 
 ## Struttura-applicazione
 
@@ -44,6 +48,7 @@ Progetto-BD-2021/
     | sources/
         | auth/
             | __init__.py
+            | forms.py
             | views.py
         | main/
             | __init__.py
