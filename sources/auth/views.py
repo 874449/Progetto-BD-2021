@@ -29,8 +29,8 @@ def logout():
     return redirect('/')
 
 
-@auth.route('/signup', methods=['GET', 'POST'])
-def sign_up():
+@auth.route('/register', methods=['GET', 'POST'])
+def register():
     """
     TODO: creare pagina html corretta e gestire gli input salvandoli nel database,
           eventualmente mandando email di conferma
@@ -44,4 +44,4 @@ def sign_up():
         db.session.commit()
         flash('Congrats. You are registered!')
         return redirect(url_for('auth.login'))
-    return render_template('signup.html', form=form)
+    return render_template('register.html', form=form)
