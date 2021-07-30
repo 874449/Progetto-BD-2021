@@ -1,6 +1,7 @@
 # Project exclude paths
 /venv/
 /debug
+/migrations
 
 # vim session
 .vim
