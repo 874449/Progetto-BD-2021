@@ -12,6 +12,7 @@ il file `requirements.txt` è una fotografia dei pacchetti contenuti nel virtual
 
 - [come lanciare il server](#istruzioni)
 - [Struttura progetto](#struttura-applicazione)
+- [Flask migrate](#Flask-migrate)
 - [Risorse esterne](#Risorse-esterne):
     - [Flask](#flask)
     - [SQL](#sql)
@@ -63,7 +64,19 @@ Progetto-BD-2021/
     runner.py
 ```
 
+## Flask-migrate
 
+Per creare le tabelle dal contesto dell'applicazione basta dare in input i seguenti comandi al terminale:
+
+```shell
+flask db init
+flask db migrate
+flask db update
+```
+
+così facendo verrà creata la cartella migrations dove vengono salvati gli status del db ed è possibile tornare a una versione precedente in caso di errori.
+
+Per ogni modifica successiva al file models.py basterà dare il comando `flask update`. 
 
 ## Risorse-esterne
 ### Flask
