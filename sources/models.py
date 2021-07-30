@@ -27,11 +27,11 @@ class Role(db.Model):
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), nullable=False, index=True)
+    username = db.Column(db.String(64), nullable=False)
     email = db.Column(db.String(64), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    documents = db.relationship('Document', backref='owner', lazy='dynamic')
+    quizzes = db.relationship('Questionario', backref='owner', lazy='dynamic')
 
     @property
     def password(self):
@@ -51,17 +51,44 @@ class User(UserMixin, db.Model):
         return f'<User: {self.username} with email: {self.email}>'
 
 
-class Document(db.Model):
-    __tablename__ = 'documents'
+class Questionario(db.Model):
+    __tablename__ = 'quizzes'
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow())
-    name = db.Column(db.String(64), default='No name')
-    questions = db.Column(db.String(64))
-    answers = db.Column(db.String(64))
+    title = db.Column(db.String(64), default='No name')
+    description = db.Column(db.Text, default='No description')
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    questions = db.relationship('Domanda', backref='comprends', lazy='dynamic')
+    answers = db.relationship('Risposta', backref='risposte', lazy='dynamic')  # TODO da rimuovere, è di test
 
     def __repr__(self):
-        return f'<Document: {self.name} with {self.id}, owned by: {self.owner_id}>'
+        return f'<Questionario: {self.title} with {self.id}, owned by: {self.owner_id}>'
+
+
+class Domanda(db.Model):
+    __tablename__ = 'questions'
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+    activable = db.Column(db.Boolean, nullable=False)
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
+    answers = db.relationship('Risposta', backref='risposte', lazy='dynamic')
+    # category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
+    # type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
+
+    def __repr__(self):
+        return f'<Domanda{self.id}: {self.text}>'
+
+
+class Risposta(db.Model):
+    __tablename__ = 'answers'
+    id = db.Column(db.Integer, primary_key=True)
+    is_open = db.Column(db.Boolean, nullable=False)
+    text = db.Column(db.Text, nullable=True)
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))  # TODO da rimuovere, è una FK per test
+
+    def __repr__(self):
+        return f'Risposta: {self.text}'
 
 
 # callback function for flask_login
