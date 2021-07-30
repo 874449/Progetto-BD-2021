@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+
+{% block title %}Error {{ number }}{% endblock %}
+
+{% block page_content %}
+    <div class="container">
+        <div class="'page-header"><h1>Error {{ number }}</h1></div>
+        <div><p>{{ message }}</p></div>
+    </div>
+{% endblock %}
