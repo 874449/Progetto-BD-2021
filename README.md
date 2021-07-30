@@ -71,7 +71,7 @@ Per creare le tabelle dal contesto dell'applicazione basta dare in input i segue
 ```shell
 flask db init
 flask db migrate
-flask db update
+flask db upgrade
 ```
 
 così facendo verrà creata la cartella migrations dove vengono salvati gli status del db ed è possibile tornare a una versione precedente in caso di errori.
