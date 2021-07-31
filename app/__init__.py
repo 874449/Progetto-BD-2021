@@ -6,6 +6,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_session import Session
+from commands import create_tables
 # from flask_bootstrap import Bootstrap
 from config import config
 
@@ -34,5 +35,7 @@ def create_app(config_name):
 
     from .quiz import quiz
     app.register_blueprint(quiz, url_prefix='/quiz')
+
+    app.cli.add_command(create_tables)
 
     return app
