@@ -61,6 +61,11 @@ class Questionario(db.Model):
     questions = db.relationship('Domanda', backref='comprends', lazy='dynamic')
     answers = db.relationship('Risposta', backref='risposte', lazy='dynamic')  # TODO da rimuovere, è di test
 
+    def __init__(self, title, timestamp, description):
+        self.title = title
+        self.description = description
+        self.timestamp = timestamp
+
     def __repr__(self):
         return f'<Questionario: {self.title} with {self.id}, owned by: {self.owner_id}>'
 
@@ -71,9 +76,13 @@ class Domanda(db.Model):
     text = db.Column(db.Text, nullable=False)
     activable = db.Column(db.Boolean, nullable=False)
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
-    answers = db.relationship('Risposta', backref='risposte', lazy='dynamic')
+    answers = db.relationship('Risposta', backref='risposta', lazy='dynamic')
     # category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
     # type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
+
+    def __init__(self, text, activable):
+        self.text = text
+        self.activable = activable
 
     def __repr__(self):
         return f'<Domanda{self.id}: {self.text}>'
@@ -86,6 +95,10 @@ class Risposta(db.Model):
     text = db.Column(db.Text, nullable=True)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))  # TODO da rimuovere, è una FK per test
+
+    def __init__(self, is_open, text):
+        self.text = text
+        self.is_open = is_open
 
     def __repr__(self):
         return f'Risposta: {self.text}'
