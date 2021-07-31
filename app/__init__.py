@@ -2,13 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_session import Session
-
 from config import config
-from .commands import create_tables
-from .main import main
-from .auth import auth
-from .quiz import quiz
-
 
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
@@ -27,10 +21,16 @@ def create_app(config_name):
     db.init_app(app)
 
     # nelle seguenti linee stiamo creando le blueprint per dividere il progetto in più file
+    from .main import main
     app.register_blueprint(main, url_prefix='/')
+
+    from .auth import auth
     app.register_blueprint(auth, url_prefix='/auth')
+
+    from .quiz import quiz
     app.register_blueprint(quiz, url_prefix='/quiz')
 
+    from .commands import create_tables
     app.cli.add_command(create_tables)
 
     return app
