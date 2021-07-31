@@ -22,6 +22,7 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
+    SESSION_TYPE = 'filesystem'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 
