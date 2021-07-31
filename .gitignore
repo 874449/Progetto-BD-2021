@@ -15,3 +15,5 @@ app/main/__pycache__
 
 # file creati da flask
 flask_session
+
+.env
