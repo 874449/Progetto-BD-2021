@@ -13,11 +13,14 @@ db = SQLAlchemy()
 def create_app(config_name):
     """crea il server con flask"""
     app = Flask(__name__)
+    # configuro l'applicazione basandomi sulle classi costruite in config.py
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
+    # costruttore per la gestione delle sessioni utente
     Session(app)
     login_manager.init_app(app)
+    # collegamento del database all'app
     db.init_app(app)
 
     # nelle seguenti linee stiamo creando le blueprint per dividere il progetto in più file
@@ -30,6 +33,7 @@ def create_app(config_name):
     from .quiz import quiz
     app.register_blueprint(quiz, url_prefix='/quiz')
 
+    # aggiungo ai comandi di flask quelli creati da me nel file commands.py
     from .commands import create_tables
     app.cli.add_command(create_tables)
 

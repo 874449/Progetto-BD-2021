@@ -1,5 +1,5 @@
 """
-In questo modulo si trovano tutte le route riguardandi l'autenticazione nel sito
+In questo modulo si trovano tutte le route riguardanti l'autenticazione nel sito
 """
 from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
@@ -32,8 +32,7 @@ def logout():
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     """
-    TODO: creare pagina html corretta e gestire gli input salvandoli nel database,
-          eventualmente mandando email di conferma
+    TODO: creare conferma attraverso token con invio della mail
     """
     form = RegistrationForm()
     if form.validate_on_submit():
