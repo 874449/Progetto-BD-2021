@@ -5,14 +5,12 @@
 {% block page_content %}
 
 <div class="container-fluid">
-    <div class="d-sm-flex justify-content-between align-items-center mb-4">
-        <h3 class="text-dark mb-0">Dashboard</h3><a class="btn btn-primary btn-sm d-none d-sm-inline-block" role="button" href="#"><i class="fas fa-download fa-sm text-white-50"></i>&nbsp;Generate Report</a>
-    </div>
-    <div class="row">
+    <div class="row align-items-center mb-4">
         {%  if current_user.is_authenticated %}
             <div class="page-header"><h1>Ciao {{ current_user.username }}</h1></div>
         {% else %}
             <div class="page-header"><h1>Ciao Anonimo!</h1></div>
+            <div class="text-dark">Effettua il login per utilizzare il servizio.</div>
         {% endif %}
     </div>
 </div>

@@ -1,10 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'layout.html' %}
+
+{% block title %}Editor{% endblock %}
+
+{% block page_content %}
+    <style>
+    .text-uppercase {
+        font-size: 20px;
+    }
+    </style>
+
+    <div class="container-fluid">
+        <div class="d-sm-flex justify-content-between align-items-center mb-4">
+            <h3 class="text-dark mb-0">Editor</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-9 mx-auto">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col text-center">
+                                <div class=" text-uppercase text-primary fw-bold text-xs mb-1"><span>Nuova domanda</span></div>
+                                <br>
+                                <i class="fas fa-plus fa-2x text-primary"></i>
+                            </div>
+                            <div class="col-auto"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-center col-md-9 mx-auto">
+             <div class="card shadow mb-4">
+                 <form  action="" method="post">
+                     {{ form.hidden_tag() }}
+                     <div class="card-header py-3">
+                         {{ form.question(class='form-control', id="signature", placeholder="Titolo") }}
+                     </div>
+                     <div class="card-body">
+                         {{ form.selection(class='form-select-sm') }}
+                         {{ form.activable(class='form-check-input custom-control-input') }}
+                         {{ form.activable.label }}
+                         {{ form.submit(class='btn btn-primary') }}
+                     </div>
+                 </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

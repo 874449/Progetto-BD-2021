@@ -20,7 +20,7 @@ type="image/x-icon">
 
     <div id="wrapper">
         <!-- LEFTSIDE NAVBAR -->
-        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0 fade show">
             <div class="container-fluid d-flex flex-column p-0"><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="{{ url_for('main.index') }}">
                     <div class="sidebar-brand-icon rotate-n-15"><i class="icon ion-chatboxes"></i></div>
                     <div class="sidebar-brand-text mx-3"><span>quiz</span></div>
@@ -30,6 +30,7 @@ type="image/x-icon">
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.dashboard') }}"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.profile') }}"><i class="fas fa-user"></i><span>Profile</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="table.html"><i class="fas fa-table"></i><span>Table</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('quiz.editor') }}"><i class="fas fa-edit"></i><span>Editor</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}"><i class="far fa-user-circle"></i><span>Login</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}"><i class="fas fa-user-circle"></i><span>Register</span></a></li>
                 </ul>
@@ -152,12 +153,18 @@ type="image/x-icon">
                 </nav>
                 <!-- FLASH -->
                 <div class="container-fluid">
-                    {% for message in get_flashed_messages() %}
-                    <div class="alert alert-warning">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        {{ message }}
+                    <div class="row mx-auto">
+                        <div class="container-fluid">
+                            {% for message in get_flashed_messages() %}
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
-                    {% endfor %}
                 <!-- CONTENUTO DINAMICO DELLA PAGINA -->
                     {% block page_content %}{% endblock %}
                 </div>
@@ -175,6 +182,9 @@ type="image/x-icon">
 
     <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
     <!-- FROM FILE -->
     <!--<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>-->
     <script src="{{ url_for('static', filename='js/bs-init.js') }}"></script>
