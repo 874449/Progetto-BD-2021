@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block title %}Error{% endblock %}
+
+{% block page_content %}
+
+    <div class="text-center mt-5">
+        <div class="error mx-auto" data-text="{{ number }}">
+            <p class="m-0">{{ number }}</p>
+        </div>
+        <p class="text-dark mb-5 lead">{{ message }}</p>
+        <p class="text-black-50 mb-0">It looks like you found a glitch in the matrix...</p><a href="/">← Back to Homepage</a>
+    </div>
+
+{% endblock %}

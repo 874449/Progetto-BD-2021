@@ -1,0 +1,92 @@
+{% extends 'layout.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+
+<body class="bg-gradient-primary">
+    <!-- FLASH MESSSAGES -->
+    <div class="container">
+        <div class="row mb-4 mx-auto">
+            <div class="container-fluid col-md-9 col-lg-12 col-xl-10">
+                {% for message in get_flashed_messages() %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-12 col-xl-10">
+                <div class="card shadow-lg o-hidden border-0 my-5">
+                    <div class="card-body p-0">
+                        <div class="row">
+                            <div class="col-lg-6 d-none d-lg-flex">
+                                <div class="flex-grow-1 bg-login-image" style="background-image: url({{ url_for('static', filename='img/login.jpg') }});"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h4 class="text-dark mb-4">Welcome Back!</h4>
+                                    </div>
+
+                                    <!-- FORM with WTF flask -->
+
+                                    <form class="user" method="POST" role="form" action="">
+                                        {{ form.hidden_tag() }}
+                                        <div class="mb-3">
+                                            {{ form.email(class="form-control form-control-user", placeholder="Enter Email Address...") }}
+                                        </div>
+                                        <div class="mb-3">
+                                            {{ form.password(class="form-control form-control-user", placeholder="Password") }}
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="custom-control custom-checkbox small">
+                                                <div class="form-check">
+                                                    {{ form.remember_me(class="form-check-input custom-control-input") }}
+                                                    {{ form.remember_me.label }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{ form.submit(class="btn btn-primary d-block btn-user w-100") }}
+                                        <hr>
+                                            <a class="btn btn-primary d-block btn-google btn-user w-100 mb-2" role="button"><i class="fab fa-google"></i>&nbsp; Login with Google</a>
+                                            <a class="btn btn-primary d-block btn-facebook btn-user w-100" role="button"><i class="fab fa-facebook-f"></i>&nbsp; Login with Facebook</a>
+                                        <hr>
+                                    </form>
+                                    <div class="text-center"><a class="small" href="forgot-password.html">Forgot Password?</a></div>
+                                    <div class="text-center"><a class="small" href="{{ url_for('auth.register') }}">Create an Account!</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+
+    <footer class="sticky-footer">
+        <div class="container my-auto">
+            <div class="text-center my-auto w-100">
+                <span>Copyright © Quiz 2021</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>-->
+    <!-- FROM FILE -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+</body>
+
+
+{% endblock %}

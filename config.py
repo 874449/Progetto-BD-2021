@@ -1,6 +1,5 @@
 import os
 import secrets
-basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
@@ -18,13 +17,16 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SESSION_TYPE = 'filesystem'
+    # per far girare il DB locale collegato a flask si deve cambiare la url con
+    # 'postgresql://<pg_username>:<pg_password>@localhost/<db_name>'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'postgresql://matteo:password@localhost/postgres'
 
 
 class ProductionConfig(Config):
-    pass
-    # TODO
-    # SQLALCHEMY_DATABASE_URI = heroku
+    DEBUG = False
+    SESSION_TYPE = 'filesystem'
+    # la variabile HEROKU_DATABASE_URL è stata settata nell'ambiente di Heroku
+    SQLALCHEMY_DATABASE_URI = os.environ.get('HEROKU_DATABASE_URL')
 
 
 config = {
