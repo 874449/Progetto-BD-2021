@@ -75,10 +75,10 @@ class Questionario(db.Model):
     questions = db.relationship('Domanda', backref='comprends', lazy='dynamic')
     answers = db.relationship('Risposta', backref='risposte', lazy='dynamic')  # TODO da rimuovere, è di test
 
-    def __init__(self, title, timestamp, description):
+    def __init__(self, title, description):
         self.title = title
         self.description = description
-        self.timestamp = timestamp
+        self.timestamp = datetime.utcnow()
 
     def __repr__(self):
         return f'<Questionario: {self.title} with {self.id}, owned by: {self.owner_id}>'
