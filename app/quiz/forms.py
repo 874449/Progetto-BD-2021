@@ -19,7 +19,7 @@ dropdown_question_types = [
 class NewQuestion(FlaskForm):
     question = StringField('Domanda', validators=[Required()])
     selection = SelectField('type', validators=[Required()], choices=dropdown_question_types)
-    activable = BooleanField('Domanda attivabile', validators=[Required()])
+    activable = BooleanField('Domanda attivabile', validators=[])
     submit = SubmitField('Create')
 
 
