@@ -1,3 +1,10 @@
+"""
+Il modulo config è un file di configurazione per le variabili d'ambiente dell'applicazione flask.
+All'interno del modulo vengono definite diverse classi per diversificare le variabili a seconda del contesto:
+
+- Config è la classe genitore che contiene alcune variabili comuni a tutti i setup
+- DevelopmentConfig è il setup per far eseguire l'applicazione flask in locale
+"""
 import os
 import secrets
 

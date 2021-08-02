@@ -1,3 +1,8 @@
+"""
+Nel file models.py è contenuto lo schema relazionale del DB.
+In questo caso è stata utilizzata la libreria flask-SQLAlchemy basata sul modello ORM:
+ciò vuol dire che ad ogni classe corrisponde una tabella del DB sottostante.
+"""
 from . import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -6,12 +11,15 @@ from . import login_manager
 
 '''
 Concept:
+la maggior parte delle classi ha un costruttore (il metodo '__init__') che viene utilizzato
+per l'inserimento degli oggetti nel database.
 
-TODO: la gestione del db è fatta in maniera da creare dei link tra
-la tabella documenti e le domande salvate nel server come file .json
+Il metodo '__repr__' è stato definito per rappresentare come stringa le varie classi
+ed è utilizzato per scopi di debug.
 '''
 
 
+# TODO: è necessaria la tabella role?
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
@@ -24,6 +32,8 @@ class Role(db.Model):
         return f'<Role: {self.name}>'
 
 
+# la classe User è figlia della classe UserMixin: una classe apposita che contiene implementazioni
+# standard per semplificare la compatibilità con la libreria flask-login
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -33,6 +43,10 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     quizzes = db.relationship('Questionario', backref='owner', lazy='dynamic')
 
+    '''
+    per questioni di sicurezza l'attributo password non è direttamente accessibile, quindi
+    la password viene letta e settata solo tramite hash
+    '''
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
