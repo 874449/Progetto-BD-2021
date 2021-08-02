@@ -11,7 +11,7 @@ db = SQLAlchemy()
 
 
 def create_app(config_name):
-    """crea il server con flask"""
+    """crea l'app di flask, configura le sue variabili e crea le blueprint"""
     app = Flask(__name__)
     # configuro l'applicazione basandomi sulle classi costruite in config.py
     app.config.from_object(config[config_name])

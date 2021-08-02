@@ -4,6 +4,7 @@ All'interno del modulo vengono definite diverse classi per diversificare le vari
 
 - Config è la classe genitore che contiene alcune variabili comuni a tutti i setup
 - DevelopmentConfig è il setup per far eseguire l'applicazione flask in locale
+- ProductionConfig è la configurazione per il porting online della webapp
 """
 import os
 import secrets
