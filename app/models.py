@@ -72,13 +72,13 @@ class Questionario(db.Model):
     title = db.Column(db.String(64), default='No name')
     description = db.Column(db.Text, default='No description')
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    questions = db.relationship('Domanda', backref='comprends', lazy='dynamic')
-    answers = db.relationship('Risposta', backref='risposte', lazy='dynamic')  # TODO da rimuovere, è di test
+    questions = db.relationship('Domanda', backref='in', lazy='dynamic')
+    answers = db.relationship('Risposta', backref='questionario', lazy='dynamic')  # TODO da rimuovere, è di test
 
-    def __init__(self, title, description):
+    def __init__(self, title, description, owner_id):
         self.title = title
         self.description = description
-        self.timestamp = datetime.utcnow()
+        self.owner_id = owner_id
 
     def __repr__(self):
         return f'<Questionario: {self.title} with {self.id}, owned by: {self.owner_id}>'
@@ -90,7 +90,7 @@ class Domanda(db.Model):
     text = db.Column(db.Text, nullable=False)
     activable = db.Column(db.Boolean, nullable=False)
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
-    answers = db.relationship('Risposta', backref='risposta', lazy='dynamic')
+    answers = db.relationship('Risposta', backref='domanda', lazy='dynamic')
     # category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
     # type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
 
