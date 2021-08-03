@@ -3,7 +3,7 @@ Il seguente modulo contiene dei comandi personalizzati eseguibili da flask
 tramite CLI:
 per richiamare un comando basterà digitare
 
-    flask `nome comando`
+    flask `nome_comando`
 
 ciò semplifica alcune funzioni come la creazione delle tabelle del DB
 o il popolamento di queste.
@@ -22,3 +22,11 @@ from . models import *
 def create_tables():
     """create_tables è un wrapper per la creazione delle tabelle del DB"""
     db.create_all()
+
+
+@click.command(name='populate_db')
+@with_appcontext
+def populate_db():
+    """funzione per aggiungere dati per riempire il database"""
+    # TODO crea la funzione
+    pass
