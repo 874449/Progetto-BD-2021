@@ -25,7 +25,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.')
+    flash('You have been logged out.', 'alert')
     return redirect('/')
 
 
@@ -41,6 +41,6 @@ def register():
                     password=form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congrats. You are registered!')
+        flash('Congrats. You are registered!', 'success')
         return redirect(url_for('auth.login'))
     return render_template('register.html', form=form)
