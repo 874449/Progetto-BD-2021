@@ -11,8 +11,8 @@ import secrets
 
 
 class Config:
+    BASE_URL = os.path.dirname(__file__)
     SECRET_KEY = os.environ.get('SECRET_KEY') or secrets.token_urlsafe(32)
-    # SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
     SESSION_PERMANENT = False
@@ -30,16 +30,17 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'postgresql://matteo:password@localhost/postgres'
 
 
-class ProductionConfig(Config):
+class HerokuProdConfig(Config):
     DEBUG = False
     SESSION_TYPE = 'filesystem'
     # la variabile HEROKU_DATABASE_URL è stata settata nell'ambiente di Heroku
     SQLALCHEMY_DATABASE_URI = os.environ.get('HEROKU_DATABASE_URL')
+    SSL_REDIRECT = True if os.environ.get('DYNO') else False
 
 
 config = {
     'development': DevelopmentConfig,
-    'production': ProductionConfig,
+    'production': HerokuProdConfig,
 
     'default': DevelopmentConfig
 }
