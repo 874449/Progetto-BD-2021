@@ -71,7 +71,7 @@ class Questionario(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow())
     title = db.Column(db.String(64), default='No name')
     description = db.Column(db.Text, default='No description')
-    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     questions = db.relationship('Domanda', backref='in', lazy='dynamic')
     answers = db.relationship('Risposta', backref='questionario', lazy='dynamic')  # TODO da rimuovere, è di test
 
@@ -88,22 +88,59 @@ class Domanda(db.Model):
     __tablename__ = 'questions'
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
-    activable = db.Column(db.Boolean, nullable=False)
+    choice_question = db.Column(db.Boolean, nullable=False)
+    activant = db.Column(db.Boolean, nullable=False)
+    activable_question = db.Column(db.Integer, db.ForeignKey('questions.id'))
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
+    category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
+    type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
     answers = db.relationship('Risposta', backref='domanda', lazy='dynamic')
-    # category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
-    # type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
-
-    def __init__(self, text, activable):
-        self.text = text
-        self.activable = activable
 
     def __repr__(self):
         return f'<Domanda{self.id}: {self.text}>'
 
 
-class Risposta(db.Model):
-    __tablename__ = 'answers'
+class CategoriaDomanda(db.Model):
+    __tablename__ = 'questions_category'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), nullable=False)
+    description = db.Column(db.String(255), default='No description')
+    questions = db.relationship('CategoriaDomanda', backref='categoria', lazy='dynamic')
+
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description
+
+    def __repr__(self):
+        return f'Categoria Domanda: id = {self.id}, name = {self.name}'
+
+
+class TipologiaDomanda(db.Model):
+    __tablename__ = 'questions_type'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), nullable=False)
+    description = db.Column(db.String(255), default='No description')
+    questions = db.relationship('TipologiaDomanda', backref='tipologia', lazy='dynamic')
+
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description
+
+    def __repr__(self):
+        return f'Tipologia Domanda: id = {self.id}, name = {self.name}'
+
+
+# TODO: idea! non sarebbe possibile integrare questa tabella direttamente nelle risposteDomande
+#  e poi richiamare le domande per essere scelte dall'utente nel form?
+class PossibileRisposta(db.Model):
+    __tablename__ = 'possible_answers'
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
+
+
+class RispostaDomanda(db.Model):
+    __tablename__ = 'answers_to_questions'
     id = db.Column(db.Integer, primary_key=True)
     is_open = db.Column(db.Boolean, nullable=False)
     text = db.Column(db.Text, nullable=True)

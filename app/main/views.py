@@ -17,7 +17,7 @@ def index():
 @login_required
 def dashboard():
     if request.method == 'POST':
-        nuovo = Questionario('Nuovo', 'no description')
+        nuovo = Questionario('Nuovo', 'no description', current_user.id)
     return render_template('dashboard.html')
 
 
