@@ -73,12 +73,12 @@ class Questionario(db.Model):
     description = db.Column(db.Text, default='No description')
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     questions = db.relationship('Domanda', backref='in', lazy='dynamic')
-    answers = db.relationship('Risposta', backref='questionario', lazy='dynamic')  # TODO da rimuovere, è di test
+    answers = db.relationship('RispostaDomanda', backref='questionario', lazy='dynamic')  # TODO da rimuovere, è di test
 
     def __init__(self, title, description, owner_id):
         self.title = title
         self.description = description
-        self.owner_id = owner_id
+        self.author_id = owner_id
 
     def __repr__(self):
         return f'<Questionario: {self.title} with {self.id}, owned by: {self.owner_id}>'
@@ -94,7 +94,7 @@ class Domanda(db.Model):
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
     category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
     type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
-    answers = db.relationship('Risposta', backref='domanda', lazy='dynamic')
+    answers = db.relationship('RispostaDomanda', backref='domanda', lazy='dynamic')
 
     def __repr__(self):
         return f'<Domanda{self.id}: {self.text}>'
@@ -105,7 +105,7 @@ class CategoriaDomanda(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     description = db.Column(db.String(255), default='No description')
-    questions = db.relationship('CategoriaDomanda', backref='categoria', lazy='dynamic')
+    questions = db.relationship('Domanda', backref='categoria', lazy='dynamic')
 
     def __init__(self, name, description):
         self.name = name
@@ -120,7 +120,7 @@ class TipologiaDomanda(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     description = db.Column(db.String(255), default='No description')
-    questions = db.relationship('TipologiaDomanda', backref='tipologia', lazy='dynamic')
+    questions = db.relationship('Domanda', backref='tipologia', lazy='dynamic')
 
     def __init__(self, name, description):
         self.name = name
