@@ -69,8 +69,8 @@ class Questionario(db.Model):
     __tablename__ = 'quizzes'
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow())
-    title = db.Column(db.String(64), default='No name')
-    description = db.Column(db.Text, default='No description')
+    title = db.Column(db.String(64))
+    description = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     questions = db.relationship('Domanda', backref='in', lazy='dynamic')
     answers = db.relationship('RispostaDomanda', backref='questionario', lazy='dynamic')  # TODO da rimuovere, è di test
@@ -81,7 +81,7 @@ class Questionario(db.Model):
         self.author_id = owner_id
 
     def __repr__(self):
-        return f'<Questionario: {self.title} with {self.id}, owned by: {self.owner_id}>'
+        return f'<Questionario: {self.title} with {self.id}, owned by: {self.author_id}>'
 
 
 class Domanda(db.Model):
@@ -95,6 +95,11 @@ class Domanda(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
     type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
     answers = db.relationship('RispostaDomanda', backref='domanda', lazy='dynamic')
+
+    def __init__(self, text, activable, quiz_id):
+        self.text = text
+        self.activable_question = activable
+        self.quiz_id = quiz_id
 
     def __repr__(self):
         return f'<Domanda{self.id}: {self.text}>'
