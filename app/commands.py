@@ -22,6 +22,7 @@ from . models import *
 def create_tables():
     """create_tables è un wrapper per la creazione delle tabelle del DB"""
     db.create_all()
+    print("Your DB has been created")
 
 
 @click.command(name='populate_db')
