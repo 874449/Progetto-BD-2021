@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, BooleanField, SubmitField, SelectField, FormField
 from wtforms.validators import Required, Length, Regexp
 from wtforms import ValidationError
-from ..models import User
+from ..models import *
 
 # QUIZ CREATION
 dropdown_question_types = [
@@ -17,20 +17,21 @@ dropdown_question_types = [
 
 
 class NewQuestion(FlaskForm):
-    question = StringField('Domanda', validators=[Required()])
+    question = StringField('Domanda')
     selection = SelectField('type', validators=[Required()], choices=dropdown_question_types)
     activable = BooleanField('Domanda attivabile', validators=[])
     submit = SubmitField('Create')
 
 
 class NewQuestionnaire(FlaskForm):
-    questionario = FormField(FlaskForm, label='quiz')
-    submit = SubmitField('Send')
+    titolo = StringField('Titolo')
+    descrizione = TextAreaField('Descrizione')
+    submit = SubmitField('Crea')
 
 
 # QUESTIONS
-class MandatoryQuestionForm(FlaskForm):
-    field = StringField('field')
+class MandatoryQuestionForm(NewQuestion):
+    question = StringField('Domanda', validators=[Required()])
 
 
 class OpenQuestionForm(FlaskForm):

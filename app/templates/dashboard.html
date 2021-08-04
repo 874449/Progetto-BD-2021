@@ -15,8 +15,37 @@
                 <div class="card-body">
                     <div class="row align-items-center no-gutters">
                         <div class="col me-2">
-                            <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Nuovo quiz</span></div>
-                            <div class="text-dark fw-bold h5 mb-0"><span>$40,000</span></div>
+                            <!--<div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Nuovo quiz</span></div>-->
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newQuizModal">
+                              <div class="text-white fw-bold h5 mb-0"><span>Nuovo quiz</span></div>
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="newQuizModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Nuovo quiz</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                    <form action="" method="POST" role="form" class="user">
+                                      <div class="modal-body">
+                                          {{ nuovo_questionario_form.hidden_tag() }}
+                                          {{ nuovo_questionario_form.titolo(class='form-text form-control', placeholder='Titolo') }}
+                                          <hr>
+                                          {{ nuovo_questionario_form.descrizione(class='form-text form-control', placeholder='Descrizione') }}
+                                      </div>
+                                      <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                                          {{ nuovo_questionario_form.submit(class='btn btn-primary') }}
+                                      </div>
+                                    </form>
+                                </div>
+                              </div>
+                            </div>
+
+
                         </div>
                         <div class="col-auto"><i class="fas fa-plus fa-2x text-gray-300"></i></div>
                     </div>
