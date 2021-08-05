@@ -25,6 +25,14 @@ def create_tables():
     print("Your DB has been created")
 
 
+@click.command(name='delete_db')
+@with_appcontext
+def delete_db():
+    """drop all tables if the database"""
+    db.drop_all()
+    print("DB Deleted")
+
+
 @click.command(name='populate_db')
 @with_appcontext
 def populate_db():
