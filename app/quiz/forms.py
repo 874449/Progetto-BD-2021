@@ -3,6 +3,7 @@ from wtforms import StringField, TextAreaField, BooleanField, SubmitField, Selec
 from wtforms.validators import Required, Length, Regexp
 from wtforms import ValidationError
 from ..models import *
+from .. import db
 
 # QUIZ CREATION
 dropdown_question_types = [
@@ -17,6 +18,7 @@ dropdown_question_types = [
 
 
 class NewQuestion(FlaskForm):
+    # dropdown_question_types = TipologiaDomanda.query.all()
     question = StringField('Domanda')
     selection = SelectField('type', validators=[Required()], choices=dropdown_question_types)
     activable = BooleanField('Domanda attivabile', validators=[])
@@ -24,7 +26,7 @@ class NewQuestion(FlaskForm):
 
 
 class NewQuestionnaire(FlaskForm):
-    titolo = StringField('Titolo')
+    titolo = StringField('Titolo', validators=[Required()])
     descrizione = TextAreaField('Descrizione')
     submit = SubmitField('Crea')
 

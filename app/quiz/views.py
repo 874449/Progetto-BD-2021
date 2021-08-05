@@ -6,11 +6,12 @@ from ..models import *
 from .. import db
 
 
-@quiz.route('/editor', methods=['GET', 'POST'])
+@quiz.route('/editor/<int:editID>', methods=['GET', 'POST'])
 @login_required
-def editor():
+def editor(editID):
     form = NewQuestion()
+    # print(f'[EDITING] QUIZ n {editID}')
     if form.validate_on_submit():
         activable = False
-        domanda = Domanda(form.question.data, form.activable.data)
+        domanda = Domanda(form.question.data, form.activable.data, id)
     return render_template('editor.html', form=form)
