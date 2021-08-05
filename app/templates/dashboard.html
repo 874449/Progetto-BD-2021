@@ -117,18 +117,18 @@
                             <li class="list-group-item">
                                 <div class="row align-items-center no-gutters">
                                     <div class="col me-2">
-                                        <h6 class="mb-0"><strong><a href="{{ url_for('quiz.editor',editID=result.id) }}">{{ result.title }}</a></strong></h6><span class="text-xs">{{ result.timestamp.strftime("%I:%M%p - %B %d, %Y") }}</span>
+                                        <h6 class="mb-0"><strong><a href="{{ url_for('quiz.editor',edit_id=result.id) }}">{{ result.title }}</a></strong></h6><span class="text-xs">{{ result.timestamp.strftime("%I:%M%p - %B %d, %Y") }}</span>
                                     </div>
-                                    <div class="col-auto">
+                                    <div class="col-5">
                                         <p class="mb-0 text-black-50">{{ result.description }}</p>
                                     </div>
                                     <div class="col-1">
-                                        <form id="delete-quiz" method="POST" action="{{ url_for('main.delete', quizID=result.id) }}">
+                                        <form id="delete-quiz" method="POST" action="{{ url_for('main.delete', quiz_id=result.id) }}">
                                             <button type="submit" class="btn btn-outline-danger fas fa-trash-alt"></button>
                                         </form>
                                     </div>
                                     <div class="col-1">
-                                        <form id="edit-quiz" method="GET" action="{{ url_for('quiz.editor', editID=result.id) }}">
+                                        <form id="edit-quiz" method="GET" action="{{ url_for('quiz.editor', edit_id=result.id) }}">
                                             <button type="submit" class="btn btn-outline-info fas fa-edit" ></button>
                                         </form>
                                     </div>

@@ -13,11 +13,10 @@ def index():
     return render_template("index.html")
 
 
-@main.route('/delete/<int:quizID>', methods=['POST'])
+@main.route('/delete/<quiz_id>', methods=['POST'])
 @login_required
-def delete(quizID):
-    # print(f'[DELETING] {quizID}')
-    quiz = Questionario.query.filter_by(id=quizID).first()
+def delete(quiz_id):
+    quiz = Questionario.query.filter_by(id=quiz_id).first()
     db.session.delete(quiz)
     db.session.commit()
     flash('Questionario cancellato con successo', 'success')
