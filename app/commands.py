@@ -38,4 +38,19 @@ def delete_db():
 def populate_db():
     """funzione per aggiungere dati per riempire il database"""
     # TODO crea la funzione
-    pass
+    fill_qtypes_table()
+
+
+@click.command(name='fill_qtypes_table')
+@with_appcontext
+def fill_qtypes_table():
+    tipologie = [TipologiaDomanda('Aperta', 'Domanda aperta'),
+                 TipologiaDomanda('Multi-scelta', 'Domanda a risposta multipla'),
+                 TipologiaDomanda('Scelta', 'Domanda a scelta che prevede una singola scelta'),
+                 TipologiaDomanda('Numerica', 'Domanda che prevede una risposta numerica')]
+
+    for elem in tipologie:
+        db.session.add(elem)
+
+    db.session.commit()
+    print('[SUCCESS] TipologiaDomande table has been filled successfully')
