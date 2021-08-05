@@ -88,17 +88,17 @@ class Domanda(db.Model):
     __tablename__ = 'questions'
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
-    choice_question = db.Column(db.Boolean, nullable=False)
     activant = db.Column(db.Boolean, nullable=False)
     activable_question = db.Column(db.Integer, db.ForeignKey('questions.id'))
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
     category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
     type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
+    actiovant_answer_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'))
     answers = db.relationship('RispostaDomanda', backref='domanda', lazy='dynamic')
 
     def __init__(self, text, activable, quiz_id):
         self.text = text
-        self.activable_question = activable
+        self.activant = activable
         self.quiz_id = quiz_id
 
     def __repr__(self):

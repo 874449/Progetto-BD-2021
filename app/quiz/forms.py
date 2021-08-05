@@ -21,7 +21,7 @@ class NewQuestion(FlaskForm):
     # dropdown_question_types = TipologiaDomanda.query.all()
     question = StringField('Domanda')
     selection = SelectField('type', validators=[Required()], choices=dropdown_question_types)
-    activable = BooleanField('Domanda attivabile', validators=[])
+    activant = BooleanField('Attiva altre domande?')
     submit = SubmitField('Create')
 
 
