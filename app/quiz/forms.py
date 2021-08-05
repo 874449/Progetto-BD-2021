@@ -1,12 +1,14 @@
-from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, BooleanField, SubmitField, SelectField, FormField
-from wtforms.validators import Required, Length, Regexp
+from flask_wtf import FlaskForm, Form
+from wtforms import StringField, TextAreaField, BooleanField, SubmitField, SelectField, FormField, FieldList
+from wtforms.validators import Required, Length
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms import ValidationError
 from ..models import *
 from .. import db
 
+
 # QUIZ CREATION
-dropdown_question_types = [
+'''dropdown_question_types = [
     ('1', 'Aperta'),
     ('2', 'Aperta obbligatoria'),
     ('3', 'A scelta singola'),
@@ -14,15 +16,33 @@ dropdown_question_types = [
     ('5', 'Numerica a interi'),
     ('6', 'Numerica floating point'),
     ('7', 'Data')
-]
+]'''
+
+'''
+Concept:
+Dentro a editorForm vengono aggiunte le domande, quando schiaccio il + per una nuova domanda appare il module
+per scegliere quale tipo di domanda fare e poi viene aggiunto il tipo corretto alla lista
+'''
+
+
+class Question(FlaskForm):
+    question = StringField('Domanda')
+    selection = QuerySelectField('type',
+                                 validators=[Required()],
+                                 query_factory=lambda: TipologiaDomanda.query.all(),
+                                 get_label='name')
+    activant = BooleanField('Attiva altre domande?')
+    submit = SubmitField('Create')
 
 
 class NewQuestion(FlaskForm):
-    # dropdown_question_types = TipologiaDomanda.query.all()
-    question = StringField('Domanda')
-    selection = SelectField('type', validators=[Required()], choices=dropdown_question_types)
-    activant = BooleanField('Attiva altre domande?')
-    submit = SubmitField('Create')
+    query = QuerySelectField('type')
+    text = TextAreaField('Testo della domanda', validators=[Required()])
+
+
+class EditorForm(FlaskForm):
+    fields = FieldList(FormField(Question, default=lambda: Question()))
+    submit = SubmitField('Salva')
 
 
 class NewQuestionnaire(FlaskForm):
@@ -32,7 +52,7 @@ class NewQuestionnaire(FlaskForm):
 
 
 # QUESTIONS
-class MandatoryQuestionForm(NewQuestion):
+class MandatoryQuestionForm(Question):
     question = StringField('Domanda', validators=[Required()])
 
 
