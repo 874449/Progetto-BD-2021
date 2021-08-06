@@ -9,11 +9,13 @@ All'interno del modulo vengono definite diverse classi per diversificare le vari
 import os
 import secrets
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 
 class Config:
-    BASE_URL = os.path.dirname(__file__)
     SECRET_KEY = os.environ.get('SECRET_KEY') or secrets.token_urlsafe(32)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SESSION_TYPE = 'filesystem'
     SQLALCHEMY_RECORD_QUERIES = True
     SESSION_PERMANENT = False
 
@@ -24,15 +26,18 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SESSION_TYPE = 'filesystem'
     # per far girare il DB locale collegato a flask si deve cambiare la url con
     # 'postgresql://<pg_username>:<pg_password>@localhost/<db_name>'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'postgresql://matteo:password@localhost/postgres'
 
 
+class TestingConfig(Config):
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'database.db')
+
+
 class HerokuProdConfig(Config):
     DEBUG = False
-    SESSION_TYPE = 'filesystem'
     # la variabile HEROKU_DATABASE_URL è stata settata nell'ambiente di Heroku
     SQLALCHEMY_DATABASE_URI = os.environ.get('HEROKU_DATABASE_URL')
     SSL_REDIRECT = True if os.environ.get('DYNO') else False
@@ -41,6 +46,9 @@ class HerokuProdConfig(Config):
 config = {
     'development': DevelopmentConfig,
     'production': HerokuProdConfig,
+    'test': TestingConfig,
 
-    'default': DevelopmentConfig
+    # a seconda delle necessità si può cambiare il valore della chiave 'default'
+    # per un setup rapido è già settato a TestingConfig
+    'default': TestingConfig
 }
