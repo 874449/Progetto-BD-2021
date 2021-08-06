@@ -28,7 +28,7 @@ def create_tables():
 @click.command(name='delete_db')
 @with_appcontext
 def delete_db():
-    """drop all tables if the database"""
+    """drop all tables of the database"""
     db.drop_all()
     print("DB Deleted")
 
@@ -38,6 +38,7 @@ def delete_db():
 def populate_db():
     """funzione per aggiungere dati per riempire il database"""
     # TODO crea la funzione
+    print('[INFO] populating TipologiaDomanda table')
     fill_qtypes_table()
 
 
@@ -50,6 +51,7 @@ def fill_qtypes_table():
                  TipologiaDomanda('Numerica', 'Domanda che prevede una risposta numerica')]
 
     for elem in tipologie:
+        print(f'[INFO] Adding {elem} to db')
         db.session.add(elem)
 
     db.session.commit()
