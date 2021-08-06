@@ -19,7 +19,7 @@ def delete(quiz_id):
     quiz = Questionario.query.filter_by(id=quiz_id).first()
     db.session.delete(quiz)
     db.session.commit()
-    flash('Questionario cancellato con successo', 'success')
+    flash('Questionario cancellato', 'success')
     return redirect(url_for('main.dashboard'))
 
 
@@ -35,7 +35,7 @@ def dashboard():
         db.session.add(nuovo)
         db.session.commit()
         flash('Questionario creato con successo', 'success')
-        return redirect(url_for('quiz.editor', editID=nuovo.id))
+        return redirect(url_for('quiz.editor', edit_id=nuovo.id))
     return render_template('dashboard.html', nuovo_questionario_form=nuovo_questionario_form, quizzes=display_quiz)
 
 
