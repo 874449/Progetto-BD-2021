@@ -4,6 +4,23 @@
 
 {% block body %}
 <body class="bg-gradient-primary">
+
+
+{% if form.email.errors %}
+    <ul class="errors">
+    {% for error in form.email %}
+        <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% if form.username.errors %}
+    <ul class="errors">
+    {% for error in form.username %}
+        <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
     <!-- FLASH MESSSAGES -->
     <div class="container">
         <div class="row mx-auto">
@@ -50,6 +67,7 @@
                                     </div>
                                 </div>
                                 {{ form.submit(class="btn btn-primary d-block btn-user w-100") }}
+
                                 <hr>
                                 <a class="btn btn-primary d-block btn-google btn-user w-100 mb-2" role="button"><i class="fab fa-google"></i>&nbsp; Register with Google</a>
                                 <a class="btn btn-primary d-block btn-facebook btn-user w-100" role="button"><i class="fab fa-facebook-f"></i>&nbsp; Register with Facebook</a>
