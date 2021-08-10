@@ -27,11 +27,14 @@ per scegliere quale tipo di domanda fare e poi viene aggiunto il tipo corretto a
 
 class Question(FlaskForm):
     text = StringField('Domanda')
-    selection = QuerySelectField('type',
-                                 validators=[Required()],
-                                 query_factory=lambda: TipologiaDomanda.query.all(),
-                                 get_label='name')
+    type_id = QuerySelectField('type',
+                               validators=[Required()],
+                               query_factory=lambda: TipologiaDomanda.query.all(),
+                               get_label='name')
     activant = BooleanField('Attiva altre domande?')
+    category_id = QuerySelectField('Tag',
+                                   query_factory=lambda: CategoriaDomanda.query.all(),
+                                   get_label='name')
     submit = SubmitField('Create')
 
 
@@ -45,7 +48,9 @@ class NewQuestion(FlaskForm):
 
 
 class EditorForm(FlaskForm):
-    fields = FieldList(FormField(Question, default=lambda: Question()))
+    title = StringField('Titolo')
+    description = TextAreaField('Descrizione')
+    questions = FieldList(FormField(Question, default=lambda: Question()))
     submit = SubmitField('Salva')
 
 
