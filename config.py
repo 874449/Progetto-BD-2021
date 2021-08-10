@@ -28,7 +28,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     # per far girare il DB locale collegato a flask si deve cambiare la url con
     # 'postgresql://<pg_username>:<pg_password>@localhost/<db_name>'
-    SQLALCHEMY_DATABASE_URI = 'postgresql://hrjnlfmdczlyel:1ae6b2d20d995627e46b8f13ec4653fed8abdb0c636e809a4cd4c081d44de52d@ec2-54-164-238-108.compute-1.amazonaws.com:5432/d11v0u9nldbf99'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL')
 
 
 class TestingConfig(Config):
