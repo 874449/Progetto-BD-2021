@@ -4,6 +4,10 @@
 
 {% block body %}
 <body class="bg-gradient-primary">
+
+
+
+
     <!-- FLASH MESSSAGES -->
     <div class="container">
         <div class="row mx-auto">
@@ -50,12 +54,14 @@
                                     </div>
                                 </div>
                                 {{ form.submit(class="btn btn-primary d-block btn-user w-100") }}
-                                <hr>
+
+                                <!--<hr>
                                 <a class="btn btn-primary d-block btn-google btn-user w-100 mb-2" role="button"><i class="fab fa-google"></i>&nbsp; Register with Google</a>
                                 <a class="btn btn-primary d-block btn-facebook btn-user w-100" role="button"><i class="fab fa-facebook-f"></i>&nbsp; Register with Facebook</a>
+                                -->
                                 <hr>
                             </form>
-                            <div class="text-center"><a class="small" href="forgot-password.html">Forgot Password?</a></div>
+                            <!--<div class="text-center"><a class="small" href="forgot-password.html">Forgot Password?</a></div>-->
                             <div class="text-center"><a class="small" href="{{ url_for('auth.login') }}">Already have an account? Login!</a></div>
                         </div>
                     </div>
