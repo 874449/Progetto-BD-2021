@@ -43,4 +43,19 @@ def register():
         db.session.commit()
         flash('Congrats. You are registered!', 'success')
         return redirect(url_for('auth.login'))
+    """
+    TODO: username potrebbe anche non essere unico quindi potrebbe anche avere doppioni nel database, trovare
+    il modo per dire a flask di non validare il campo username.
+    """
+    if form.username.errors:
+        flash(form.username.errors[0], 'warning')
+    if form.email.errors:
+        flash(form.email.errors[0], 'warning')
+    if form.password.errors:
+        flash(form.password.errors[0], 'warning')
+    if form.password2.errors:
+        flash(form.password2.errors[0], 'warning')
+    # if form.errors:
+    #    for i in form.errors:
+    #        flash(i, 'warning')
     return render_template('register.html', form=form)
