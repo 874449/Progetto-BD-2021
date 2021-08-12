@@ -1,5 +1,5 @@
-from flask_wtf import FlaskForm, Form
-from wtforms import StringField, TextAreaField, BooleanField, SubmitField, SelectField, FormField, FieldList
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField, BooleanField, SubmitField, FormField, FieldList, IntegerField, Form
 from wtforms.validators import Required, Length
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms import ValidationError
@@ -25,17 +25,16 @@ per scegliere quale tipo di domanda fare e poi viene aggiunto il tipo corretto a
 '''
 
 
-class Question(FlaskForm):
-    text = StringField('Domanda')
-    type_id = QuerySelectField('type',
-                               validators=[Required()],
-                               query_factory=lambda: TipologiaDomanda.query.all(),
-                               get_label='name')
-    activant = BooleanField('Attiva altre domande?')
-    category_id = QuerySelectField('Tag',
-                                   query_factory=lambda: CategoriaDomanda.query.all(),
-                                   get_label='name')
-    submit = SubmitField('Create')
+class Question(Form):
+    text = StringField('Domanda', validators=[Required()])
+    # type_id = QuerySelectField('type',
+    #                           validators=[Required()],
+    #                           query_factory=lambda: TipologiaDomanda.query.all(),
+    #                           get_label='name')
+    # activant = BooleanField('Attiva altre domande?')
+    # category_id = QuerySelectField('Tag',
+    #                               query_factory=lambda: CategoriaDomanda.query.all(),
+    #                               get_label='name')
 
 
 class NewQuestion(FlaskForm):
@@ -50,7 +49,7 @@ class NewQuestion(FlaskForm):
 class EditorForm(FlaskForm):
     title = StringField('Titolo')
     description = TextAreaField('Descrizione')
-    questions = FieldList(FormField(Question, default=lambda: Question()))
+    questions = FieldList(FormField(Question, default=lambda: Question()), min_entries=1)
     submit = SubmitField('Salva')
 
 
@@ -69,6 +68,10 @@ class OpenQuestionForm(FlaskForm):
     answer = TextAreaField('Email', validators=[Required(), Length(1, 64)])
     remember_me = BooleanField('Keep me logged in')
     submit = SubmitField('Log In')
+
+
+class NumericQuestionForm(Question):
+    answer = IntegerField('Inserisci un numero intero per rispondere')
 
 
 class MultipleChoiceForm(FlaskForm):
