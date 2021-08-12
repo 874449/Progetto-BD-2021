@@ -11,19 +11,38 @@ from .. import db
 def editor(edit_id):
     # queries
     current_quiz = Questionario.query.filter_by(id=edit_id).first()
-    questions = current_quiz.questions
+    questions = Domanda.query.filter_by(quiz_id=edit_id).all()
 
-    # DEBUG
-    print(questions)
+    if not questions:
+        db.session.add(Domanda('Testo di default', 1, False, edit_id))
+        db.session.commit()
+
     # forms
     question = Question()
-    editor_form = EditorForm()
+    editor_form = EditorForm(obj=current_quiz)
 
     if editor_form.validate_on_submit():
-        pass
-    if question.validate_on_submit():
-        activable = False
-        domanda = Domanda(question.question.data, question.activant.data, edit_id)
-        # db.session.add(domanda)
-        # db.session.commit()
-    return render_template('editor.html', editor_form=editor_form, form=question, current_quiz=current_quiz)
+        editor_form.populate_obj(current_quiz)
+        db.session.commit()
+        flash("Saved changes", 'success')
+
+    return render_template('editor.html', editor_form=editor_form,
+                           form=question, current_quiz=current_quiz)
+
+
+@quiz.route('/delete/question/<id_domanda>', methods=['POST'])
+def delete_question(id_domanda):
+    domanda = Domanda.query.filter_by(id=id_domanda).first()
+    db.session.delete(domanda)
+    db.session.commit()
+    flash('Domanda cancellata', 'success')
+    return redirect(url_for('quiz.editor', edit_id=domanda.quiz_id))
+
+
+@quiz.route('/view/<questionnaire_id>', methods=['GET', 'POST'])
+def render(questionnaire_id):
+    # query
+    current_quiz = Questionario.query.filter_by(id=questionnaire_id).first()
+    quiz_questions = Domanda.query.filter_by(quiz_id=questionnaire_id).all()
+
+    return render_template('visualize.html')

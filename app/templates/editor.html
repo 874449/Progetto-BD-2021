@@ -4,80 +4,53 @@
 
 {% block page_content %}
     <div class="container-fluid">
-
-        <!-- Modal -->
-        <div class="modal fade" id="newQuestion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Crea una nuova domanda</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- FLASH ERRORI -->
+        <div class="row mx-auto">
+            <div class="container">
+                {% if editor_form.errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <ul class="errors">
+                            {% for field_name, field_errors in editor_form.errors|dictsort if field_errors %}
+                                {% for error in field_errors %}
+                                    <li>{{ editor_form[field_name].label }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
                     </div>
-                    <form action="" method="POST" role="form" class="user">
-                        <div class="modal-body">
-                            {{ form.hidden_tag() }}
-                            {{ form.text(class='form-text form-control', placeholder='Testo della domanda') }}
-                            <hr>
-                            {{ form.selection(class='form-select form-control') }}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                            {{ form.submit(class='btn btn-primary') }}
-                        </div>
-                    </form>
-                </div>
+                {% endif %}
             </div>
         </div>
-        <!-- end Modal -->
 
+        <!-- EDITOR -->
         <div class="page-header align-items-center mb-4">
             <h3 class="text-dark mb-0">Editor</h3>
         </div>
-
-        <div class="card shadow mb-4 text-center col-md-7 mx-auto">
-            <div class="card-header"><h3>{{ current_quiz.title }}</h3></div>
-            <div class="">{{ current_quiz.description }}</div>
-        </div>
-        <div class="row align-items-center">
-            <div class="mx-auto col-md-7">
-                <div class="card shadow mb-4">
-                    <div class="col-md-auto ">
-                    <form action="" method="post">
-                        {{ form.hidden_tag() }}
-                        <div class="card-header py-3">
-                             {{ form.text(class='form-control', id="signature", placeholder="Titolo") }}
-                        </div>
-                        <div class="card-body">
-                             {{ form.selection(class='form-select-sm') }}
-                             {{ form.activant(class='form-check-input custom-control-input') }}
-                             {{ form.activant.label }}
-                             {{ form.submit(class='btn btn-primary') }}
-                         </div>
-                    </form>
-                    </div>
-                    <div class="col-1 mx-auto">
-                        <form method="POST" action="">
-                            <button type="submit" class="btn btn-outline-danger fas fa-trash-alt"></button>
-                        </form>
-                    </div>
+        <form method="POST">
+            {{ form.csrf_token }}
+            <div class="card shadow mb-4 text-center col-md-7 mx-auto">
+                <div class="card-header">
+                    {{ editor_form.hidden_tag() }}
+                    <h3>{{ editor_form.title(class='form-input') }}</h3>
+                    {{ editor_form.description(class='form-control') }}
+                </div>
+                <div class="card-body" data-toggle="fieldset" id="question-fieldset">
+                    <table class="table">
+                        {% for dom in editor_form.questions %}
+                            <tr data-toggle="fieldset-entry">
+                                <td>{{ dom.text.label }}</td>
+                                <td>{{ dom.text(class='form-control form-input', placeholder='Scrivi una domanda...') }}</td>
+                                <td><button class="btn btn-danger" type="button" data-toggle="fieldset-remove-row" id="question-{{loop.index0}}-remove"><i class="fas fa-trash-alt"></i></button></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    <button type="button" class="btn btn-success" data-toggle="fieldset-add-row" data-target="#question-fieldset"><i class="fas fa-plus fa-2x text-white"></i></button>
+                </div>
+                <div class="card-footer">
+                    {{ editor_form.submit(class="btn btn-info") }}
                 </div>
             </div>
-        </div>
-        <div class="row mx-auto col-xl-1 mb-4">
-            <div class="card textwhite bg-primary text-white border-start-primary shadow">
-                <!-- Button trigger modal -->
-
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newQuestion">
-                <div class="card-body text-center">
-                    <div class="row align-items-center no-gutters">
-                            <!--<div class="text-white fw-bold h5 text-xs"><span>Aggiungi domanda</span></div><br>-->
-                        <i class="fas fa-plus fa-2x text-white"></i>
-                    </div>
-                </div>
-                </button>
-            </div>
-        </div>
-
+        </form>
     </div>
-<script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
 {% endblock %}
