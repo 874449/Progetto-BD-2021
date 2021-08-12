@@ -19,7 +19,10 @@ ed è utilizzato per scopi di debug.
 '''
 
 
-# TODO: è necessaria la tabella role?
+# TODO: creare ruoli e permessi per:
+#  admin - l'amministratore che può fare tutte le query e controllare ciò che fanno gli utenti
+#  utente normale - può creare quiz, editarli e invitare al questionario gli altri utenti
+#  utente anonimo - può solo visualizzare e compilare i quiz a cui è invitato
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
@@ -93,11 +96,12 @@ class Domanda(db.Model):
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
     category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
     type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
-    actiovant_answer_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'))
+    activant_answer_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'))
     answers = db.relationship('RispostaDomanda', backref='domanda', lazy='dynamic')
 
-    def __init__(self, text, activable, quiz_id):
+    def __init__(self, text, tipo, activable, quiz_id):
         self.text = text
+        self.type_id = tipo
         self.activant = activable
         self.quiz_id = quiz_id
 
