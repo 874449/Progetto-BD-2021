@@ -44,7 +44,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    quizzes = db.relationship('Questionario', backref='owner', lazy='dynamic')
+    quizzes = db.relationship('Questionario', cascade="all,delete", backref='owner', lazy='dynamic')
 
     '''
     per questioni di sicurezza l'attributo password non è direttamente accessibile, quindi
@@ -75,7 +75,7 @@ class Questionario(db.Model):
     title = db.Column(db.String(64))
     description = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    questions = db.relationship('Domanda', backref='in', lazy='dynamic')
+    questions = db.relationship('Domanda', cascade="all,delete", backref='in', lazy='dynamic')
     #answers = db.relationship('RispostaDomanda', backref='questionario', lazy='dynamic')  # TODO da rimuovere, è di test
 
     def __init__(self, title, description, owner_id):
@@ -97,7 +97,7 @@ class Domanda(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
     type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
     activant_answer_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'))
-    answers = db.relationship('RispostaDomanda', backref='domanda', lazy='dynamic')
+    answers = db.relationship('RispostaDomanda', cascade="all,delete", backref='domanda', lazy='dynamic')
 
     # def __init__(self, text, tipo, activable, quiz_id):
     #    self.text = text
