@@ -40,6 +40,8 @@ class Role(db.Model):
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(64), nullable=True)
+    last_name = db.Column(db.String(64), nullable=True)
     username = db.Column(db.String(64), nullable=False)
     email = db.Column(db.String(64), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
@@ -136,7 +138,7 @@ class TipologiaDomanda(db.Model):
         self.description = description
 
     def __repr__(self):
-        return f'Tipologia Domanda: id = {self.id}, name = {self.name}'
+        return f'{self.id}'
 
 
 # TODO: idea! non sarebbe possibile integrare questa tabella direttamente nelle risposteDomande
