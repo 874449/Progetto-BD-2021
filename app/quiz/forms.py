@@ -27,10 +27,10 @@ per scegliere quale tipo di domanda fare e poi viene aggiunto il tipo corretto a
 
 class Question(Form):
     text = StringField('Domanda', validators=[Required()])
-    # type_id = QuerySelectField('type',
-    #                           validators=[Required()],
-    #                           query_factory=lambda: TipologiaDomanda.query.all(),
-    #                           get_label='name')
+    type_id = QuerySelectField('type',
+                               validators=[Required()],
+                               query_factory=lambda: TipologiaDomanda.query.all(),
+                               get_label='name')
     activant = BooleanField('Attiva altre domande?')
     # category_id = QuerySelectField('Tag',
     #                               query_factory=lambda: CategoriaDomanda.query.all(),
