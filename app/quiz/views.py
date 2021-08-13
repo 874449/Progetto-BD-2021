@@ -4,7 +4,6 @@ from .forms import Question, EditorForm, OpenQuestionForm, MandatoryQuestionForm
 from . import quiz
 from ..models import *
 from .. import db
-import re
 
 
 @quiz.route('/editor/<edit_id>', methods=['GET', 'POST'])
@@ -29,16 +28,14 @@ def editor(edit_id):
         i = 0
         max_len = len(current_quiz.questions.all())
         for elem in editor_form.questions.data:
-            tmp = str(elem['type_id'])
-            type_id_extract = re.findall("\d+", tmp)[0]
             if i < max_len:
                 setattr(current_quiz.questions[i], 'text', elem['text'])
-                setattr(current_quiz.questions[i], 'type_id', type_id_extract)
+                setattr(current_quiz.questions[i], 'type_id', str(elem['type_id']))
                 setattr(current_quiz.questions[i], 'activant', elem['activant'])
                 i = i + 1
             else:
                 domanda = Domanda(text=elem['text'],
-                                  type_id=type_id_extract,
+                                  type_id=str(elem['type_id']),
                                   activant=elem['activant'],
                                   quiz_id=edit_id)
                 db.session.add(domanda)
