@@ -15,7 +15,7 @@ def editor(edit_id):
     questions = Domanda.query.filter_by(quiz_id=edit_id).all()
 
     if not questions:
-        db.session.add(Domanda('Testo di default', 1, False, edit_id))
+        db.session.add(Domanda(text='Testo di default', type_id=1, activant=False, quiz_id=edit_id))
         db.session.commit()
 
     # forms
