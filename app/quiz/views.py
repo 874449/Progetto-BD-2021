@@ -1,9 +1,10 @@
 from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from . forms import Question, EditorForm, OpenQuestionForm, MandatoryQuestionForm
+from .forms import Question, EditorForm, OpenQuestionForm, MandatoryQuestionForm
 from . import quiz
 from ..models import *
 from .. import db
+import re
 
 
 @quiz.route('/editor/<edit_id>', methods=['GET', 'POST'])
@@ -22,21 +23,31 @@ def editor(edit_id):
     editor_form = EditorForm(obj=current_quiz)
 
     if editor_form.validate_on_submit():
-        editor_form.populate_obj(current_quiz)
+        # editor_form.populate_obj(current_quiz)  --- it doesn't work
+        current_quiz.title = editor_form.title.data
+        current_quiz.description = editor_form.description.data
+        i = 0
+        max_len = len(current_quiz.questions.all())
+        for elem in editor_form.questions.data:
+            tmp = str(elem['type_id'])
+            type_id_extract = re.findall("\d+", tmp)[0]
+            if i < max_len:
+                setattr(current_quiz.questions[i], 'text', elem['text'])
+                setattr(current_quiz.questions[i], 'type_id', type_id_extract)
+                setattr(current_quiz.questions[i], 'activant', elem['activant'])
+                i = i + 1
+            else:
+                domanda = Domanda(text=elem['text'],
+                                  type_id=type_id_extract,
+                                  activant=elem['activant'],
+                                  quiz_id=edit_id)
+                db.session.add(domanda)
+
         db.session.commit()
         flash("Saved changes", 'success')
 
     return render_template('editor.html', editor_form=editor_form,
                            form=question, current_quiz=current_quiz)
-
-
-@quiz.route('/delete/question/<id_domanda>', methods=['POST'])
-def delete_question(id_domanda):
-    domanda = Domanda.query.filter_by(id=id_domanda).first()
-    db.session.delete(domanda)
-    db.session.commit()
-    flash('Domanda cancellata', 'success')
-    return redirect(url_for('quiz.editor', edit_id=domanda.quiz_id))
 
 
 @quiz.route('/view/<questionnaire_id>', methods=['GET', 'POST'])
