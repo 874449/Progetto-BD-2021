@@ -76,7 +76,7 @@ class Questionario(db.Model):
     description = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     questions = db.relationship('Domanda', backref='in', lazy='dynamic')
-    answers = db.relationship('RispostaDomanda', backref='questionario', lazy='dynamic')  # TODO da rimuovere, è di test
+    #answers = db.relationship('RispostaDomanda', backref='questionario', lazy='dynamic')  # TODO da rimuovere, è di test
 
     def __init__(self, title, description, owner_id):
         self.title = title
@@ -91,7 +91,7 @@ class Domanda(db.Model):
     __tablename__ = 'questions'
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
-    activant = db.Column(db.Boolean, nullable=False)
+    activant = db.Column(db.Boolean)
     activable_question = db.Column(db.Integer, db.ForeignKey('questions.id'))
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
     category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
@@ -99,11 +99,11 @@ class Domanda(db.Model):
     activant_answer_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'))
     answers = db.relationship('RispostaDomanda', backref='domanda', lazy='dynamic')
 
-    def __init__(self, text, tipo, activable, quiz_id):
-        self.text = text
-        self.type_id = tipo
-        self.activant = activable
-        self.quiz_id = quiz_id
+    # def __init__(self, text, tipo, activable, quiz_id):
+    #    self.text = text
+    #    self.type_id = tipo
+    #    self.activant = activable
+    #    self.quiz_id = quiz_id
 
     def __repr__(self):
         return f'<Domanda{self.id}: {self.text}>'

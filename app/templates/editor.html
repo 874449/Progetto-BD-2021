@@ -38,8 +38,9 @@
                     <table class="table">
                         {% for dom in editor_form.questions %}
                             <tr data-toggle="fieldset-entry">
-                                <td>{{ dom.text.label }}</td>
                                 <td>{{ dom.text(class='form-control form-input', placeholder='Scrivi una domanda...') }}</td>
+                                <td>{{ dom.activant }}</td>
+
                                 <td><button class="btn btn-danger" type="button" data-toggle="fieldset-remove-row" id="question-{{loop.index0}}-remove"><i class="fas fa-trash-alt"></i></button></td>
                             </tr>
                         {% endfor %}
@@ -52,5 +53,7 @@
             </div>
         </form>
     </div>
-    <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+    {% block script_part %}
+        <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+    {% endblock %}
 {% endblock %}

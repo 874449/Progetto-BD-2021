@@ -31,7 +31,7 @@ class Question(Form):
     #                           validators=[Required()],
     #                           query_factory=lambda: TipologiaDomanda.query.all(),
     #                           get_label='name')
-    # activant = BooleanField('Attiva altre domande?')
+    activant = BooleanField('Attiva altre domande?')
     # category_id = QuerySelectField('Tag',
     #                               query_factory=lambda: CategoriaDomanda.query.all(),
     #                               get_label='name')
