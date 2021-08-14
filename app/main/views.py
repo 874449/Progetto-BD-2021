@@ -45,3 +45,9 @@ def profile(user_id):
     user = User.query.filter_by(id=user_id)
 
     return render_template('profile.html')
+
+
+@main.route('/responses/<quiz_id>')
+@login_required
+def responses(quiz_id):
+    return render_template('index.html')
