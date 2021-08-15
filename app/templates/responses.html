@@ -48,5 +48,7 @@
 
 
 </div>
-    <script src="{{ url_for('static', filename='js/chart.min.js') }}"></script>
+    {% block script_part %}
+        <script src="{{ url_for('static', filename='js/chart.min.js') }}"></script>
+    {% endblock %}
 {% endblock %}
