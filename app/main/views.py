@@ -1,7 +1,7 @@
 from flask import render_template, flash, url_for, redirect, session
 from flask_login import login_required, current_user
 from .. models import *
-from .. import db
+from .. import db, moment
 from ..quiz.forms import NewQuestionnaire
 from . import main
 
