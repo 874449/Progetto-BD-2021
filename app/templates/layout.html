@@ -115,6 +115,7 @@ type="image/x-icon">
     <!-- FROM FILE -->
     <script src="{{ url_for('static', filename='js/bs-init.js') }}"></script>
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    {{ moment.include_moment() }}
     {% block script_part %}{% endblock %}
 </body>
 {% endblock %}

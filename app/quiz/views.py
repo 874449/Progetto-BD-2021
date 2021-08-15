@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from .forms import Question, EditorForm, OpenQuestionForm, MandatoryQuestionForm
 from . import quiz
 from ..models import *
-from .. import db
+from .. import db, moment
 
 
 @quiz.route('/editor/<edit_id>', methods=['GET', 'POST'])
