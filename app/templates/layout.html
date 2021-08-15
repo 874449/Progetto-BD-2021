@@ -30,7 +30,7 @@ type="image/x-icon">
                     {% if current_user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.dashboard') }}"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.profile', user_id=current_user['id']) }}"><i class="fas fa-user"></i><span>Profile</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="table.html"><i class="fas fa-table"></i><span>Table</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="quizzes.html"><i class="fas fa-table"></i><span>Questionari</span></a></li>
                     {% else %}
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}"><i class="far fa-user-circle"></i><span>Login</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}"><i class="fas fa-user-circle"></i><span>Register</span></a></li>
@@ -102,7 +102,7 @@ type="image/x-icon">
             <!-- FOOTER -->
             <footer class="bg-white sticky-footer">
                 <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Progetto Basi di Dati 2020/21</span></div>
+                    <div class="text-center my-auto copyright"><span>Progetto Basi di Dati 2020/21 Gruppo Math.Random</span></div>
                 </div>
             </footer>
         </div>
