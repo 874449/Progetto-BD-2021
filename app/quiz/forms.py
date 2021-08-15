@@ -37,15 +37,6 @@ class Question(Form):
     #                               get_label='name')
 
 
-class NewQuestion(FlaskForm):
-    query = QuerySelectField('type',
-                             validators=[Required()],
-                             query_factory=lambda: TipologiaDomanda.query.all(),
-                             get_label='name')
-    # text = TextAreaField('Testo della domanda', validators=[Required()])
-    submit = SubmitField('Create')
-
-
 class EditorForm(FlaskForm):
     title = StringField('Titolo')
     description = TextAreaField('Descrizione')
