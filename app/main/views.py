@@ -39,10 +39,10 @@ def dashboard():
     return render_template('dashboard.html', nuovo_questionario_form=nuovo_questionario_form, quizzes=display_quiz)
 
 
-@main.route('/profile/<user_id>')
+@main.route('/profile/<username>')
 @login_required
-def profile(user_id):
-    user = User.query.filter_by(id=user_id)
+def profile(username):
+    user = User.query.filter_by(username=username)
 
     return render_template('profile.html')
 
