@@ -106,12 +106,20 @@ class PossibileRisposta(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
 
 
+class RisposteQuestionario(db.Model):
+    __tablename__ = 'quiz_answers'
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime, default=datetime.utcnow())
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
+
+
 class RispostaDomanda(db.Model):
     __tablename__ = 'answers_to_questions'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey('quiz_answers.id'), primary_key=True)
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), primary_key=True)
     is_open = db.Column(db.Boolean, nullable=False)
     text = db.Column(db.Text, nullable=True)
-    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
+
 
     def __init__(self, is_open, text):
         self.text = text
@@ -119,6 +127,15 @@ class RispostaDomanda(db.Model):
 
     def __repr__(self):
         return f'Risposta: {self.text}'
+
+
+class HannoComeRisposta(db.Model):
+    __tablename__ = 'have_as_answer'
+    possible_answers_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'), primary_key=True)
+    answers_to_questions_id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column(db.Integer, primary_key=True)
+    db.ForeignKeyConstraint(['answers_to_questions_id', 'question_id'],
+                            ['answers_to_questions.id', 'answers_to_questions.question_id'])
 
 
 class Domanda(db.Model):
