@@ -1,38 +1,115 @@
-__Progetto per il corso di Basi di Dati 2020/2021__
+### Progetto per il corso di Basi di Dati 2020/2021
 
 __Gruppo:__ _Math.Random_
 
 Composto da
 ``Alessandro Zanin (870696)``, ``Matteo Spanio (877485)``, ``Michael Alessandro Montin (874449)``
 
-__Indice__
+### Indice
 
-1. Introduzione al progetto
+1. **Introduzione al progetto**
    1. Strumenti e piattaforme usate per sviluppare il progetto
    2. Gestione del gruppo e suddivisione del lavoro
    3. Istruzioni per il setup dell'ambiente per eseguire il progetto in locale
-2. Database
+2. **Database**
    1. Schema logico e relazionale della Base di Dati
    2. Query sviluppate 
    3. Transazioni, Rollback, Triggers
    4. Routes in Flask
    5. Implementazione delle funzioni di Login/Sign-in
-   6. Implementazione dei form e dell'inserimento dei dati
-3. Analisi dei dati dei questionari
-4. Misure di sicurezza
+   6. Implementazione dei form e dell'inserimento dei dati 
+   7. Analisi dei dati dei questionari
+   8. Politiche d'integrità del database
+   9. Definizione di ruoli
+3. **Misure di sicurezza**
    1. Hash, passwords, ecc.
    2. Autenticazione e Log-in
    3. CSRF, SQL Injection
-5. Sviluppo grafico del sito per il progetto
+4. **Sviluppo grafico del sito**
 
-__1. Introduzione al progetto__
+### 1. Introduzione al progetto
 
 Il progetto consiste nell'implementazione di una Web Application 
 dedicata alla creazione di questionari. 
-Ogni utente può creare multipli questionari, ognuno formato da 
+Ogni utente può creare innumerevoli questionari, ognuno formato da 
 multiple domande che a loro volta possono essere di 
 diversa categoria (ad esempio, risposta aperta o scelta multipla).
 Ogni utente può inoltre vedere tutti i questionari fatti da altri utenti
-e rispondere alle domande in una schermata dedicata
+e rispondere alle domande in una schermata dedicata.
+Il proprietario di un questionario sarà poi in grado di visionare le
+risposte fornite dagli utenti 
 
-   
+**i. Strumenti e piattaforme usate per sviluppare il progetto**
+
+Il progetto è stato sviluppato utilizzando Python e SQLAlchemy,
+tutti i membri del gruppo hanno usato l'IDE PyCharm per 
+interfacciarsi con semplicità ed efficacia allo sviluppo del progetto. 
+Il codice è stato condiviso tra i vari membri del gruppo tramite
+GitHub in modo che ognuno potesse lavorare sulla versione più recente
+possibile, inoltre il database è stato condiviso tramite Heroku, che
+ha permesso a tutti i membri di lanciare l'applicazione usando lo
+stessa base di dati per la fase di testing.
+Il gruppo ha inoltre deciso di creare un gruppo Whatsapp dedicato al
+progetto in cui tutti i membri erano sempre raggiungibili per 
+eventuale necessità
+
+**ii. Gestione del gruppo e suddivisione del lavoro**
+
+Il gruppo non ha ritenuto necessaria la definizione di ruoli precisi,
+ci sono stati multipli incontri online tramite piattaforme come Discord
+in cui ogni membro ha avuto la possibilità di esprimere le sue idee
+e opinioni, alla fine di ogni incontro ognuno si è autonomamente
+assegnato gli incarichi che si trovava più a suo agio a svolgere,
+nello specifico `Michael` ha preferito principalmente concentrarsi sulla
+creazione di triggers, `Matteo` ha deciso di
+concentrare i suoi sforzi principalmente sullo sviluppo di funzionalità
+con Python mentre `Alessandro` ha curato la veste grafica 
+dell'applicazione e la documentazione. 
+Nonostante questo, ogni sviluppo è stato ampiamente discusso e trattato
+con tutti i membri del gruppo che hanno dato il loro contributo ogni 
+qualvolta fosse richiesto.
+
+**iii. Istruzioni per il setup dell'ambiente per eseguire il progetto in locale**
+
+# **MATTEO QUI LASCIO SPAZIO A TE HAHA**
+
+### 2. Database
+
+**i. Schema logico e relazionale della Base di Dati**
+
+Per la Base di dati è stato sviluppato il seguente schema logico
+e relazionale che illustra le relazioni e gli attributi delle varie 
+tabelle
+
+# **Immagine con schema di michael qui**
+
+**ii. Query sviluppate**
+
+**iii. Transazioni, Rollback, Triggers**
+
+**iv. Routes in Flask**
+
+**v. Implementazione delle funzioni di Login/Sign-in**
+
+**vi. Implementazione dei form e dell'inserimento dei dati**
+
+**vii. Analisi dei dati dei questionari**
+
+**viii. Politiche d'integrità del database**
+
+**ix. Definizione di ruoli**
+
+### 3. Misure di sicurezza
+
+**i. Hash e passwords**
+
+**ii. Autenticazione e Log-in**
+
+**iii. CSRF, SQL Injection**
+
+### 4. Sviluppo grafico del sito
+
+La veste grafica della Web Application è stata inizialmente prototipata
+su Bootstrap Studio per poi essere esportata direttamente su 
+PyCharm, da qui sono state create le varie schermate dell'interfaccia
+tramite HTML e CSS
