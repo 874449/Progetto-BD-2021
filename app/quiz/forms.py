@@ -8,15 +8,13 @@ from .. import db
 
 
 # QUIZ CREATION
-'''dropdown_question_types = [
-    ('1', 'Aperta'),
-    ('2', 'Aperta obbligatoria'),
-    ('3', 'A scelta singola'),
-    ('4', 'A scelta multipla'),
-    ('5', 'Numerica a interi'),
-    ('6', 'Numerica floating point'),
-    ('7', 'Data')
-]'''
+''' at the moment in DB:
+dropdown_question_types:
+    ('1', 'Aperta')
+    ('2', 'A scelta multipla')
+    ('3', 'A scelta singola')
+    ('4', 'Numerica a interi')
+'''
 
 '''
 Concept:
@@ -25,7 +23,7 @@ per scegliere quale tipo di domanda fare e poi viene aggiunto il tipo corretto a
 '''
 
 
-class Question(Form):
+class Question(FlaskForm):
     text = StringField('Domanda', validators=[Required()])
     type_id = QuerySelectField('type',
                                validators=[Required()],
@@ -35,12 +33,19 @@ class Question(Form):
     # category_id = QuerySelectField('Tag',
     #                               query_factory=lambda: CategoriaDomanda.query.all(),
     #                               get_label='name')
+    submit = SubmitField('Crea')
+
+
+class EditForm(FlaskForm):
+    text = StringField('Testo')
+    activant = BooleanField('Attivante')
+    activable = BooleanField('Attivabile')
 
 
 class EditorForm(FlaskForm):
     title = StringField('Titolo')
     description = TextAreaField('Descrizione')
-    questions = FieldList(FormField(Question, default=lambda: Question()), min_entries=1)
+    # questions = FieldList(FormField(Question, default=lambda: Question()), min_entries=1)
     submit = SubmitField('Salva')
 
 
@@ -51,10 +56,6 @@ class NewQuestionnaire(FlaskForm):
 
 
 # QUESTIONS
-class MandatoryQuestionForm(Question):
-    question = StringField('Domanda', validators=[Required()])
-
-
 class OpenQuestionForm(FlaskForm):
     answer = TextAreaField('Email', validators=[Required(), Length(1, 64)])
     remember_me = BooleanField('Keep me logged in')

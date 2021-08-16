@@ -1,6 +1,6 @@
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for, abort
 from flask_login import login_required, current_user
-from .forms import Question, EditorForm, OpenQuestionForm, MandatoryQuestionForm
+from .forms import Question, EditorForm, EditForm
 from . import quiz
 from ..models import *
 from .. import db, moment
@@ -11,46 +11,57 @@ from .. import db, moment
 def editor(edit_id):
     # queries
     current_quiz = Questionario.query.filter_by(id=edit_id).first()
-    questions = Domanda.query.filter_by(quiz_id=edit_id).all()
-
-    if not questions:
-        db.session.add(Domanda(text='', type_id=1, activant=False, quiz_id=edit_id))
-        db.session.commit()
+    tipi_domanda = TipologiaDomanda.query.all()
 
     # forms
     question = Question()
     editor_form = EditorForm(obj=current_quiz)
 
-    if editor_form.validate_on_submit():
-        # editor_form.populate_obj(current_quiz)  --- it doesn't work
-        current_quiz.title = editor_form.title.data
-        current_quiz.description = editor_form.description.data
-        i = 0
-        max_len = len(current_quiz.questions.all())
-        for elem in editor_form.questions.data:
-            if i < max_len:
-                setattr(current_quiz.questions[i], 'text', elem['text'])
-                setattr(current_quiz.questions[i], 'type_id', str(elem['type_id']))
-                setattr(current_quiz.questions[i], 'activant', elem['activant'])
-                i = i + 1
-            else:
-                domanda = Domanda(text=elem['text'],
-                                  type_id=str(elem['type_id']),
-                                  activant=elem['activant'],
-                                  quiz_id=edit_id)
-                db.session.add(domanda)
+    if question.validate_on_submit():
+        domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id,
+                          activant=question.activant.data, quiz_id=edit_id)
+        db.session.add(domanda)
+        db.session.commit()
+        flash('Nuova domanda creata', 'success')
+        return redirect(url_for('quiz.editor', edit_id=current_quiz.id))
 
+    if editor_form.validate_on_submit():
+        editor_form.populate_obj(current_quiz)
         db.session.commit()
         flash("Saved changes", 'success')
 
     return render_template('editor.html', editor_form=editor_form,
-                           form=question, current_quiz=current_quiz)
+                           form=question, current_quiz=current_quiz, tipi_domanda=tipi_domanda)
+
+
+@quiz.route('/editor/<quiz_id>/<question_id>', methods=['GET', 'POST'])
+@login_required
+def edit_question(quiz_id, question_id):
+    current_question = Domanda.query.filter_by(id=question_id)
+    form = EditForm(obj=current_question)
+    if form.validate_on_submit():
+        return redirect(url_for('quiz.edit_question', quiz_id=quiz_id, question_id=question_id))
+    return render_template('question_editor.html', form=form, current_question=current_question)
+
+
+@quiz.route('/delete/<domanda_id>', methods=['POST'])
+@login_required
+def delete(domanda_id):
+    query1 = Domanda.query.filter_by(id=domanda_id).first()
+    query2 = Questionario.query.filter_by(id=query1.quiz_id).first()
+    if query1 and query2 and current_user.id == query2.author_id:
+        db.session.delete(query1)
+        db.session.commit()
+        flash('Domanda rimossa', 'success')
+        return redirect(url_for('quiz.editor', edit_id=query1.quiz_id))
+    else:
+        flash('Operazione invalida', 'danger')
+        abort(403)
 
 
 @quiz.route('/view/<questionnaire_id>', methods=['GET', 'POST'])
 def render(questionnaire_id):
     # query
     current_quiz = Questionario.query.filter_by(id=questionnaire_id).first()
-    quiz_questions = Domanda.query.filter_by(quiz_id=questionnaire_id).all()
 
     return render_template('visualize.html')

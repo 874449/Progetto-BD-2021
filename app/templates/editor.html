@@ -3,6 +3,7 @@
 {% block title %}Editor{% endblock %}
 
 {% block page_content %}
+
     <div class="container-fluid">
         <!-- FLASH ERRORI -->
         <div class="row mx-auto">
@@ -22,38 +23,89 @@
             </div>
         </div>
 
+    <!--
+        Refactoring del quiz editor:
+            al click sull'editor viene visualizzata la lista delle domande con il titolo e la descrizione editabili
+            per ogni domanda c'è il pulsante edit che reindirizza a una pagina per fare l'editing della domanda
+            per ogni domanda c'è il pulsante per cancellarla
+            alla fine della pagina il pulsante '+' fa apparire un modal per creare la domanda.
+    -->
+
+        <!-- new qiestion Modal -->
+        <div class="modal fade" id="newQuestion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Nuovo quiz</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="" method="POST" role="form" class="user">
+                        <div class="modal-body">
+                            {{ form.hidden_tag() }}
+                            {{ form.text(class='form-text form-control', placeholder='Testo della domanda') }}
+                            <hr>
+                            {{ form.type_id(class='form-select') }}
+                            <hr>
+                            {{ form.activant.label }} {{ form.activant(class='form-check-inline') }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                            {{ form.submit(class='btn btn-primary') }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- end Modal -->
+
         <!-- EDITOR -->
         <div class="page-header align-items-center mb-4">
             <h3 class="text-dark mb-0">Editor</h3>
         </div>
-        <form method="POST">
-            {{ form.csrf_token }}
             <div class="card shadow mb-4 text-center col-md-7 mx-auto">
                 <div class="card-header">
+                    <form method="POST">
                     {{ editor_form.hidden_tag() }}
                     <h3>{{ editor_form.title(class='form-input') }}</h3>
                     {{ editor_form.description(class='form-control') }}
+                    {{ editor_form.submit(class="btn btn-info") }}
+                    </form>
                 </div>
                 <div class="card-body" data-toggle="fieldset" id="question-fieldset">
-                    <table class="table">
-                        {% for dom in editor_form.questions %}
-                            <tr data-toggle="fieldset-entry">
-                                <td>{{ dom.text(class='form-control form-input', placeholder='Scrivi una domanda...') }}</td>
-                                <td>{{ dom.activant }}</td>
-                                <td>{{ dom.type_id }}</td>
-                                <td><button class="btn btn-danger" type="button" data-toggle="fieldset-remove-row" id="question-{{loop.index0}}-remove"><i class="fas fa-trash-alt"></i></button></td>
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">Testo della domanda</th>
+                                <th scope="col">Attivante</th>
+                                <th scope="col">Tipo di domanda</th>
                             </tr>
-                        {% endfor %}
+                        </thead>
+                        <tbody>
+                            {% for domanda in current_quiz.questions %}
+                                <tr data-toggle="fieldset-entry">
+                                    <th scope="row">{{ loop.index0 + 1 }}</th>
+                                    <td>{{ domanda.text }}</td>
+                                    <td>{{ domanda.activant }}</td>
+                                    <td>{{ tipi_domanda[domanda.type_id - 1].name }}</td>
+                                    <td>
+                                        <form id="edit-question" method="POST" action="{{ url_for('quiz.edit_question', question_id=domanda.id, quiz_id=current_quiz.id) }}">
+                                            <button type="submit" class="btn btn-outline-info fas fa-edit"></button>
+                                        </form>
+                                        <form id="delete-question" method="POST" action="{{ url_for('quiz.delete', domanda_id=domanda.id) }}">
+                                            <button type="submit" class="btn btn-outline-danger fas fa-trash-alt"></button>
+                                        </form>
+                                    </td>
+                                <!-- <td><a href=""><button class="btn btn-danger" type="button" data-toggle="fieldset-remove-row" id="question-{{loop.index0}}-remove"><i class="fas fa-trash-alt"></i></button></td>-->
+                                </tr>
+                            {% endfor %}
+                        </tbody>
                     </table>
-                    <button type="button" class="btn btn-success" data-toggle="fieldset-add-row" data-target="#question-fieldset"><i class="fas fa-plus fa-2x text-white"></i></button>
+                    <!--<button type="button" class="btn btn-success" data-toggle="fieldset-add-row" data-target="#question-fieldset"><i class="fas fa-plus fa-2x text-white"></i></button>-->
                 </div>
                 <div class="card-footer">
-                    {{ editor_form.submit(class="btn btn-info") }}
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newQuestion"><i class="fas fa-plus fa-2x text-white"></i></button>
                 </div>
             </div>
-        </form>
     </div>
-    {% block script_part %}
-        <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
-    {% endblock %}
 {% endblock %}
