@@ -47,6 +47,13 @@ def profile(user_id):
     return render_template('profile.html')
 
 
+@main.route('/quizzes')
+@login_required
+def quizzes():
+    if current_user.is_authenticated:
+        return render_template('quizzes.html')
+
+
 @main.route('/responses/<quiz_id>')
 @login_required
 def responses(quiz_id):
