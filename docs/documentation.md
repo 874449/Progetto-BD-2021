@@ -10,6 +10,7 @@ __Indice__
 1. Introduzione al progetto
    1. Strumenti e piattaforme usate per sviluppare il progetto
    2. Gestione del gruppo e suddivisione del lavoro
+   3. Istruzioni per il setup dell'ambiente per eseguire il progetto in locale
 2. Database
    1. Schema logico e relazionale della Base di Dati
    2. Query sviluppate 
