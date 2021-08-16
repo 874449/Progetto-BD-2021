@@ -7,6 +7,7 @@ from . import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from uuid import uuid4
 from . import login_manager
 
 '''
@@ -42,9 +43,11 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(64), nullable=True)
     last_name = db.Column(db.String(64), nullable=True)
-    username = db.Column(db.String(64), nullable=False)
+    username = db.Column(db.String(64), nullable=False, unique=True)
     email = db.Column(db.String(64), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
+    member_since = db.Column(db.DateTime(), default=datetime.utcnow)
+    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     quizzes = db.relationship('Questionario', cascade="all,delete", backref='owner', lazy='dynamic')
 
@@ -63,6 +66,11 @@ class User(UserMixin, db.Model):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        db.session.add(self)
+        db.session.commit()
+
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
 
@@ -73,12 +81,12 @@ class User(UserMixin, db.Model):
 class Questionario(db.Model):
     __tablename__ = 'quizzes'
     id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String, default=uuid4())
     timestamp = db.Column(db.DateTime, default=datetime.utcnow())
     title = db.Column(db.String(64))
     description = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     questions = db.relationship('Domanda', cascade="all,delete", backref='in', lazy='dynamic')
-    #answers = db.relationship('RispostaDomanda', backref='questionario', lazy='dynamic')  # TODO da rimuovere, è di test
 
     def __init__(self, title, description, owner_id):
         self.title = title
@@ -87,6 +95,30 @@ class Questionario(db.Model):
 
     def __repr__(self):
         return f'<Questionario: {self.title} with {self.id}, owned by: {self.author_id}>'
+
+
+# TODO: idea! non sarebbe possibile integrare questa tabella direttamente nelle risposteDomande
+#  e poi richiamare le domande per essere scelte dall'utente nel form?
+class PossibileRisposta(db.Model):
+    __tablename__ = 'possible_answers'
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
+
+
+class RispostaDomanda(db.Model):
+    __tablename__ = 'answers_to_questions'
+    id = db.Column(db.Integer, primary_key=True)
+    is_open = db.Column(db.Boolean, nullable=False)
+    text = db.Column(db.Text, nullable=True)
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
+
+    def __init__(self, is_open, text):
+        self.text = text
+        self.is_open = is_open
+
+    def __repr__(self):
+        return f'Risposta: {self.text}'
 
 
 class Domanda(db.Model):
@@ -99,13 +131,10 @@ class Domanda(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
     type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
     activant_answer_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'))
-    answers = db.relationship('RispostaDomanda', cascade="all,delete", backref='domanda', lazy='dynamic')
-
-    # def __init__(self, text, tipo, activable, quiz_id):
-    #    self.text = text
-    #    self.type_id = tipo
-    #    self.activant = activable
-    #    self.quiz_id = quiz_id
+    possible_answers = db.relationship('PossibileRisposta', cascade="all,delete", backref='domanda_a_scelta',
+                                       lazy='dynamic', primaryjoin=id == PossibileRisposta.question_id)
+    answers = db.relationship('RispostaDomanda', cascade="all,delete", backref='domanda', lazy='dynamic',
+                              primaryjoin=id == RispostaDomanda.question_id)
 
     def __repr__(self):
         return f'<Domanda{self.id}: {self.text}>'
@@ -139,31 +168,6 @@ class TipologiaDomanda(db.Model):
 
     def __repr__(self):
         return f'{self.id}'
-
-
-# TODO: idea! non sarebbe possibile integrare questa tabella direttamente nelle risposteDomande
-#  e poi richiamare le domande per essere scelte dall'utente nel form?
-class PossibileRisposta(db.Model):
-    __tablename__ = 'possible_answers'
-    id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.Text, nullable=False)
-    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
-
-
-class RispostaDomanda(db.Model):
-    __tablename__ = 'answers_to_questions'
-    id = db.Column(db.Integer, primary_key=True)
-    is_open = db.Column(db.Boolean, nullable=False)
-    text = db.Column(db.Text, nullable=True)
-    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
-    quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))  # TODO da rimuovere, è una FK per test
-
-    def __init__(self, is_open, text):
-        self.text = text
-        self.is_open = is_open
-
-    def __repr__(self):
-        return f'Risposta: {self.text}'
 
 
 # callback function for flask_login

@@ -59,3 +59,9 @@ def register():
     #    for i in form.errors:
     #        flash(i, 'warning')
     return render_template('register.html', form=form)
+
+
+@auth.before_app_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.ping()
