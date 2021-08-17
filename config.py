@@ -52,5 +52,5 @@ config = {
 
     # a seconda delle necessità si può cambiare il valore della chiave 'default'
     # per un setup rapido è già settato a TestingConfig
-    'default': HerokuProdConfig
+    'default': TestingConfig
 }
