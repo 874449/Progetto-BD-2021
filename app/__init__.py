@@ -3,12 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_session import Session
 from flask_moment import Moment
+from flask_pagedown import PageDown
 from config import config
 
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 login_manager.login_message_category = 'warning'
+pagedown = PageDown()
 moment = Moment()
 db = SQLAlchemy()
 
@@ -28,6 +30,9 @@ def create_app(config_name):
 
     # aggiunta della libreria per la conversione del tempo UTC in locale
     moment.init_app(app)
+
+    # aggiunta della libreria per l'editing con sintassi markdown
+    pagedown.init_app(app)
 
     # nelle seguenti linee stiamo creando le blueprint per dividere il progetto in più file
     from .main import main

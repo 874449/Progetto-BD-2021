@@ -8,6 +8,8 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from uuid import uuid4
+from markdown import markdown
+import bleach
 from . import login_manager
 
 '''
@@ -85,6 +87,7 @@ class Questionario(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow())
     title = db.Column(db.String(64))
     description = db.Column(db.Text)
+    description_html = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     questions = db.relationship('Domanda', cascade="all,delete", backref='in', lazy='dynamic')
 
@@ -96,6 +99,18 @@ class Questionario(db.Model):
     def __repr__(self):
         return f'<Questionario: {self.title} with {self.id}, owned by: {self.author_id}>'
 
+    @staticmethod
+    def on_changed_description(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p', 'math']
+        target.description_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'),
+            tags=allowed_tags, strip=True))
+
+
+db.event.listen(Questionario.description, 'set', Questionario.on_changed_description)
+
 
 # TODO: idea! non sarebbe possibile integrare questa tabella direttamente nelle risposteDomande
 #  e poi richiamare le domande per essere scelte dall'utente nel form?
@@ -103,7 +118,20 @@ class PossibileRisposta(db.Model):
     __tablename__ = 'possible_answers'
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
+    text_html = db.Column(db.Text)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
+
+    @staticmethod
+    def on_changed_text(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p', 'math']
+        target.text_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'),
+            tags=allowed_tags, strip=True))
+
+
+db.event.listen(PossibileRisposta.text, 'set', PossibileRisposta.on_changed_text)
 
 
 class RisposteQuestionario(db.Model):
@@ -119,6 +147,7 @@ class RispostaDomanda(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), primary_key=True)
     is_open = db.Column(db.Boolean, nullable=False)
     text = db.Column(db.Text, nullable=True)
+    text_html = db.Column(db.Text)
 
 
     def __init__(self, is_open, text):
@@ -127,6 +156,18 @@ class RispostaDomanda(db.Model):
 
     def __repr__(self):
         return f'Risposta: {self.text}'
+
+    @staticmethod
+    def on_changed_text(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p', 'math']
+        target.text_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'),
+            tags=allowed_tags, strip=True))
+
+
+db.event.listen(RispostaDomanda.text, 'set', RispostaDomanda.on_changed_text)
 
 
 class HannoComeRisposta(db.Model):
@@ -142,6 +183,7 @@ class Domanda(db.Model):
     __tablename__ = 'questions'
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
+    text_html = db.Column(db.Text)
     activant = db.Column(db.Boolean)
     activable_question = db.Column(db.Integer, db.ForeignKey('questions.id'))
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
@@ -155,6 +197,18 @@ class Domanda(db.Model):
 
     def __repr__(self):
         return f'<Domanda{self.id}: {self.text}>'
+
+    @staticmethod
+    def on_changed_text(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p', 'math']
+        target.text_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'),
+            tags=allowed_tags, strip=True))
+
+
+db.event.listen(Domanda.text, 'set', Domanda.on_changed_text)
 
 
 class CategoriaDomanda(db.Model):

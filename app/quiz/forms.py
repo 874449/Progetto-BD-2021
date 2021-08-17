@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, BooleanField, SubmitField, FormField, FieldList, IntegerField, Form
 from wtforms.validators import Required, Length
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
+from flask_pagedown.fields import PageDownField
 from wtforms import ValidationError
 from ..models import *
 from .. import db
@@ -24,7 +25,7 @@ per scegliere quale tipo di domanda fare e poi viene aggiunto il tipo corretto a
 
 
 class Question(FlaskForm):
-    text = StringField('Domanda', validators=[Required()])
+    text = PageDownField('Domanda', validators=[Required()])
     type_id = QuerySelectField('type',
                                validators=[Required()],
                                query_factory=lambda: TipologiaDomanda.query.all(),
@@ -44,14 +45,14 @@ class EditForm(FlaskForm):
 
 class EditorForm(FlaskForm):
     title = StringField('Titolo')
-    description = TextAreaField('Descrizione')
+    description = PageDownField('Descrizione')
     # questions = FieldList(FormField(Question, default=lambda: Question()), min_entries=1)
     submit = SubmitField('Salva')
 
 
 class NewQuestionnaire(FlaskForm):
     titolo = StringField('Titolo', validators=[Required()])
-    descrizione = TextAreaField('Descrizione')
+    descrizione = PageDownField('Descrizione')
     submit = SubmitField('Crea')
 
 

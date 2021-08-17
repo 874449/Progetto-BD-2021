@@ -85,7 +85,13 @@
                             {% for domanda in current_quiz.questions %}
                                 <tr data-toggle="fieldset-entry">
                                     <th scope="row">{{ loop.index0 + 1 }}</th>
-                                    <td>{{ domanda.text }}</td>
+                                    <td>
+                                        {% if domanda.text_html %}
+                                            {{ domanda.text_html | safe }}
+                                        {% else %}
+                                            {{ domanda.text }}
+                                        {% endif %}
+                                    </td>
                                     <td>{{ domanda.activant }}</td>
                                     <td>{{ tipi_domanda[domanda.type_id - 1].name }}</td>
                                     <td>
