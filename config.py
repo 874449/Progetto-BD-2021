@@ -4,8 +4,10 @@ All'interno del modulo vengono definite diverse classi per diversificare le vari
 
 - Config è la classe genitore che contiene alcune variabili comuni a tutti i setup
 - DevelopmentConfig è il setup per far eseguire l'applicazione flask in locale
+- TestingConfig è il setup per utilizzare un DB SQLite, rapido da creare per fare dei test
 - ProductionConfig è la configurazione per il porting online della webapp
 """
+
 import os
 import secrets
 
@@ -50,5 +52,5 @@ config = {
 
     # a seconda delle necessità si può cambiare il valore della chiave 'default'
     # per un setup rapido è già settato a TestingConfig
-    'default': TestingConfig
+    'default': HerokuProdConfig
 }
