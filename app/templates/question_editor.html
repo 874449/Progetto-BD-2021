@@ -1,7 +1,12 @@
 {% extends 'layout.html' %}
 
 {% block page_content %}
-
+    <div class="text-center mt-5">
+        <div class="col-auto">
+            
+        </div>
+        <a href="{{ url_for('quiz.editor', edit_id=quiz_id) }}">← Torna all'editor del quiz</a>
+    </div>
 {% endblock %}
 
 

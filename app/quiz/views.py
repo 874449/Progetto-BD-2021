@@ -41,7 +41,7 @@ def edit_question(quiz_id, question_id):
     form = EditForm(obj=current_question)
     if form.validate_on_submit():
         return redirect(url_for('quiz.edit_question', quiz_id=quiz_id, question_id=question_id))
-    return render_template('question_editor.html', form=form, current_question=current_question)
+    return render_template('question_editor.html', form=form, current_question=current_question, quiz_id=quiz_id)
 
 
 @quiz.route('/delete/<domanda_id>', methods=['POST'])
