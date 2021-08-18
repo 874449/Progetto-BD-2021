@@ -141,6 +141,17 @@ class RisposteQuestionario(db.Model):
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
 
 
+have_as_answer = db.Table('have_as_answer',
+                          db.Column('possible_answer_id', db.Integer, primary_key=True),
+                          db.Column('answer_to_questions_id', db.Integer, primary_key=True),
+                          db.Column('question_id', db.Integer, primary_key=True),
+                          db.ForeignKeyConstraint(['answer_to_questions_id', 'question_id'],
+                                                  ['answers_to_questions.id', 'answers_to_questions.question_id'],
+                                                  name='fk_answer_to_questions'),
+                          db.ForeignKeyConstraint(['possible_answer_id'], ['possible_answers.id'], name='fk_possible_answers')
+                          )
+
+
 class RispostaDomanda(db.Model):
     __tablename__ = 'answers_to_questions'
     id = db.Column(db.Integer, db.ForeignKey('quiz_answers.id'), primary_key=True)
@@ -148,7 +159,8 @@ class RispostaDomanda(db.Model):
     is_open = db.Column(db.Boolean, nullable=False)
     text = db.Column(db.Text, nullable=True)
     text_html = db.Column(db.Text)
-
+    have_as_answers = db.relationship('PossibileRisposta', secondary=have_as_answer,
+                                      backref=db.backref('answers_to_questions', lazy='joined'))
 
     def __init__(self, is_open, text):
         self.text = text
@@ -170,13 +182,13 @@ class RispostaDomanda(db.Model):
 db.event.listen(RispostaDomanda.text, 'set', RispostaDomanda.on_changed_text)
 
 
-class HannoComeRisposta(db.Model):
-    __tablename__ = 'have_as_answer'
-    possible_answers_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'), primary_key=True)
-    answers_to_questions_id = db.Column(db.Integer, primary_key=True)
-    question_id = db.Column(db.Integer, primary_key=True)
-    db.ForeignKeyConstraint(['answers_to_questions_id', 'question_id'],
-                            ['answers_to_questions.id', 'answers_to_questions.question_id'])
+#class HannoComeRisposta(db.Model):
+#    __tablename__ = 'have_as_answer'
+#    possible_answers_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'), primary_key=True)
+#    answers_to_questions_id = db.Column(db.Integer, primary_key=True)
+#    question_id = db.Column(db.Integer, primary_key=True)
+#    db.ForeignKeyConstraint(['answers_to_questions_id', 'question_id'],
+#                            ['answers_to_questions.id', 'answers_to_questions.question_id'])
 
 
 class Domanda(db.Model):
