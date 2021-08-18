@@ -9,23 +9,24 @@ Composto da
 
 1. **Introduzione al progetto**
    1. Strumenti e piattaforme usate per sviluppare il progetto
+      1. Librerie utilizzate
+      2. ORM
    2. Gestione del gruppo e suddivisione del lavoro
    3. Istruzioni per il setup dell'ambiente per eseguire il progetto in locale
 2. **Database**
    1. Schema logico e relazionale della Base di Dati
-   2. Query sviluppate 
-   3. Transazioni, Rollback, Triggers
+      1. Implementazione delle relazioni
+   2. Query sviluppate
+   3. Transazioni, Rollback, Triggers - Politiche d'integrità del database
    4. Routes in Flask
    5. Implementazione delle funzioni di Login/Sign-in
-   6. Implementazione dei form e dell'inserimento dei dati 
-   7. Analisi dei dati dei questionari
-   8. Politiche d'integrità del database
-   9. Definizione di ruoli
-3. **Misure di sicurezza**
+   6. Analisi dei dati dei questionari
+   7. Definizione di ruoli
+4. **Misure di sicurezza**
    1. Hash, passwords, ecc.
    2. Autenticazione e Log-in
    3. CSRF, SQL Injection
-4. **Sviluppo grafico del sito**
+5. **Sviluppo grafico del sito**
 
 ### 1. Introduzione al progetto
 
@@ -52,6 +53,8 @@ stessa base di dati per la fase di testing.
 Il gruppo ha inoltre deciso di creare un gruppo Whatsapp dedicato al
 progetto in cui tutti i membri erano sempre raggiungibili per 
 eventuale necessità
+
+libro mighel 
 
 **ii. Gestione del gruppo e suddivisione del lavoro**
 
@@ -81,31 +84,85 @@ Per la Base di dati è stato sviluppato il seguente schema logico
 e relazionale che illustra le relazioni e gli attributi delle varie 
 tabelle
 
+**a. Implementazione delle relazioni**
+
+riga 144 file models.py
+
 # **Immagine con schema di michael qui**
 
 **ii. Query sviluppate**
 
-**iii. Transazioni, Rollback, Triggers**
+codice delle query e breve descrizione di dove è 
+stata usata e come
+
+**iii. Transazioni, Rollback, Triggers - Politiche d'integrità del database**
+
+usando orm ci stacchiamo da database di postgres,
+ovvero il database puro, con orm astrai e vai a lavorare
+con python, 
 
 **iv. Routes in Flask**
 
+file diviso in blueprint, init.py principale, la dentro
+si crea una funzione crea applicazione che inizializza
+le librerie utili all-utilizzo e si registrano le 
+bleuprint. logicamente diviso in multiple blueprint 
+
+auth autenticazione
+
+main interfaccia utente di base
+
+quiz editor questionari renderizzazione questionari
+
+rimozione domande
+
+errors.py per gli errori piu ricorrenti
+
 **v. Implementazione delle funzioni di Login/Sign-in**
 
-**vi. Implementazione dei form e dell'inserimento dei dati**
+accenno e basta e poi spiego
+dall'altra parte
+cartella auth, route specifica 
+usato username al posto di id per sicurezza aggiuntiva 
+del server (cosi uno non puo barare e trovare gli id del
+server) 
 
-**vii. Analisi dei dati dei questionari**
+ORM gia di suo controlla SQLInj percio è piu
+controllo di errore umano
 
-**viii. Politiche d'integrità del database**
+**vi. Analisi dei dati dei questionari**
 
-**ix. Definizione di ruoli**
+esperienza utilizzo analisi dei dati (google moduli) view 
+delle risposte del questionario (es grafico a torta o percentuali)
+
+**vii. Definizione di ruoli**
+
+heroku non permette ruoli percio non li abbiamo creati,
+abbiamo tabella ruoli in database che clona questa
+funzionalità
 
 ### 3. Misure di sicurezza
 
 **i. Hash e passwords**
 
+un sacco di funzioni per gestire le passwords degli utenti
+in models, passwords hashate per protezione degli utenti
+due volte stessa password non riproduce stesso hash
+classe users password hash crittografia particolare
+
 **ii. Autenticazione e Log-in**
 
-**iii. CSRF, SQL Injection**
+cartella auth, route specifica 
+usato username al posto di id per sicurezza aggiuntiva 
+del server (cosi uno non puo barare e trovare gli id del
+server) 
+
+Cookies (flask_session) validi un anno 
+
+**iii. CSRF, SQL Injection, XSS**
+
+le librerie potrebbero essere vulnerabili ad attacchi nel caso di 
+falle, pero sono open source percio lesgoo 
 
 ### 4. Sviluppo grafico del sito
 
@@ -113,3 +170,6 @@ La veste grafica della Web Application è stata inizialmente prototipata
 su Bootstrap Studio per poi essere esportata direttamente su 
 PyCharm, da qui sono state create le varie schermate dell'interfaccia
 tramite HTML e CSS
+
+macro 
+
