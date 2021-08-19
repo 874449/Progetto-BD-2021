@@ -112,28 +112,6 @@ class Questionario(db.Model):
 db.event.listen(Questionario.description, 'set', Questionario.on_changed_description)
 
 
-# TODO: idea! non sarebbe possibile integrare questa tabella direttamente nelle risposteDomande
-#  e poi richiamare le domande per essere scelte dall'utente nel form?
-class PossibileRisposta(db.Model):
-    __tablename__ = 'possible_answers'
-    id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.Text, nullable=False)
-    text_html = db.Column(db.Text)
-    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
-
-    @staticmethod
-    def on_changed_text(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
-                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p', 'math']
-        target.text_html = bleach.linkify(bleach.clean(
-            markdown(value, output_format='html'),
-            tags=allowed_tags, strip=True))
-
-
-db.event.listen(PossibileRisposta.text, 'set', PossibileRisposta.on_changed_text)
-
-
 class RisposteQuestionario(db.Model):
     __tablename__ = 'quiz_answers'
     id = db.Column(db.Integer, primary_key=True)
@@ -148,7 +126,8 @@ have_as_answer = db.Table('have_as_answer',
                           db.ForeignKeyConstraint(['answer_to_questions_id', 'question_id'],
                                                   ['answers_to_questions.id', 'answers_to_questions.question_id'],
                                                   name='fk_answer_to_questions'),
-                          db.ForeignKeyConstraint(['possible_answer_id'], ['possible_answers.id'], name='fk_possible_answers')
+                          db.ForeignKeyConstraint(['possible_answer_id'], ['possible_answers.id'],
+                                                  name='fk_possible_answers')
                           )
 
 
@@ -202,8 +181,8 @@ class Domanda(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
     type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
     activant_answer_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'))
-    possible_answers = db.relationship('PossibileRisposta', cascade="all,delete", backref='domanda_a_scelta',
-                                       lazy='dynamic', primaryjoin=id == PossibileRisposta.question_id)
+    #possible_answers = db.relationship('PossibileRisposta', cascade="all,delete", backref='domanda_a_scelta',
+    #                                   lazy='dynamic', primaryjoin=id == PossibileRisposta.question_id)
     answers = db.relationship('RispostaDomanda', cascade="all,delete", backref='domanda', lazy='dynamic',
                               primaryjoin=id == RispostaDomanda.question_id)
 
@@ -221,6 +200,30 @@ class Domanda(db.Model):
 
 
 db.event.listen(Domanda.text, 'set', Domanda.on_changed_text)
+
+
+# TODO: idea! non sarebbe possibile integrare questa tabella direttamente nelle risposteDomande
+#  e poi richiamare le domande per essere scelte dall'utente nel form?
+class PossibileRisposta(db.Model):
+    __tablename__ = 'possible_answers'
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+    text_html = db.Column(db.Text)
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
+    active_question = db.relationship('Domanda', backref='risposta_attivante',
+                                      primaryjoin=id == Domanda.activant_answer_id)
+
+    @staticmethod
+    def on_changed_text(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p', 'math']
+        target.text_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'),
+            tags=allowed_tags, strip=True))
+
+
+db.event.listen(PossibileRisposta.text, 'set', PossibileRisposta.on_changed_text)
 
 
 class CategoriaDomanda(db.Model):
