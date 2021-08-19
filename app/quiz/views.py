@@ -1,6 +1,6 @@
 from flask import render_template, request, flash, redirect, url_for, abort
 from flask_login import login_required, current_user
-from .forms import Question, EditorForm, EditForm
+from .forms import Question, EditorForm, EditForm, PossibleAnswerForm
 from . import quiz
 from ..models import *
 from .. import db, moment
@@ -37,16 +37,28 @@ def editor(edit_id):
 @quiz.route('/editor/<quiz_id>/<question_id>', methods=['GET', 'POST'])
 @login_required
 def edit_question(quiz_id, question_id):
-    current_question = Domanda.query.filter_by(id=question_id)
+    # query
+    current_question = Domanda.query.filter_by(id=question_id).first()
     form = EditForm(obj=current_question)
     if form.validate_on_submit():
-        return redirect(url_for('quiz.edit_question', quiz_id=quiz_id, question_id=question_id))
-    return render_template('question_editor.html', form=form, current_question=current_question, quiz_id=quiz_id)
+        print('\n[DEBUG] - INFO')
+        print(form.text.data)
+        print(form.possible_answers.data)
+        print(f'{request.form}')
+        print('[END DEBUG]\n')
+        form.populate_obj(current_question)
+        db.session.commit()
+        flash('modifiche salvate', 'success')
+        # return redirect(url_for('quiz.edit_question', quiz_id=quiz_id, question_id=question_id))
+
+    return render_template('question_editor.html', form=form, current_question=current_question,
+                           quiz_id=quiz_id)
 
 
 @quiz.route('/delete/<domanda_id>', methods=['POST'])
 @login_required
 def delete(domanda_id):
+    # TODO security check proprietary role
     query1 = Domanda.query.filter_by(id=domanda_id).first()
     query2 = Questionario.query.filter_by(id=query1.quiz_id).first()
     if query1 and query2 and current_user.id == query2.author_id:

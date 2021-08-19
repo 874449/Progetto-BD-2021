@@ -37,10 +37,23 @@ class Question(FlaskForm):
     submit = SubmitField('Crea')
 
 
+class PossibleAnswerForm(Form):
+    text = PageDownField('Testo della risposta')
+
+
 class EditForm(FlaskForm):
-    text = StringField('Testo')
-    activant = BooleanField('Attivante')
-    activable = BooleanField('Attivabile')
+    text = PageDownField('Testo', validators=[Required()])
+    # type_id = QuerySelectField('type',
+    #                           validators=[Required()],
+    #                           query_factory=lambda: TipologiaDomanda.query.all(),
+    #                           get_label='name')
+    # category_id = QuerySelectField('Tag',
+    #                               query_factory=lambda: CategoriaDomanda.query.all(),
+    #                               get_label='name')
+    # activant = BooleanField('Attivante')
+    # activable = BooleanField('Attivabile')
+    possible_answers = FieldList(FormField(PossibleAnswerForm, default=lambda: PossibileRisposta(), min_entries=1))
+    submit = SubmitField('Salva')
 
 
 class EditorForm(FlaskForm):
