@@ -1,9 +1,12 @@
 from flask import render_template, flash, url_for, redirect
 from flask_login import login_required, current_user
+from sqlalchemy import case
+
 from .. models import *
 from .. import db, moment
 from ..quiz.forms import NewQuestionnaire
 from . import main
+from sqlalchemy.dialects import postgresql
 
 
 @main.route('/')
@@ -63,5 +66,12 @@ def quizzes():
 @main.route('/responses/<quiz_id>')
 @login_required
 def responses(quiz_id):
-    #risposte = session.query(User, Questionario).join(Questionario)
-    return render_template('responses.html')
+    subquery = db.session.query(RisposteQuestionario.id).filter(RisposteQuestionario.quiz_id == quiz_id)
+                                                                #, RisposteQuestionario.id == 1)
+    risposte = db.session.query(Domanda.text.label('Domanda'), case((RispostaDomanda.is_open == True, RispostaDomanda.text),
+                                                   else_=PossibileRisposta.text).label('Risposta')).join(RispostaDomanda)\
+        .outerjoin(RispostaDomanda.have_as_answers).filter(RispostaDomanda.id.in_(subquery))
+    print('-------------------')
+    print(str(risposte.statement.compile(dialect=postgresql.dialect())))
+    print('---------------------')
+    return render_template('responses.html', risposte=risposte)

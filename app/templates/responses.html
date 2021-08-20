@@ -28,7 +28,7 @@
                     </li>
                 </ul>
             </div>
-            <!--<div class="tab-content" id="myTabContent">
+            <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="home-tab">
                     <div class="card-body">
                         <div class="chart-area">
@@ -41,10 +41,23 @@
 
                 </div>
                 <div class="tab-pane fade" id="single" role="tabpanel" aria-labelledby="profile-tab">
-
+                    {% for i in risposte %}
+                    <div class="row">
+                        <div class="col-6">
+                            {{ i.Domanda }}
+                        </div>
+                        <div class="col-6">
+                            {{ i.Risposta }}
+                        </div>
+                    </div>
+                    {% endfor %}
 
                 </div>
-            </div>-->
+            </div>
+
+
+
+
         </div>
     </div>
 
