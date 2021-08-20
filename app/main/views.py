@@ -60,8 +60,13 @@ def quizzes():
         return render_template('quizzes.html')
 
 
-@main.route('/responses/<quiz_id>')
+@main.route('/responses')
 @login_required
-def responses(quiz_id):
-    #risposte = session.query(User, Questionario).join(Questionario)
+def responses():
     return render_template('responses.html')
+#'/responses/<quiz_id>'
+#def responses(quiz_id):
+    #risposte = session.query(User, Questionario).join(Questionario)
+    #return render_template('responses.html')
+
+

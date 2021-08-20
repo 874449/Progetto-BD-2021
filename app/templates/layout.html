@@ -4,7 +4,7 @@
     {{ pagedown.html_head() }}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>{% block title %}{% endblock %} - Quiz</title>
+    <title>{% block title %}{% endblock %} - Quizza che ti passa</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
     <link rel="stylesheet" href="{{ url_for('static', filename='fonts/fontawesome-all.min.css') }}">
@@ -23,18 +23,19 @@ type="image/x-icon">
         <!-- LEFTSIDE NAVBAR -->
         <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0 fade show">
             <div class="container-fluid d-flex flex-column p-0"><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="{{ url_for('main.index') }}">
-                    <div class="sidebar-brand-icon rotate-n-15"><i class="icon ion-chatboxes"></i></div>
-                    <div class="sidebar-brand-text mx-3"><span>quiz</span></div>
+                    <div class="sidebar-brand-icon rotate-n-15"><i class="icon ion-document"></i></div>
+                    <div class="sidebar-brand-text mx-3"><span>quiz4all</span></div>
                 </a>
                 <hr class="sidebar-divider my-0">
                 <ul class="navbar-nav text-light" id="accordionSidebar">
                     {% if current_user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.dashboard') }}"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.profile', username=current_user['username']) }}"><i class="fas fa-user"></i><span>Profile</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.quizzes') }}"><i class="fas fa-table"></i><span>Questionari</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.dashboard') }}"><i class="fas fa-home"></i><span>Crea un questionario</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.quizzes') }}"><i class="fas fa-table"></i><span>Compila un questionario</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.responses') }}"><i class="fas fa-check"></i><span>Risposte ai tuoi questionari</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.profile', username=current_user['username']) }}"><i class="fas fa-user"></i><span>Profilo</span></a></li>
                     {% else %}
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}"><i class="far fa-user-circle"></i><span>Login</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}"><i class="fas fa-user-circle"></i><span>Register</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}"><i class="fas fa-user-circle"></i><span>Registrati</span></a></li>
                     {% endif %}
                 </ul>
 

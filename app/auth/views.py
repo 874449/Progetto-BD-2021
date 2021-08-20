@@ -17,7 +17,7 @@ def login():
         if user is not None and user.verify_password(form.password.data):
             login_user(user, form.remember_me.data)
             return redirect(request.args.get('next') or url_for('main.index'))
-        flash('Invalid email or password.', 'warning')
+        flash('Password o E-Mail invalida.', 'warning')
     return render_template("login.html", form=form)
 
 
@@ -25,7 +25,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.', 'warning')
+    flash('Sei stato disconnesso con successo.', 'warning')
     return redirect('/')
 
 
@@ -41,7 +41,7 @@ def register():
                     password=form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congrats. You are registered!', 'success')
+        flash('Congratulazioni, registrazione avvenuta con successo!', 'success')
         return redirect(url_for('auth.login'))
     """
     TODO: username potrebbe anche non essere unico quindi potrebbe anche avere doppioni nel database, trovare
