@@ -1,9 +1,12 @@
 from flask import render_template, flash, url_for, redirect
 from flask_login import login_required, current_user
+from sqlalchemy import case
+
 from .. models import *
 from .. import db, moment
 from ..quiz.forms import NewQuestionnaire
 from . import main
+from sqlalchemy.dialects import postgresql
 
 
 @main.route('/')
@@ -44,7 +47,7 @@ def dashboard():
 def profile(username):
     user = User.query.filter_by(username=username)
 
-    return render_template('profile.html')
+    return render_template('profile.html', user=user)
 
 
 @main.route('/quizzes')
@@ -62,11 +65,53 @@ def quizzes():
 
 @main.route('/responses')
 @login_required
-def responses():
-    return render_template('responses.html')
-#'/responses/<quiz_id>'
-#def responses(quiz_id):
-    #risposte = session.query(User, Questionario).join(Questionario)
-    #return render_template('responses.html')
+def responses(quiz_id):
+    subquery = db.session.query(RisposteQuestionario.id).filter(RisposteQuestionario.quiz_id == quiz_id)
+                                                                #, RisposteQuestionario.id == 1)
+    risposte = db.session.query(Domanda.text.label('Domanda'),Domanda.type_id.label('Tipo'),
+                                Domanda.id.label('Id_domanda'),
+                                case((RispostaDomanda.is_open, RispostaDomanda.text),
+                                     else_=PossibileRisposta.text).label('Risposta')).join(RispostaDomanda)\
+        .outerjoin(RispostaDomanda.have_as_answers).filter(RispostaDomanda.id.in_(subquery))\
+        .order_by(Domanda.id, RispostaDomanda.id)
+    print('-------------------')
+    print(str(risposte.statement.compile(dialect=postgresql.dialect())))
+    print('---------------------')
+    #print(type(risposte))
+    overview = {}
+    # inizializzazione
+    # vengono usati dizionari di dizionari
+    # 1 = aperta
+    # 2 = scelta
+    # 3 = multipla
+    for i in risposte:
+        overview[(i.Domanda, i.Tipo)] = {}
+        if i.Tipo != 1:
+            possibili_risposte = PossibileRisposta.query.filter(PossibileRisposta.question_id == i.Id_domanda)
+            for j in possibili_risposte:
+                overview[(i.Domanda, i.Tipo)][j.text] = 0
+    print(overview)
+    # valorizzazione numeri
+    for i in risposte:
+        if i.Tipo == 1:
+            overview[(i.Domanda, i.Tipo)][i.Risposta] = 1
+        else:
+            print(overview[(i.Domanda, i.Tipo)][i.Risposta])
+            overview[(i.Domanda, i.Tipo)][i.Risposta] += 1
+    print(overview)
+    # formato: {
+    #               ("Domanda1","Singola"):
+    #                                       (false,{
+    #                                              "1":0,
+#                                                  "2":0,
+#                                                  "3":0,
+#                                                  "diosantissimobenedettissimo":0
+#                                                  }
+#                                            )
+#    for i in risposte:
+#        if (i.Domanda, i.Tipo) not in overview:
+#            overview[(i.Domanda, i.Tipo)] = {}
+#        if i.tipo == 1:
+#            overview[(i.Domanda, i.Tipo)][i.Risosta] = 1
 
-
+    return render_template('responses.html', overview=overview, risposte=risposte)

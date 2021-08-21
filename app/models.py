@@ -212,6 +212,7 @@ class PossibileRisposta(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
     active_question = db.relationship('Domanda', backref='risposta_attivante',
                                       primaryjoin=id == Domanda.activant_answer_id)
+    # answers_to_questions = db.relationship('RispostaDomanda', secondary=have_as_answer, backref=db.backref('possible_answers', lazy='joined'))
 
     @staticmethod
     def on_changed_text(target, value, oldvalue, initiator):
