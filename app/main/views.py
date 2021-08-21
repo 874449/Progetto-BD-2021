@@ -63,11 +63,11 @@ def quizzes():
         return render_template('quizzes.html')
 
 
-@main.route('/responses')
+@main.route('/responses/<quiz_id>')
 @login_required
 def responses(quiz_id):
     subquery = db.session.query(RisposteQuestionario.id).filter(RisposteQuestionario.quiz_id == quiz_id)
-                                                                #, RisposteQuestionario.id == 1)
+                                                                # , RisposteQuestionario.id == 1)
     risposte = db.session.query(Domanda.text.label('Domanda'),Domanda.type_id.label('Tipo'),
                                 Domanda.id.label('Id_domanda'),
                                 case((RispostaDomanda.is_open, RispostaDomanda.text),
@@ -77,7 +77,7 @@ def responses(quiz_id):
     print('-------------------')
     print(str(risposte.statement.compile(dialect=postgresql.dialect())))
     print('---------------------')
-    #print(type(risposte))
+    # print(type(risposte))
     overview = {}
     # inizializzazione
     # vengono usati dizionari di dizionari
@@ -108,10 +108,10 @@ def responses(quiz_id):
 #                                                  "diosantissimobenedettissimo":0
 #                                                  }
 #                                            )
-#    for i in risposte:
-#        if (i.Domanda, i.Tipo) not in overview:
-#            overview[(i.Domanda, i.Tipo)] = {}
-#        if i.tipo == 1:
-#            overview[(i.Domanda, i.Tipo)][i.Risosta] = 1
-
     return render_template('responses.html', overview=overview, risposte=risposte)
+
+
+@main.route('/responses_overview/')
+@login_required
+def responses_overview():
+    return render_template('responses_overview.html')

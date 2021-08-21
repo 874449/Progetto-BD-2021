@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block page_content %}
+    <style>
+        a {
+            text-decoration: none !important;
+            color: black
+        }
+    </style>
+
+<div class="container-fluid">
+    <div class="d-sm-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-dark mb-0">Risposte</h3>
+    </div>
+</div>
+    {% block script_part %}
+        <script src="{{ url_for('static', filename='js/chart.min.js') }}"></script>
+    {% endblock %}
+{% endblock %}

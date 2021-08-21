@@ -31,7 +31,7 @@ type="image/x-icon">
                     {% if current_user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.dashboard') }}"><i class="fas fa-home"></i><span>Crea un questionario</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.quizzes') }}"><i class="fas fa-table"></i><span>Compila un questionario</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.responses') }}"><i class="fas fa-check"></i><span>Risposte ai tuoi questionari</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.responses_overview') }}"><i class="fas fa-check"></i><span>Risposte ai tuoi questionari</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('main.profile', username=current_user['username']) }}"><i class="fas fa-user"></i><span>Profilo</span></a></li>
                     {% else %}
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}"><i class="far fa-user-circle"></i><span>Login</span></a></li>
