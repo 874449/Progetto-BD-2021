@@ -106,7 +106,7 @@ con python,
 
 Il Progetto si divide essenzialmente in 3 grandi sezioni: 
 Autenticazione, interfaccia
-del sito e gestione, modifica e renderizzazione dei questionari.\
+del sito e infine modifica e renderizzazione dei questionari.\
 Per ognuna di queste sezioni, chiamate Blueprint, troviamo
 un file `__init__.py` che funge da inizializzazione,
 nel secondo file (`forms.py` oppure `errors.py`) troviamo 
@@ -120,12 +120,15 @@ POST come ad esempio `'/delete/<quiz_id>'`)
 
 **v. Implementazione delle funzioni di Login/Sign-in**
 
-accenno e basta e poi spiego
-dall'altra parte
-cartella auth, route specifica 
-usato username al posto di id per sicurezza aggiuntiva 
-del server (cosi uno non puo barare e trovare gli id del
-server) 
+Le funzionalità di Login e Sign-In sono trattate più
+nel dettaglio nella sezione 3.ii di questo documento, 
+tutte le funzionalità ricollegabili a questa categoria
+sono contenute nella Blueprint auth.
+Particolare attenzione è stata fatta all'utilizzo di username 
+al posto di id per ottenere uno strato di sicurezza aggiuntiva
+del server, evitando quindi che un utente malintenzionato
+possa trovare gli id degli utenti quando non dovrebbe 
+essere in grado di farlo.
 
 ORM gia di suo controlla SQLInj percio è piu
 controllo di errore umano
@@ -137,18 +140,53 @@ delle risposte del questionario (es grafico a torta o percentuali)
 
 **vii. Definizione di ruoli**
 
-heroku non permette ruoli percio non li abbiamo creati,
-abbiamo tabella ruoli in database che clona questa
-funzionalità
+I ruoli sono una funzionalità senza dubbio molto efficiente, 
+permettono di conferire un gruppo di permessi senza 
+doverli impostare manualmente alla creazione di ciascun utente.
+Semplicemente, impostando di quali permessi può
+godere ogni tipologia di ruolo, basta poi assegnare
+quello appropriato nella fase di registrazione.
+Nonostante la loro utilità, abbiamo deciso di non utilizzarli per due
+ragioni, ciascuna causa e conseguenza dell'altra: 
+
+1) Durante i nostri incontri iniziali per ragionare sulla
+struttura del progetto ci siamo resi conto che, sostanzialmente,
+i ruoli a noi non sarebbero serviti. Abbiamo strutturato il
+sito in modo che gli utenti siano tutti allo stesso livello
+per quanto riguarda i permessi (tutti gli utenti possono 
+eseguire tutte le operazioni, dalla creazione di nuovi
+questionari alla visione e compilazione di quelli altrui).  
+Sarebbe stato quindi ridondante creare un singolo ruolo
+che non avrebbe nemmeno rappresentato una restrizione di alcun tipo.
+2) Heroku, la piattaforma che abbiamo deciso di utilizzare
+per lo sviluppo del progetto, non supporta i ruoli come 
+funzionalità.  
+Anche volendo, quindi non avremmo comunque potuto 
+implementarli ma, come illustrato nel punto 1), 
+non avendone bisogno non abbiamo sentito la mancanza
+di questa funzionalità.
+
+Nonostante tutto, abbiamo comunque deciso di implementare una sorta di 
+clone dei ruoli, ovvero abbiamo creato all'interno del database
+una tabella chiamata, per l'appunto, ruoli, che 
+ne emula le funzionalità e i vantaggi.
 
 ### 3. Misure di sicurezza
 
 **i. Hash e passwords**
 
-un sacco di funzioni per gestire le passwords degli utenti
-in models, passwords hashate per protezione degli utenti
-due volte stessa password non riproduce stesso hash
-classe users password hash crittografia particolare
+All'interno del file `models.py` abbiamo creato una
+moltitudine di funzioni che ci hanno permesso di gestire
+le password e la loro memorizzazione all'interno del database.  
+Ogni password viene protetta tramite una funzione hash che
+la rende illeggibile agli occhi di malintenzionati, inoltre
+abbiamo fatto attenzione che la stessa password salvata 
+più volte non riproducesse lo stesso hash proprio per evitare
+che multipli utenti che utilizzano la stessa password
+potessero rappresentare una debolezza nella sicurezza della
+base di dati.
+
+magari mettiamo qualche riga di codice qui come esempio, ci penzo
 
 **ii. Autenticazione e Log-in**
 
