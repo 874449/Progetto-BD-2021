@@ -44,17 +44,18 @@ risposte fornite dagli utenti
 
 Il progetto è stato sviluppato utilizzando Python e SQLAlchemy,
 tutti i membri del gruppo hanno usato l'IDE PyCharm per 
-interfacciarsi con semplicità ed efficacia allo sviluppo del progetto. 
+interfacciarsi con semplicità ed efficacia allo sviluppo del progetto.\
 Il codice è stato condiviso tra i vari membri del gruppo tramite
 GitHub in modo che ognuno potesse lavorare sulla versione più recente
 possibile, inoltre il database è stato condiviso tramite Heroku, che
 ha permesso a tutti i membri di lanciare l'applicazione usando lo
-stessa base di dati per la fase di testing.
+stessa base di dati per la fase di testing e sviluppo.\
 Il gruppo ha inoltre deciso di creare un gruppo Whatsapp dedicato al
 progetto in cui tutti i membri erano sempre raggiungibili per 
-eventuale necessità
-
-libro mighel 
+eventuale necessità.\
+Il gruppo ha fatto riferimento al libro di testo "Flask Web Development"
+di Miguel Grinberg come ulteriore fonte di esempi e spiegazioni riguardanti
+Flask e altre componenti del progetto
 
 **ii. Gestione del gruppo e suddivisione del lavoro**
 
@@ -103,20 +104,19 @@ con python,
 
 **iv. Routes in Flask**
 
-file diviso in blueprint, init.py principale, la dentro
-si crea una funzione crea applicazione che inizializza
-le librerie utili all-utilizzo e si registrano le 
-bleuprint. logicamente diviso in multiple blueprint 
-
-auth autenticazione
-
-main interfaccia utente di base
-
-quiz editor questionari renderizzazione questionari
-
-rimozione domande
-
-errors.py per gli errori piu ricorrenti
+Il Progetto si divide essenzialmente in 3 grandi sezioni: 
+Autenticazione, interfaccia
+del sito e gestione, modifica e renderizzazione dei questionari.\
+Per ognuna di queste sezioni, chiamate Blueprint, troviamo
+un file `__init__.py` che funge da inizializzazione,
+nel secondo file (`forms.py` oppure `errors.py`) troviamo 
+utilità come la definizione di classi di dati che le pagine
+gestiranno, metodi/funzioni oppure pagine di errore comuni.
+Infine, nel file `views.py` troviamo le effettive Routes
+che stabiliscono quando e come ciascuna pagina deve
+essere visualizzata (per esempio, potremmo voler avere
+pagine accessibili solo dopo una 
+POST come ad esempio `'/delete/<quiz_id>'`)
 
 **v. Implementazione delle funzioni di Login/Sign-in**
 

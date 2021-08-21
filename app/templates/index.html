@@ -8,6 +8,7 @@
     <div class="row align-items-center mb-4">
         {%  if current_user.is_authenticated %}
             <div class="page-header"><h1>Ciao {{ current_user.username.capitalize() }}</h1></div>
+            <div class="page-header"><h1>Comincia subito a creare un quiz cliccando su "Crea un Questionario"!</h1></div>
         {% else %}
             <div class="page-header"><h1>Ciao Anonimo!</h1></div>
             <div class="text-dark">Effettua il <a href="{{ url_for('auth.login') }}">login</a> per utilizzare il servizio.</div>

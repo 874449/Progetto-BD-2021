@@ -63,7 +63,7 @@ def quizzes():
         return render_template('quizzes.html')
 
 
-@main.route('/responses/<quiz_id>')
+@main.route('/responses')
 @login_required
 def responses(quiz_id):
     subquery = db.session.query(RisposteQuestionario.id).filter(RisposteQuestionario.quiz_id == quiz_id)
