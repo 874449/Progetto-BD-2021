@@ -207,7 +207,52 @@ falle, pero sono open source percio lesgoo
 La veste grafica della Web Application è stata inizialmente prototipata
 su Bootstrap Studio per poi essere esportata direttamente su 
 PyCharm, da qui sono state create le varie schermate dell'interfaccia
-tramite HTML e CSS
+tramite HTML e CSS.
 
-macro 
-
+L'applicazione si suddivide in multiple sezioni:
+1) **Pagina iniziale**: Questa è la pagina che viene aperta all'avvio della
+web application, il suo unico scopo è di accogliere l'utente o spingerlo
+ad accedere/registrarsi, nel caso non lo avesse ancora fatto.  
+La web app mantiene l'accesso di un utente (anche se chiude il sito
+e lo riapre in seguito) tramite l'utilizzo
+di cookies, per la durata di un anno.  
+Una volta eseguito l'accesso al sito, l'utente avrà accesso a tutte
+le sezioni del sito rimanenti.
+2) **"Crea un questionario"**: Cliccando su questo link si verrà indirizzati
+ad una pagina dove l'utente avra accesso ad un pulsante per creare 
+nuovi quiz (il pulsante aprirà l'editor che permetterà l'inserimento
+di un titolo ed una descrizione, in seguito al salvataggio l'utente
+potrà continuare la creazione inserendo tutte le domande che vorrà).  
+L'utente, inoltre, ha a disposizione una lista di tutti i questionari
+che ha già creato, con la possibilità di cancellarli, modificarli oppure
+vederne le risposte.
+3) **"Compila un questionario"**: Su questa schermata sono visibili i 
+questionari creati da altri utenti in modo da poterli compilare.  
+Una volta cliccato sul pulsante "Compila", l'utente verrà portato su 
+un editor simile a quello di creazione delle domande dove potrà
+inserire e salvare la sua risposta.  
+Ci sono 4 tipologie di domande supportate dal sito:  
+Aperta, ovvero un campo di testo in cui l'utente è libero di
+scrivere tutto ciò che vuole;
+Scelta, dove l'utente deve selezionare una singola risposta tra quelle
+fornite.
+Multi-scelta, molto simile a Scelta, qui l'utente può selezionare
+multiple risposte invece di una sola;
+Numerica, accetta solo risposte numeriche.
+4) **"Risposte ai tuoi questionari"**: Da qui, è possibile accedere
+direttamente alle risposte fornite dagli utenti sui propri questionari:
+Una volta selezionato lo specifico quiz di cui si vogliono visionare i
+risultati si avrà la possibilità di visualizzare i risultati 
+in due diversi modi,
+una visualizzazione suddivisa, dove ogni domanda è separata
+e presenta subito sotto una lista delle sue risposte,
+oppure una visualizzazione generale suddivisa in due colonne, 
+sulla colonna di sinistra troviamo la domanda mentre su quella
+a destra abbiamo la risposta ad essa collegata.
+Come specificato in precedenza, anche nella schermata
+"Crea un questionario" è presente un pulsante "Visualizza risposte" 
+che porterà alla medesima schermata di visualizzazione delle risposte
+del questionario selezionato.
+5) **"Profilo"**: Quest'ultima pagina presenta delle impostazioni per
+l'account, come la possibilità di modificare la propria E-Mail oppure il
+Nome Utente.
