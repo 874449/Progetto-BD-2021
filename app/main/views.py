@@ -114,4 +114,5 @@ def responses(quiz_id):
 @main.route('/responses_overview/')
 @login_required
 def responses_overview():
-    return render_template('responses_overview.html')
+    display_quiz = Questionario.query.filter_by(author_id=current_user.id).order_by(Questionario.id.desc()).all()
+    return render_template('responses_overview.html', questionari=display_quiz)
