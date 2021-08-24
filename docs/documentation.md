@@ -23,9 +23,9 @@ Composto da
    6. Analisi dei dati dei questionari
    7. Definizione di ruoli
 4. **Misure di sicurezza**
-   1. Hash, passwords, ecc.
+   1. Hash e passwords
    2. Autenticazione e Log-in
-   3. CSRF, SQL Injection
+   3. CSRF, SQL Injection, XSS
 5. **Sviluppo grafico del sito**
 
 ### 1. Introduzione al progetto
@@ -190,10 +190,14 @@ magari mettiamo qualche riga di codice qui come esempio, ci penzo
 
 **ii. Autenticazione e Log-in**
 
-cartella auth, route specifica 
-usato username al posto di id per sicurezza aggiuntiva 
-del server (cosi uno non puo barare e trovare gli id del
-server) 
+Particolare attenzione è stata fatta all'utilizzo di username 
+al posto di id per ottenere uno strato di sicurezza aggiuntiva
+del server, evitando quindi che un utente malintenzionato
+possa trovare gli id degli utenti quando non dovrebbe 
+essere in grado di farlo.
+
+ORM gia di suo controlla SQLInj percio è piu
+controllo di errore umano
 
 Cookies (flask_session) validi un anno 
 
