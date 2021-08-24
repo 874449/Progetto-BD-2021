@@ -66,48 +66,8 @@ def quizzes():
 @main.route('/responses/<quiz_id>')
 @login_required
 def responses(quiz_id):
-    subquery = db.session.query(RisposteQuestionario.id).filter(RisposteQuestionario.quiz_id == quiz_id)
-                                                                # , RisposteQuestionario.id == 1)
-    risposte = db.session.query(Domanda.text.label('Domanda'),Domanda.type_id.label('Tipo'),
-                                Domanda.id.label('Id_domanda'),
-                                case((RispostaDomanda.is_open, RispostaDomanda.text),
-                                     else_=PossibileRisposta.text).label('Risposta')).join(RispostaDomanda)\
-        .outerjoin(RispostaDomanda.have_as_answers).filter(RispostaDomanda.id.in_(subquery))\
-        .order_by(Domanda.id, RispostaDomanda.id)
-    print('-------------------')
-    print(str(risposte.statement.compile(dialect=postgresql.dialect())))
-    print('---------------------')
-    # print(type(risposte))
-    overview = {}
-    # inizializzazione
-    # vengono usati dizionari di dizionari
-    # 1 = aperta
-    # 2 = scelta
-    # 3 = multipla
-    for i in risposte:
-        overview[(i.Domanda, i.Tipo)] = {}
-        if i.Tipo != 1:
-            possibili_risposte = PossibileRisposta.query.filter(PossibileRisposta.question_id == i.Id_domanda)
-            for j in possibili_risposte:
-                overview[(i.Domanda, i.Tipo)][j.text] = 0
-    print(overview)
-    # valorizzazione numeri
-    for i in risposte:
-        if i.Tipo == 1:
-            overview[(i.Domanda, i.Tipo)][i.Risposta] = 1
-        else:
-            print(overview[(i.Domanda, i.Tipo)][i.Risposta])
-            overview[(i.Domanda, i.Tipo)][i.Risposta] += 1
-    print(overview)
-    # formato: {
-    #               ("Domanda1","Singola"):
-    #                                       (false,{
-    #                                              "1":0,
-#                                                  "2":0,
-#                                                  "3":0,
-#                                                  "diosantissimobenedettissimo":0
-#                                                  }
-#                                            )
+    overview = get_overview(quiz_id)
+    risposte = get_singole(quiz_id)
     return render_template('responses.html', overview=overview, risposte=risposte)
 
 
@@ -116,3 +76,60 @@ def responses(quiz_id):
 def responses_overview():
     display_quiz = Questionario.query.filter_by(author_id=current_user.id).order_by(Questionario.id.desc()).all()
     return render_template('responses_overview.html', questionari=display_quiz)
+
+
+def get_overview(quiz_id):
+    subquery = db.session.query(RisposteQuestionario.id).filter(RisposteQuestionario.quiz_id == quiz_id)
+    # , RisposteQuestionario.id == 1)
+    risposte = db.session.query(Domanda.text.label('Domanda'), Domanda.type_id.label('Tipo'),
+                                Domanda.id.label('Id_domanda'),
+                                case((RispostaDomanda.is_open, RispostaDomanda.text),
+                                     else_=PossibileRisposta.text).label('Risposta')).join(RispostaDomanda) \
+        .outerjoin(RispostaDomanda.have_as_answers).filter(RispostaDomanda.id.in_(subquery)) \
+        .order_by(Domanda.id, RispostaDomanda.id)
+    # print(str(risposte.statement.compile(dialect=postgresql.dialect())))
+    overview = {}
+    # formato dizionario:{("Domanda1","Tipo_di_domanda"):{"Risposta1":numero di risposte,"Risposta2":numero_di_risposte)
+    # inizializzazione del dizionario
+    # 1 = aperta
+    # 2 = scelta
+    # 3 = multipla
+    for i in risposte:
+        overview[(i.Domanda, i.Tipo)] = {}
+        if i.Tipo != 1:
+            possibili_risposte = PossibileRisposta.query.filter(PossibileRisposta.question_id == i.Id_domanda).all()
+            for j in possibili_risposte:
+                overview[(i.Domanda, i.Tipo)][j.text] = 0
+    # valorizzazione delle riposte multiple nel dizionario
+    for i in risposte:
+        if i.Tipo == 1:
+            overview[(i.Domanda, i.Tipo)][i.Risposta] = 1
+        else:
+            overview[(i.Domanda, i.Tipo)][i.Risposta] += 1
+    return overview
+
+
+def get_singole(quiz_id):
+    risposte_questionario = db.session.query(RisposteQuestionario.id).filter(RisposteQuestionario.quiz_id == quiz_id).all()
+    risposte_singole = {}
+    print("RISPOSTE QUESTIONARIO: _------------------------------------------")
+    print(risposte_questionario)
+    for r in risposte_questionario:
+        i = r.id
+        print(i)
+        subquery = db.session.query(RisposteQuestionario.id).filter(RisposteQuestionario.quiz_id == quiz_id,
+                                                                    RisposteQuestionario.id == i)
+        risposte = db.session.query(Domanda.text.label('Domanda'),
+                                    case((RispostaDomanda.is_open, RispostaDomanda.text),
+                                         else_=PossibileRisposta.text).label('Risposta')).join(RispostaDomanda) \
+            .outerjoin(RispostaDomanda.have_as_answers).filter(RispostaDomanda.id.in_(subquery)) \
+            .order_by(Domanda.id, RispostaDomanda.id)
+        for j in risposte:
+            risposte_singole[i] = {}
+        for j in risposte:
+            if j.Domanda not in risposte_singole[i]:
+                risposte_singole[i][j.Domanda] = [j.Risposta]
+            else:
+                risposte_singole[i][j.Domanda].append(j.Risposta)
+    print(risposte_singole)
+    return risposte_singole
