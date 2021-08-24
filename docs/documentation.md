@@ -130,9 +130,6 @@ del server, evitando quindi che un utente malintenzionato
 possa trovare gli id degli utenti quando non dovrebbe 
 essere in grado di farlo.
 
-ORM gia di suo controlla SQLInj percio è piu
-controllo di errore umano
-
 **vi. Analisi dei dati dei questionari**
 
 esperienza utilizzo analisi dei dati (google moduli) view 
@@ -190,21 +187,42 @@ magari mettiamo qualche riga di codice qui come esempio, ci penzo
 
 **ii. Autenticazione e Log-in**
 
+Come anticipato nella sezione 2.v del documento, tutto ciò che
+riguarda la sicurezza del sito e della base di dati è sviluppato
+all'interno della blueprint `auth`.  
 Particolare attenzione è stata fatta all'utilizzo di username 
-al posto di id per ottenere uno strato di sicurezza aggiuntiva
+al posto di id nella gestione delle password 
+per ottenere uno strato di sicurezza aggiuntiva
 del server, evitando quindi che un utente malintenzionato
 possa trovare gli id degli utenti quando non dovrebbe 
-essere in grado di farlo.
+essere in grado di farlo tramite un utilizzo malizioso ed improprio
+delle query.
 
-ORM gia di suo controlla SQLInj percio è piu
-controllo di errore umano
+Il progetto salva e mantiene delle informazioni, i Cookies.
+Grazie a questi piccoli salvataggi siamo in grado di creare
+un esperienza più conveniente per l'utente che, ad esempio, 
+nel caso in cui abbia effettuato l'accesso in una 
+sessione precedente e abbia chiuso il sito senza effettuare il 
+Log-Out, noterà di essere ancora collegato alla riapertura del
+sito, senza avere il bisogno di reinserire le informazioni del suo 
+profilo. I Cookies durano circa un anno, dopo tale periodo decadono e 
+vengono eliminati.
 
 Cookies (flask_session) validi un anno 
 
 **iii. CSRF, SQL Injection, XSS**
 
-le librerie potrebbero essere vulnerabili ad attacchi nel caso di 
-falle, pero sono open source percio lesgoo 
+La gestione delle SQLInjection, ovvero quando un utente 
+malintenzionato sfrutta SQL per riprodurre codice in posti e modi che
+non dovrebbero essergli permessi, è gestita quasi totalmente
+in autonomia da ORM, tanto che i controlli predisposti sono più 
+atti alla prevenzione di errori umani **_(esempio qui magari)_**
+
+Alcune vulnerabilità potrebbero nascere dalle librerie utilizzate che 
+potrebbero fornire da sorgente per exploit di diversa natura, tuttavia
+tutte le librerie utilizzate nel progetto sono Open-Source, ovvero 
+sono pubbliche ed eventuali errori potrebbero essere rapidamente 
+risolti dalla community online.
 
 ### 4. Sviluppo grafico del sito
 
