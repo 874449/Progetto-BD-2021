@@ -1,6 +1,6 @@
 from flask import render_template, request, flash, redirect, url_for, abort
 from flask_login import login_required, current_user
-from .forms import Question, EditorForm, EditForm, PossibleAnswerForm
+from .forms import Question, EditorForm, EditForm, SingleAnswerForm
 from . import quiz
 from ..models import *
 from .. import db, moment
@@ -28,7 +28,7 @@ def editor(edit_id):
     if editor_form.validate_on_submit():
         editor_form.populate_obj(current_quiz)
         db.session.commit()
-        flash("Saved changes", 'success')
+        flash("Modifiche salvate", 'success')
 
     return render_template('editor.html', editor_form=editor_form,
                            form=question, current_quiz=current_quiz, tipi_domanda=tipi_domanda)
@@ -39,19 +39,27 @@ def editor(edit_id):
 def edit_question(quiz_id, question_id):
     # query
     current_question = Domanda.query.filter_by(id=question_id).first()
-    form = EditForm(obj=current_question)
-    if form.validate_on_submit():
-        print('\n[DEBUG] - INFO')
-        print(form.text.data)
-        print(form.possible_answers.data)
-        print(f'{request.form}')
-        print('[END DEBUG]\n')
-        form.populate_obj(current_question)
+    risposte = PossibileRisposta.query.filter_by(question_id=question_id).all()
+
+    # forms
+    risposte_form = SingleAnswerForm()
+    form_dom = EditForm(obj=current_question)
+
+    if risposte_form.validate_on_submit():
+        nuova_risp = PossibileRisposta(text=risposte_form.text.data, question_id=question_id)
+        db.session.add(nuova_risp)
         db.session.commit()
-        flash('modifiche salvate', 'success')
+        flash('Risposta aggiunta', 'success')
+        return redirect(url_for('quiz.edit_question', quiz_id=quiz_id, question_id=question_id))
+
+    if form_dom.validate_on_submit():
+        form_dom.populate_obj(current_question)
+        db.session.commit()
+        flash('Modifiche salvate', 'success')
         # return redirect(url_for('quiz.edit_question', quiz_id=quiz_id, question_id=question_id))
 
-    return render_template('question_editor.html', form=form, current_question=current_question,
+    return render_template('question_editor.html', form=form_dom, risposte=risposte,
+                           current_question=current_question, risposte_form=risposte_form,
                            quiz_id=quiz_id)
 
 
@@ -69,6 +77,13 @@ def delete(domanda_id):
     else:
         flash('Operazione invalida', 'danger')
         abort(403)
+
+
+@quiz.route('/remove/<answer_id>', methods=['POST'])
+@login_required
+def delete_answer(answer_id):
+    # TODO
+    return '<h1>ciao</h1>'
 
 
 @quiz.route('/view/<questionnaire_id>', methods=['GET', 'POST'])

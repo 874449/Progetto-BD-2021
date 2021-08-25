@@ -4,55 +4,91 @@
 
 {% block page_content %}
 
-    <div class="row mx-auto">
-        <div class="container">
-            {% if form.errors %}
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    <ul class="errors">
-                        {% for field_name, field_errors in form.errors|dictsort if field_errors %}
-                            {% for error in field_errors %}
-                                <li>{{ form[field_name].label }}: {{ error }}</li>
-                            {% endfor %}
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="text-center mt-5">
-        <div class="col-auto">
-            <div class="row">
-                <form method="post">
-                    {{ form.hidden_tag() }}
-
-                    {{ form.text(class='form-control') }}
-                    {% if current_question.type_id == 2 or current_question.type_id == 3 %}
-                        <div class="row" data-toggle="fieldset" id="domanda-fieldset">
-                            <table>
-                                {% for possible_answer in form.possible_answers %}
-                                    <tr data-toggle="fieldset-entry">
-                                        {{ possible_answer.hidden_tag() }}
-                                        <td>{{ possible_answer.text.label }}</td>
-                                        <td>{{ possible_answer.text }}</td>
-                                        <td><button class="btn btn-danger" type="button" data-toggle="fieldset-remove-row" id="domanda-{{loop.index0}}-remove"><i class="fas fa-trash-alt"></i></button></td>
-                                    </tr>
+    <div class="container-fluid">
+        <!-- errors display -->
+        <div class="row mx-auto">
+            <div class="container">
+                {% if form.errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <ul class="errors">
+                            {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                                {% for error in field_errors %}
+                                    <li>{{ form[field_name].label }}: {{ error }}</li>
                                 {% endfor %}
-                            </table>
-                            <div class="col-2">
-                                <button type="button" class="btn btn-info" data-toggle="fieldset-add-row" data-target="#domanda-fieldset">+</button>
-                            </div>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <!-- new qiestion Modal -->
+        <div class="modal fade" id="newAnswer" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Aggiungi risposta</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="" method="POST" role="form" class="user">
+                        <div class="modal-body">
+                            {{ risposte_form.csrf_token }}
+                            {{ risposte_form.hidden_tag() }}
+                            {{ risposte_form.text(class='form-text form-control', placeholder='Testo della risposta...') }}
                         </div>
-                    {% endif %}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                            {{ risposte_form.add(class='btn btn-primary') }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- end Modal -->
+
+        <div class="page-header align-items-center mb-4">
+            <h3 class="text-dark mb-0">Editor singola domanda</h3>
+        </div>
+        <div class="card mb-4 text-center col-md-7 mx-auto">
+            <div class="card-header">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    {{ form.text(class='form-control') }}
                     {{ form.submit(class='btn btn-success') }}
                 </form>
             </div>
+            {% if current_question.type_id == 2 or current_question.type_id == 3 %}
+                <div class="card-body">
+                    <div class="row" data-toggle="fieldset" id="domanda-fieldset">
+                        <table>
+                            {% for risposta in risposte %}
+                                <tr>
+                                    <td>{{ loop.index0 + 1 }}</td>
+                                    <td>
+                                        {% if risposta.text_html %}
+                                            {{ risposta.text_html | safe }}
+                                        {% else %}
+                                            {{ risposta.text }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <form id="delete-question" method="POST" action="{{ url_for('quiz.delete_answer', answer_id=risposta.id) }}">
+                                            <button type="submit" class="btn btn-outline-danger fas fa-trash-alt"></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newAnswer"><i class="fas fa-plus fa-2x text-white"></i></button>
+                </div>
+            {% endif %}
         </div>
         <a href="{{ url_for('quiz.editor', edit_id=quiz_id) }}">← Torna all'editor del quiz</a>
     </div>
-{% endblock %}
 
-{% block script_part %}
-    <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
 {% endblock %}
