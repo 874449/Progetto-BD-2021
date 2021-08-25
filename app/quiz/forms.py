@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, BooleanField, SubmitField, FormField, FieldList, IntegerField, Form
+from wtforms import StringField, TextAreaField, BooleanField, SubmitField, FormField, FieldList, IntegerField
 from wtforms.validators import Required, Length
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from flask_pagedown.fields import PageDownField
@@ -37,8 +37,9 @@ class Question(FlaskForm):
     submit = SubmitField('Crea')
 
 
-class PossibleAnswerForm(Form):
-    text = PageDownField('Testo della risposta')
+class SingleAnswerForm(FlaskForm):
+    text = PageDownField('Testo della risposta...')
+    add = SubmitField('Aggiungi')
 
 
 class EditForm(FlaskForm):
@@ -52,14 +53,13 @@ class EditForm(FlaskForm):
     #                               get_label='name')
     # activant = BooleanField('Attivante')
     # activable = BooleanField('Attivabile')
-    possible_answers = FieldList(FormField(PossibleAnswerForm, default=lambda: PossibileRisposta(), min_entries=1))
+    # possible_answers = FieldList(FormField(PossibleAnswerForm, default=lambda: PossibileRisposta(), min_entries=1))
     submit = SubmitField('Salva')
 
 
 class EditorForm(FlaskForm):
     title = StringField('Titolo')
     description = PageDownField('Descrizione')
-    # questions = FieldList(FormField(Question, default=lambda: Question()), min_entries=1)
     submit = SubmitField('Salva')
 
 
@@ -80,6 +80,7 @@ class NumericQuestionForm(Question):
     answer = IntegerField('Inserisci un numero intero per rispondere')
 
 
+# TODO da implementare
 class MultipleChoiceForm(FlaskForm):
     email = StringField('Email', validators=[Required(), Length(1, 64)])
     submit = SubmitField('Register')
