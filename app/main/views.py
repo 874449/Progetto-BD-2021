@@ -57,10 +57,12 @@ def quizzes():
     #  Sostanzialmente in pseudocodice dovrebbe essere una cosa tipo:
     #  1 - query per prendere tutti i quiz
     #  2 - if quiz in query is public:
-    #  3 -  visualizza il quiz nell'elenco
+    #  3 - visualizza il quiz nell'elenco
     #  poi ci sarà un pulsante per entrare nel quiz e dare la propria risposta
-    if current_user.is_authenticated:
-        return render_template('quizzes.html')
+    questionari = Questionario.query
+    # TODO: join tra questionari e utenti per fare il display del proprietario
+
+    return render_template('quizzes.html', questionari=questionari)
 
 
 @main.route('/responses/<quiz_id>')
