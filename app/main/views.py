@@ -19,7 +19,14 @@ def index():
 @main.route('/delete/<quiz_uuid>', methods=['POST'])
 @login_required
 def delete(quiz_uuid):
+    # TODO tripla query annidata, bisognerebbe sistemare il file models per far funzionare il delete on cascade...
     quiz = Questionario.query.filter_by(uuid=quiz_uuid).first()
+    domande = Domanda.query.filter_by(quiz_id=quiz.id).all()
+    for domanda in domande:
+        scelte = PossibileRisposta.query.filter_by(question_id=domanda.id).all()
+        for scelta in scelte:
+            db.session.delete(scelta)
+    db.session.commit()
     db.session.delete(quiz)
     db.session.commit()
     flash('Questionario cancellato', 'success')
