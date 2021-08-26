@@ -92,5 +92,7 @@ def delete_answer(answer_id, quiz_id):
 def render(questionnaire_uuid):
     # query
     current_quiz = Questionario.query.filter_by(id=questionnaire_uuid).first()
+    domande = current_quiz.questions
+    print[domande]
 
-    return render_template('visualize.html')
+    return render_template('visualize.html', domande=domande)
