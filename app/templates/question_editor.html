@@ -34,7 +34,6 @@
                     </div>
                     <form action="" method="POST" role="form" class="user">
                         <div class="modal-body">
-                            {{ risposte_form.csrf_token }}
                             {{ risposte_form.hidden_tag() }}
                             {{ risposte_form.text(class='form-text form-control', placeholder='Testo della risposta...') }}
                         </div>
@@ -74,7 +73,7 @@
                                         {% endif %}
                                     </td>
                                     <td>
-                                        <form id="delete-question" method="POST" action="{{ url_for('quiz.delete_answer', answer_id=risposta.id) }}">
+                                        <form id="delete-question" method="POST" action="{{ url_for('quiz.delete_answer', answer_id=risposta.id, quiz_id=quiz_id) }}">
                                             <button type="submit" class="btn btn-outline-danger fas fa-trash-alt"></button>
                                         </form>
                                     </td>

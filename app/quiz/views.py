@@ -45,18 +45,17 @@ def edit_question(quiz_id, question_id):
     risposte_form = SingleAnswerForm()
     form_dom = EditForm(obj=current_question)
 
-    if risposte_form.validate_on_submit():
+    if risposte_form.add.data and risposte_form.validate():
         nuova_risp = PossibileRisposta(text=risposte_form.text.data, question_id=question_id)
         db.session.add(nuova_risp)
         db.session.commit()
         flash('Risposta aggiunta', 'success')
         return redirect(url_for('quiz.edit_question', quiz_id=quiz_id, question_id=question_id))
 
-    if form_dom.validate_on_submit():
+    if form_dom.submit.data and form_dom.validate():
         form_dom.populate_obj(current_question)
         db.session.commit()
         flash('Modifiche salvate', 'success')
-        # return redirect(url_for('quiz.edit_question', quiz_id=quiz_id, question_id=question_id))
 
     return render_template('question_editor.html', form=form_dom, risposte=risposte,
                            current_question=current_question, risposte_form=risposte_form,
@@ -79,16 +78,19 @@ def delete(domanda_id):
         abort(403)
 
 
-@quiz.route('/remove/<answer_id>', methods=['POST'])
+@quiz.route('/remove/<quiz_id>/<answer_id>', methods=['POST'])
 @login_required
-def delete_answer(answer_id):
-    # TODO
-    return '<h1>ciao</h1>'
+def delete_answer(answer_id, quiz_id):
+    query = PossibileRisposta.query.filter_by(id=answer_id).first()
+    db.session.delete(query)
+    db.session.commit()
+
+    return redirect(url_for('quiz.edit_question', quiz_id=quiz_id, question_id=query.question_id))
 
 
-@quiz.route('/view/<questionnaire_id>', methods=['GET', 'POST'])
-def render(questionnaire_id):
+@quiz.route('/view/<questionnaire_uuid>', methods=['GET', 'POST'])
+def render(questionnaire_uuid):
     # query
-    current_quiz = Questionario.query.filter_by(id=questionnaire_id).first()
+    current_quiz = Questionario.query.filter_by(id=questionnaire_uuid).first()
 
     return render_template('visualize.html')
