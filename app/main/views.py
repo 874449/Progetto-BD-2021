@@ -38,7 +38,7 @@ def dashboard():
         db.session.add(nuovo)
         db.session.commit()
         flash('Questionario creato con successo', 'success')
-        return redirect(url_for('quiz.editor', edit_id=nuovo.uuid))
+        return redirect(url_for('quiz.editor', edit_uuid=nuovo.uuid))
     return render_template('dashboard.html', nuovo_questionario_form=nuovo_questionario_form, quizzes=display_quiz)
 
 

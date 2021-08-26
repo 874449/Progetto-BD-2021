@@ -68,11 +68,16 @@ def delete(domanda_id):
     # TODO security check proprietary role
     query1 = Domanda.query.filter_by(id=domanda_id).first()
     query2 = Questionario.query.filter_by(id=query1.quiz_id).first()
+    query3 = PossibileRisposta.query.filter_by(question_id=domanda_id).all()
+
     if query1 and query2 and current_user.id == query2.author_id:
+        for elem in query3:
+            db.session.delete(elem)
+        db.session.commit()
         db.session.delete(query1)
         db.session.commit()
         flash('Domanda rimossa', 'success')
-        return redirect(url_for('quiz.editor', edit_uuid=query1.quiz_uuid))
+        return redirect(url_for('quiz.editor', edit_uuid=query2.uuid))
     else:
         flash('Operazione invalida', 'danger')
         abort(403)
