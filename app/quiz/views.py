@@ -98,6 +98,8 @@ def render(questionnaire_uuid):
     # query
     current_quiz = Questionario.query.filter_by(uuid=questionnaire_uuid).first()
     domande = current_quiz.questions
-    print[domande]
+    risposte_possibili = PossibileRisposta.query.all()
+    print(domande)
 
-    return render_template('visualize.html', domande=domande)
+    return render_template('visualize.html', current_quiz=current_quiz, domande=domande,
+                           risposte_possibili=risposte_possibili)

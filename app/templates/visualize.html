@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block title %}Compila{% endblock %}
+
+{% block page_content %}
+    <div class="page-header align-items-center mb-4">
+            <h2>{{ current_quiz.title }}</h2>
+            <p>
+                {% if current_quiz.description_html %}
+                    {{ current_quiz.description_html | safe }}
+                {% else %}
+                    {{ current_quiz.description }}
+                {% endif %}
+            </p>
+    </div>
+
+    <div class="card shadow mb-4 text-center col-md-7 mx-auto">
+        {% for domanda in domande %}
+            <div class="card-header">
+                {% if domanda.text_html %}
+                    {{ domanda.text_html | safe }}
+                {% else %}
+                    {{ domanda.text }}
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if domanda.type_id == 2 or domanda.type_id == 3 %}
+                    {% for risposta in risposte_possibili %}
+                        {% if risposta.question_id==domanda.id %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="card-footer">
+            salva
+        </div>
+    </div>
+
+{% endblock %}
