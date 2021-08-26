@@ -61,15 +61,16 @@ def profile(username):
 @login_required
 def quizzes():
     # TODO: view con la lista di tutti i questionari pubblici fatti dagli altri utenti.
-    #  Sostanzialmente in pseudocodice dovrebbe essere una cosa tipo:
-    #  1 - query per prendere tutti i quiz
-    #  2 - if quiz in query is public:
-    #  3 - visualizza il quiz nell'elenco
-    #  poi ci sarà un pulsante per entrare nel quiz e dare la propria risposta
-    questionari = Questionario.query
-    # TODO: join tra questionari e utenti per fare il display del proprietario
+    #  DECIDERE SE CREARE LA CONDIVISIONE PRIVATA DEI QUIZ!
 
-    return render_template('quizzes.html', questionari=questionari)
+    query = db.session.\
+        query(
+            Questionario.title, Questionario.description, Questionario.description_html,
+            Questionario.timestamp, Questionario.uuid, User.username).\
+        join(
+            Questionario, User.id == Questionario.author_id)
+
+    return render_template('quizzes.html', questionari=query)
 
 
 @main.route('/responses/<quiz_id>')

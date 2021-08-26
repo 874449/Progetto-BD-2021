@@ -3,6 +3,12 @@
 {% block title %}Questionari{% endblock %}
 
 {% block page_content %}
+    <style>
+        a {
+            text-decoration: none !important;
+            color: black
+        }
+    </style>
     <div class="container-fluid">
         <div class="row align-items-center mb-4">
             {%  if current_user.is_authenticated %}
@@ -24,25 +30,33 @@
                     <th scope="col">Titolo</th>
                     <th scope="col">Descrizione</th>
                     <th scope="col">Data</th>
-                    <th scope="col">Nro di domande</th>
+                    <th scope="col">Autore</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for questionario in questionari %}
-                    {% if questionario.author_id != current_user.id %}
+                    {% if questionario.username != current_user.username %}
                     <tr>
-                        <td>{{ questionario.title }}</td>
+                        <td><a href="{{ url_for('quiz.render', questionnaire_uuid=questionario.uuid) }}">{{ questionario.title }}</a></td>
                         <td>
                             {% if questionario.description_html %}
-                                {{ questionario.description_html | safe }}
+                                {% if questionario.description_html|length > 50 %}
+                                    {{ questionario.description[:40]+'...' | safe }}
+                                {% else %}
+                                    {{ questionario.description_html | safe }}
+                                {% endif %}
                             {% else %}
-                                {{ questionario.description }}
+                                {%  if questionario.description|length > 40 %}
+                                    {{ questionario.description[:40]+'...' }}
+                                {% else %}
+                                    {{ questionario.description }}
+                                {% endif %}
                             {% endif %}
                         </td>
 
                         <td>{{ moment(questionario.timestamp).format('LLL') }}</td>
                         <td>
-                            numero n
+                            <a href="{{ url_for('main.profile', username=questionario.username) }}">{{ questionario.username }}</a>
                         </td>
                     </tr>
                     {% endif %}
