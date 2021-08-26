@@ -1,0 +1,8 @@
+<p>Gentile {{ user.username }},</p>
+<p>Benvenuto a <b>Quiz4All</b>!</p>
+<p>Per confermare il tuo account segui <a href="{{ url_for('auth.confirm', token=token, _external=True) }}">questo link</a>.</p>
+<p>Oppure puoi copiare il seguente link nella barra degli indirizzi del tuo browser preferito:</p>
+<p>{{ url_for('auth.confirm', token=token, _external=True) }}</p>
+<p>Cordialmente,</p>
+<p>Lo staff di Quiz4All</p>
+<p><small>NB: Le risposte a questo indirizzo non sono controllate periodicamente.</small></p>

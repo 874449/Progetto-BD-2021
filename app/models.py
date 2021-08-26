@@ -4,8 +4,10 @@ In questo caso è stata utilizzata la libreria flask-SQLAlchemy basata sul model
 ciò vuol dire che ad ogni classe corrisponde una tabella del DB sottostante.
 """
 from . import db
+from flask import current_app
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask_login import UserMixin
 from uuid import uuid4
 from markdown import markdown
@@ -48,6 +50,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), nullable=False, unique=True)
     email = db.Column(db.String(64), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
+    confirmed = db.Column(db.Boolean, default=False)
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
@@ -67,6 +70,26 @@ class User(UserMixin, db.Model):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def generate_confirmation_token(self, expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'confirm': self.id}).decode('utf-8')
+
+    def confirm(self, token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token.encode('utf-8'))
+        except:
+            return False
+        if data.get('confirm') != self.id:
+            return False
+        self.confirmed = True
+        db.session.add(self)
+        return True
+
+    def generate_reset_token(self, expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'reset': self.id}).decode('utf-8')
 
     def ping(self):
         self.last_seen = datetime.utcnow()
@@ -212,7 +235,8 @@ class PossibileRisposta(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
     active_question = db.relationship('Domanda', backref='risposta_attivante',
                                       primaryjoin=id == Domanda.activant_answer_id)
-    # answers_to_questions = db.relationship('RispostaDomanda', secondary=have_as_answer, backref=db.backref('possible_answers', lazy='joined'))
+    #answers_to_questions = db.relationship('RispostaDomanda', secondary=have_as_answer,
+    #                                       backref=db.backref('possible_answers', lazy='joined'))
 
     @staticmethod
     def on_changed_text(target, value, oldvalue, initiator):

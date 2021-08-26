@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_session import Session
 from flask_moment import Moment
+from flask_mail import Mail
 from flask_pagedown import PageDown
 from config import config
 
@@ -11,6 +12,7 @@ login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 login_manager.login_message_category = 'warning'
 pagedown = PageDown()
+mail = Mail()
 moment = Moment()
 db = SQLAlchemy()
 
@@ -27,6 +29,9 @@ def create_app(config_name):
     login_manager.init_app(app)
     # collegamento del database all'app
     db.init_app(app)
+
+    # libreria per l'invio di email
+    mail.init_app(app)
 
     # aggiunta della libreria per la conversione del tempo UTC in locale
     moment.init_app(app)

@@ -15,6 +15,16 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
+    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')
+    MAIL_PORT = int(os.environ.get('MAIL_PORT', '587'))
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in \
+                   ['true', 'on', '1']
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    QUIZ_MAIL_SUBJECT_PREFIX = '[Quiz4All]'
+    QUIZ_MAIL_SENDER = 'Quiz4All Admin <pbaudo15@gmail.com>'
+    QUIZ_ADMIN = os.environ.get('QUIZ_ADMIN')
+    SSL_REDIRECT = False
     SECRET_KEY = os.environ.get('SECRET_KEY') or secrets.token_urlsafe(32)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SESSION_TYPE = 'filesystem'

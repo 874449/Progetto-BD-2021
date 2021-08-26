@@ -1,0 +1,13 @@
+Gentile {{ user.username }},
+
+Benvenuto a Quiz4All!
+
+Per confermare il tuo account segui copia il seguente link nella barra degli indirizzi del tuo browser preferito:
+
+{{ url_for('auth.confirm', token=token, _external=True) }}
+
+Cordialmente,
+
+Lo staff di Quiz4All
+
+NB: Le risposte a questo indirizzo non sono controllate periodicamente.
