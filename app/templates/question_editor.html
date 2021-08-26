@@ -73,7 +73,7 @@
                                         {% endif %}
                                     </td>
                                     <td>
-                                        <form id="delete-question" method="POST" action="{{ url_for('quiz.delete_answer', answer_id=risposta.id, quiz_id=quiz_id) }}">
+                                        <form id="delete-question" method="POST" action="{{ url_for('quiz.delete_answer', answer_id=risposta.id, quiz_uuid=quiz_uuid) }}">
                                             <button type="submit" class="btn btn-outline-danger fas fa-trash-alt"></button>
                                         </form>
                                     </td>
@@ -87,7 +87,7 @@
                 </div>
             {% endif %}
         </div>
-        <a href="{{ url_for('quiz.editor', edit_id=quiz_id) }}">← Torna all'editor del quiz</a>
+        <a href="{{ url_for('quiz.editor', edit_uuid=quiz_uuid) }}">← Torna all'editor del quiz</a>
     </div>
 
 {% endblock %}

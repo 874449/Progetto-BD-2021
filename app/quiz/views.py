@@ -6,11 +6,11 @@ from ..models import *
 from .. import db, moment
 
 
-@quiz.route('/editor/<edit_id>', methods=['GET', 'POST'])
+@quiz.route('/editor/<edit_uuid>', methods=['GET', 'POST'])
 @login_required
-def editor(edit_id):
+def editor(edit_uuid):
     # queries
-    current_quiz = Questionario.query.filter_by(id=edit_id).first()
+    current_quiz = Questionario.query.filter_by(uuid=edit_uuid).first()
     tipi_domanda = TipologiaDomanda.query.all()
 
     # forms
@@ -19,11 +19,11 @@ def editor(edit_id):
 
     if question.validate_on_submit():
         domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id,
-                          activant=question.activant.data, quiz_id=edit_id)
+                          activant=question.activant.data, quiz_id=current_quiz.id)
         db.session.add(domanda)
         db.session.commit()
         flash('Nuova domanda creata', 'success')
-        return redirect(url_for('quiz.editor', edit_id=current_quiz.id))
+        return redirect(url_for('quiz.editor', edit_uuid=current_quiz.uuid))
 
     if editor_form.validate_on_submit():
         editor_form.populate_obj(current_quiz)
@@ -34,9 +34,9 @@ def editor(edit_id):
                            form=question, current_quiz=current_quiz, tipi_domanda=tipi_domanda)
 
 
-@quiz.route('/editor/<quiz_id>/<question_id>', methods=['GET', 'POST'])
+@quiz.route('/editor/<quiz_uuid>/<question_id>', methods=['GET', 'POST'])
 @login_required
-def edit_question(quiz_id, question_id):
+def edit_question(quiz_uuid, question_id):
     # query
     current_question = Domanda.query.filter_by(id=question_id).first()
     risposte = PossibileRisposta.query.filter_by(question_id=question_id).all()
@@ -50,7 +50,7 @@ def edit_question(quiz_id, question_id):
         db.session.add(nuova_risp)
         db.session.commit()
         flash('Risposta aggiunta', 'success')
-        return redirect(url_for('quiz.edit_question', quiz_id=quiz_id, question_id=question_id))
+        return redirect(url_for('quiz.edit_question', quiz_uuid=quiz_uuid, question_id=question_id))
 
     if form_dom.submit.data and form_dom.validate():
         form_dom.populate_obj(current_question)
@@ -59,7 +59,7 @@ def edit_question(quiz_id, question_id):
 
     return render_template('question_editor.html', form=form_dom, risposte=risposte,
                            current_question=current_question, risposte_form=risposte_form,
-                           quiz_id=quiz_id)
+                           quiz_uuid=quiz_uuid)
 
 
 @quiz.route('/delete/<domanda_id>', methods=['POST'])
@@ -72,26 +72,26 @@ def delete(domanda_id):
         db.session.delete(query1)
         db.session.commit()
         flash('Domanda rimossa', 'success')
-        return redirect(url_for('quiz.editor', edit_id=query1.quiz_id))
+        return redirect(url_for('quiz.editor', edit_uuid=query1.quiz_uuid))
     else:
         flash('Operazione invalida', 'danger')
         abort(403)
 
 
-@quiz.route('/remove/<quiz_id>/<answer_id>', methods=['POST'])
+@quiz.route('/remove/<quiz_uuid>/<answer_id>', methods=['POST'])
 @login_required
-def delete_answer(answer_id, quiz_id):
+def delete_answer(answer_id, quiz_uuid):
     query = PossibileRisposta.query.filter_by(id=answer_id).first()
     db.session.delete(query)
     db.session.commit()
 
-    return redirect(url_for('quiz.edit_question', quiz_id=quiz_id, question_id=query.question_id))
+    return redirect(url_for('quiz.edit_question', quiz_uuid=quiz_uuid, question_id=query.question_id))
 
 
 @quiz.route('/view/<questionnaire_uuid>', methods=['GET', 'POST'])
 def render(questionnaire_uuid):
     # query
-    current_quiz = Questionario.query.filter_by(id=questionnaire_uuid).first()
+    current_quiz = Questionario.query.filter_by(uuid=questionnaire_uuid).first()
     domande = current_quiz.questions
     print[domande]
 

@@ -95,7 +95,7 @@
                                     <td>{{ domanda.activant }}</td>
                                     <td>{{ tipi_domanda[domanda.type_id - 1].name }}</td>
                                     <td>
-                                        <form id="edit-question" method="POST" action="{{ url_for('quiz.edit_question', question_id=domanda.id, quiz_id=current_quiz.id) }}">
+                                        <form id="edit-question" method="POST" action="{{ url_for('quiz.edit_question', question_id=domanda.id, quiz_uuid=current_quiz.uuid) }}">
                                             <button type="submit" class="btn btn-outline-info fas fa-edit"></button>
                                         </form>
                                         <form id="delete-question" method="POST" action="{{ url_for('quiz.delete', domanda_id=domanda.id) }}">

@@ -117,7 +117,7 @@
                                 <div class="row align-items-center no-gutters">
 
                                     <div class="col-5 col-sm-4">
-                                        <h6 class="mb-0"><strong><a href="{{ url_for('quiz.editor',edit_id=result.id) }}">{{ result.title }}</a></strong></h6><span class="text-xs">{{ moment(result.timestamp).format('LLL') }}</span>
+                                        <h6 class="mb-0"><strong><a href="{{ url_for('quiz.editor',edit_uuid=result.uuid) }}">{{ result.title }}</a></strong></h6><span class="text-xs">{{ moment(result.timestamp).format('LLL') }}</span>
                                     </div>
                                      <div class="col-5 col-sm-4">
                                         <p class="mb-0 text-black-50">
@@ -137,12 +137,12 @@
                                         </p>
                                     </div>
                                     <div class="col-1 col-sm-2">
-                                        <form id="delete-quiz" method="POST" action="{{ url_for('main.delete', quiz_id=result.id) }}">
+                                        <form id="delete-quiz" method="POST" action="{{ url_for('main.delete', quiz_uuid=result.uuid) }}">
                                             <button type="submit" class="btn btn-outline-danger fas fa-trash-alt"></button>
                                         </form>
                                     </div>
                                     <div class="col-1 col-sm-2">
-                                        <form id="edit-quiz" method="GET" action="{{ url_for('quiz.editor', edit_id=result.id) }}">
+                                        <form id="edit-quiz" method="GET" action="{{ url_for('quiz.editor', edit_uuid=result.uuid) }}">
                                             <button type="submit" class="btn btn-outline-info fas fa-edit" ></button>
                                         </form>
                                     </div>

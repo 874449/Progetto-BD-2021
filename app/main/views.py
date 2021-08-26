@@ -16,10 +16,10 @@ def index():
     return render_template("index.html")
 
 
-@main.route('/delete/<quiz_id>', methods=['POST'])
+@main.route('/delete/<quiz_uuid>', methods=['POST'])
 @login_required
-def delete(quiz_id):
-    quiz = Questionario.query.filter_by(id=quiz_id).first()
+def delete(quiz_uuid):
+    quiz = Questionario.query.filter_by(uuid=quiz_uuid).first()
     db.session.delete(quiz)
     db.session.commit()
     flash('Questionario cancellato', 'success')
@@ -38,7 +38,7 @@ def dashboard():
         db.session.add(nuovo)
         db.session.commit()
         flash('Questionario creato con successo', 'success')
-        return redirect(url_for('quiz.editor', edit_id=nuovo.id))
+        return redirect(url_for('quiz.editor', edit_id=nuovo.uuid))
     return render_template('dashboard.html', nuovo_questionario_form=nuovo_questionario_form, quizzes=display_quiz)
 
 
