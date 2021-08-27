@@ -46,7 +46,13 @@
                             <hr>
                             {{ form.type_id(class='form-select') }}
                             <hr>
-                            {{ form.activant.label }} {{ form.activant(class='form-check-inline') }}
+                            {{ form.is_activated.label }} {{ form.is_activated(class='form-check-inline', id='is_activated',onclick='visibile()') }}
+                            <div id="divInvis" style="visibility: hidden">
+                                <br>
+                                {{ form.activant.label }} {{ form.activant(class='form-select') }}
+                                <br>
+                                {{ form.id_activant_answer.label }} {{ form.id_activant_answer(class='form-select') }}
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
@@ -112,4 +118,15 @@
                 </div>
             </div>
     </div>
+
+    <script>
+    function visibile(){
+        if (document.getElementById('is_activated').checked)
+        {
+            document.getElementById('divInvis').style.visibility = 'visible';
+        } else {
+            document.getElementById('divInvis').style.visibility = 'hidden';
+        }
+    }
+    </script>
 {% endblock %}

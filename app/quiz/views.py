@@ -12,14 +12,23 @@ def editor(edit_uuid):
     # queries
     current_quiz = Questionario.query.filter_by(uuid=edit_uuid).first()
     tipi_domanda = TipologiaDomanda.query.all()
+    subquery = db.session.query(TipologiaDomanda.id).filter(TipologiaDomanda.name == "Scelta")
+    # attivante = db.session.query(Domanda.id, Domanda.text, PossibileRisposta.id, PossibileRisposta.text)\
+    #    .join(PossibileRisposta).filter(Domanda.type_id.in_(subquery), Domanda.quiz_id == current_quiz)
+    #print(current_quiz.id)
+    attivante = db.session.query(Domanda.id, Domanda.text).filter(Domanda.type_id.in_(subquery),
+                                                                  Domanda.quiz_id == current_quiz.id)
+    attivante_list = [(i.id, i.text) for i in attivante]
+
 
     # forms
     question = Question()
+    question.activant.choices = attivante_list
     editor_form = EditorForm(obj=current_quiz)
 
     if question.validate_on_submit():
         domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id,
-                          activant=question.activant.data, quiz_id=current_quiz.id)
+                          activant=question.is_activated.data, quiz_id=current_quiz.id)
         db.session.add(domanda)
         db.session.commit()
         flash('Nuova domanda creata', 'success')
