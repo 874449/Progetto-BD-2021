@@ -1,12 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, BooleanField, SubmitField, FormField, FieldList, IntegerField
+from wtforms import StringField, TextAreaField, BooleanField, SubmitField, FormField, FieldList, IntegerField, \
+    SelectField
 from wtforms.validators import Required, Length
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from flask_pagedown.fields import PageDownField
 from wtforms import ValidationError
 from ..models import *
 from .. import db
-
 
 # QUIZ CREATION
 ''' at the moment in DB:
@@ -30,7 +30,9 @@ class Question(FlaskForm):
                                validators=[Required()],
                                query_factory=lambda: TipologiaDomanda.query.all(),
                                get_label='name')
-    activant = BooleanField('Attiva altre domande?')
+    is_activated = BooleanField('E\' attivata da altre domande?')
+    activant = SelectField('Domanda che attiva questa domanda', coerce=int, validators=[Required()])
+    id_activant_answer = SelectField('Risposta che deve attivare questa domanda', validators=[Required()])
     # category_id = QuerySelectField('Tag',
     #                               query_factory=lambda: CategoriaDomanda.query.all(),
     #                               get_label='name')
