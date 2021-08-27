@@ -75,7 +75,50 @@ qualvolta fosse richiesto.
 
 **iii. Istruzioni per il setup dell'ambiente per eseguire il progetto in locale**
 
-# **MATTEO QUI LASCIO SPAZIO A TE HAHA**
+Se ancora non si ha i file sorgente è necessario prima di tutto scaricarli da github con il comanda
+```shell
+git clone https://github.com/matteospanio/Progetto-BD-2021.git
+```
+
+Una volta scaricato il progetto si entri nella cartella principale con `mv Progetto-BD-2021`, una volta nel progetto
+è necessario installare un virtual environment con il comando `virtualenv venv` e per attivarlo basterà digitare
+`source venv/bin/activate` (per maggiori dettagli sull'installazione di un virtual environment si rimanda alla
+[documentazione ufficiale](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment).
+
+A questo punto è necessario installare le librerie utilizzate dal progetto con il comando `pip install -r requirements.txt`.
+Successivamente bisogna creare le variabili d'ambiente per flask:
+```shell
+# per sistemi Unix-like
+export FLASK_APP = runner.py
+export FLASK_ENV = development
+
+# su windows
+set FLASK_APP = runner.py
+set FLASK_ENV = development
+```
+
+A questo punto si può scegliere se usare il database già preconfigurato su Heroku o crearne uno locale.
+Se si desidera creare un database locale si consiglia di utilizzare postgres tramite phppgadmin, per collegare il database
+creato basterà digitare nella shell:
+```shell
+# su sistemi Unix-like
+export DEV_DATABASE_URL = 'postgresql://<pg_username>:<pg_password>@localhost/<db_name>'
+# dove:
+# pg_username è il nome utente di postegres
+# pg_password è la password di postgres
+# db_name è il nome del database creato
+
+# su windows
+set DEV_DATABASE_URL = 'postgresql://<pg_username>:<pg_password>@localhost/<db_name>'
+```
+infine per creare le tabelle del database basterà digitare:
+```shell
+# per creare lo schema del database si usa create_tables
+flask create_tables
+# populate_db riempie le tabelle con alcuni dati standard
+flask populate_db
+```
+A questo punto si può far partire l'applicazione con `flask run` e collegarsi all'indirizzo http://127.0.0.1:5000/.
 
 ### 2. Database
 
