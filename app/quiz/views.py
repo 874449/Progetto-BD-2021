@@ -25,7 +25,6 @@ def editor(edit_uuid):
                                                                   Domanda.quiz_id == current_quiz.id)
     attivante_list = [(i.id, i.text) for i in attivante]
 
-
     # forms
     question = Question()
     question.activant.choices = attivante_list
@@ -109,24 +108,18 @@ def delete_answer(answer_id, quiz_uuid):
 
 @quiz.route('/view/<questionnaire_uuid>', methods=['GET', 'POST'])
 def render(questionnaire_uuid):
-
-    class CompilationForm(FlaskForm):
-        submit = SubmitField('Invia', render_kw={'class': 'btn btn-info'})
-
     # query
     current_quiz = Questionario.query.filter_by(uuid=questionnaire_uuid).first()
-
     domande = current_quiz.questions.all()
-    print('\nDEBUG domande')
-    print(f'quante domande appartengono al questionario: {len(domande)}')
-    print(domande)
 
+    # creazione dinamica del form
+    class CompilationForm(FlaskForm):
+        submit = SubmitField('Invia', render_kw={'class': 'btn btn-info'})
     iterator = 0
     for domanda in domande:
         if domanda.type_id == 1:
             setattr(CompilationForm, 'domanda' + str(iterator), TextAreaField('Risposta aperta',
-                                                                              render_kw={'class': 'form-control'})
-                    )
+                                                                              render_kw={'class': 'form-control'}))
         elif domanda.type_id == 3:
             setattr(CompilationForm, 'domanda' + str(iterator), RadioField(
                 choices=[(q.id, q.text) for q in PossibileRisposta.query.filter_by(question_id=domanda.id)],
@@ -134,30 +127,36 @@ def render(questionnaire_uuid):
             ))
         else:
             setattr(CompilationForm, 'domanda' + str(iterator), SelectMultipleField(
-                choices=[(q.id, q.text) for q in PossibileRisposta.query.filter_by(question_id=domanda.id)],
+                choices=[(str(q.id), q.text) for q in PossibileRisposta.query.filter_by(question_id=domanda.id)],
                 render_kw={'class': 'form-select'}
             ))
         iterator += 1
 
-    risposte_possibili = PossibileRisposta.query.all()
-
     form = CompilationForm()
 
     if form.validate_on_submit():
+        db.session.add(RisposteQuestionario(quiz_id=current_quiz.id))
+        db.session.commit()
+
         iterator = 0
         for dom in domande:
-            print(request.form.get('domanda' + str(iterator)))
             if dom.type_id == 1:
-                db.session.add(RispostaDomanda(
-                    question_id=dom.id, is_open=True, text=request.form.get('domanda' + str(iterator))
-                ))
+                print(request.form.get('domanda' + str(iterator)))
+                # TODO: inserire nel db chiavi esterne che sono anche PK
+                # db.session.add(RispostaDomanda(id=1, question_id=dom.id, is_open=True, text=request.form.get('domanda' + str(iterator))))
+            elif dom.type_id == 3:
+                print('a scelta')
+            #    db.session.add(RispostaDomanda(
+            #        question_id=dom.id, is_open=False, have_as_answer=request.form.get('domanda' + str(iterator))
+            #    ))
             else:
-                db.session.add(RispostaDomanda(
-                    question_id=dom.id, is_open=False
-                ))
+                print(request.form.getlist('domanda' + str(iterator)))
+            #        db.session.add(RispostaDomanda(
+            #            question_id=dom.id, is_open=False, have_as_answer=risposta
+            #        ))
             iterator += 1
+        flash('Risposta inviata', 'success')
         # db.session.add(RisposteQuestionario(quiz_id=current_quiz.id))
-        # db.session.commit()
+        db.session.commit()
 
-    return render_template('visualize.html', current_quiz=current_quiz, domande=domande,
-                           risposte_possibili=risposte_possibili, form=form, dim=len(domande))
+    return render_template('visualize.html', current_quiz=current_quiz, domande=domande, form=form)

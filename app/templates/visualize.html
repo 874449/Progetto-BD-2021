@@ -3,6 +3,25 @@
 {% block title %}Compila{% endblock %}
 
 {% block page_content %}
+    <!-- FLASH ERRORI -->
+        <div class="row mx-auto">
+            <div class="container">
+                {% if form.errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <ul class="errors">
+                            {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                                {% for error in field_errors %}
+                                    <li>{{ form[field_name].label }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+
     <div class="page-header align-items-center mb-4">
             <h2>{{ current_quiz.title }}</h2>
             <p>
