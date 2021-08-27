@@ -1,10 +1,13 @@
-from flask import render_template, flash, url_for, redirect
+from flask import render_template, flash, url_for, redirect, Response
 from flask_login import login_required, current_user
 from sqlalchemy import case
+import io
+import csv
 
 from .. models import *
 from .. import db, moment
 from ..quiz.forms import NewQuestionnaire
+from . forms import EditProfileForm
 from . import main
 from sqlalchemy.dialects import postgresql
 
@@ -52,9 +55,25 @@ def dashboard():
 @main.route('/profile/<username>')
 @login_required
 def profile(username):
-    user = User.query.filter_by(username=username)
+    user = User.query.filter_by(username=username).first_or_404()
 
-    return render_template('main/profile.html', user=user)
+    return render_template('main/user.html', user=user)
+
+
+@main.route('/edit-profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        db.session.add(current_user._get_current_object())
+        db.session.commit()
+        flash('Modifiche salvate.', 'success')
+        return redirect(url_for('.profile', username=current_user.username))
+    form.first_name.data = current_user.first_name
+    form.last_name.data = current_user.last_name
+    return render_template('main/profile.html', form=form)
 
 
 @main.route('/quizzes')
@@ -76,9 +95,10 @@ def quizzes():
 @main.route('/responses/<quiz_id>')
 @login_required
 def responses(quiz_id):
+    current_quiz = Questionario.query.filter_by(id=quiz_id).first()
     overview = get_overview(quiz_id)
     risposte = get_singole(quiz_id)
-    return render_template('responses.html', overview=overview, risposte=risposte)
+    return render_template('responses.html', current_quiz=current_quiz, overview=overview, risposte=risposte)
 
 
 @main.route('/responses_overview/')
@@ -143,3 +163,28 @@ def get_singole(quiz_id):
                 risposte_singole[i][j.Domanda].append(j.Risposta)
     print(risposte_singole)
     return risposte_singole
+
+
+@main.route('/download/csv/<uuid>')
+@login_required
+def download(uuid):
+    current_quiz = Questionario.query.filter_by(uuid=uuid).first()
+
+    result = []
+    get_singole(current_quiz.id)
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    line = ['Emp Id, Emp First Name, Emp Last Name, Emp Designation']
+    writer.writerow(line)
+
+    for row in result:
+        line = [str(row['emp_id']) + ',' + row['emp_first_name'] + ',' + row['emp_last_name'] + ',' + row[
+            'emp_designation']]
+        writer.writerow(line)
+
+    output.seek(0)
+
+    return Response(output, mimetype="text/csv",
+                    headers={"Content-Disposition": "attachment;filename=questionario.csv"})
