@@ -13,8 +13,9 @@
                 {% endif %}
             </p>
     </div>
-
     <div class="card shadow mb-4 text-center col-md-7 mx-auto">
+    <form method="POST">
+        {{ form.hidden_tag() }}
         {% for domanda in domande %}
             <div class="card-header">
                 {% if domanda.text_html %}
@@ -24,17 +25,14 @@
                 {% endif %}
             </div>
             <div class="card-body">
-                {% if domanda.type_id == 2 or domanda.type_id == 3 %}
-                    {% for risposta in risposte_possibili %}
-                        {% if risposta.question_id==domanda.id %}
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
+                {{ getter(form, 'domanda' + to_str(loop.index0) ) }}
             </div>
         {% endfor %}
         <div class="card-footer">
-            salva
+            {{ form.submit }}
         </div>
+    </form>
     </div>
+
 
 {% endblock %}

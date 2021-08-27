@@ -1,9 +1,14 @@
-from flask import render_template, request, flash, redirect, url_for, abort
+from flask import render_template, flash, redirect, request, url_for, abort
 from flask_login import login_required, current_user
 from .forms import Question, EditorForm, EditForm, SingleAnswerForm
 from . import quiz
 from ..models import *
 from .. import db, moment
+
+from flask_wtf import FlaskForm
+from wtforms import TextAreaField, SelectMultipleField, SubmitField, FormField, FieldList, RadioField
+from wtforms.validators import Required, Length
+from flask_pagedown.fields import PageDownField
 
 
 @quiz.route('/editor/<edit_uuid>', methods=['GET', 'POST'])
@@ -30,7 +35,7 @@ def editor(edit_uuid):
         db.session.commit()
         flash("Modifiche salvate", 'success')
 
-    return render_template('editor.html', editor_form=editor_form,
+    return render_template('quiz/editor.html', editor_form=editor_form,
                            form=question, current_quiz=current_quiz, tipi_domanda=tipi_domanda)
 
 
@@ -57,7 +62,7 @@ def edit_question(quiz_uuid, question_id):
         db.session.commit()
         flash('Modifiche salvate', 'success')
 
-    return render_template('question_editor.html', form=form_dom, risposte=risposte,
+    return render_template('quiz/question_editor.html', form=form_dom, risposte=risposte,
                            current_question=current_question, risposte_form=risposte_form,
                            quiz_uuid=quiz_uuid)
 
@@ -95,11 +100,55 @@ def delete_answer(answer_id, quiz_uuid):
 
 @quiz.route('/view/<questionnaire_uuid>', methods=['GET', 'POST'])
 def render(questionnaire_uuid):
+
+    class CompilationForm(FlaskForm):
+        submit = SubmitField('Invia', render_kw={'class': 'btn btn-info'})
+
     # query
     current_quiz = Questionario.query.filter_by(uuid=questionnaire_uuid).first()
-    domande = current_quiz.questions
-    risposte_possibili = PossibileRisposta.query.all()
+
+    domande = current_quiz.questions.all()
+    print('\nDEBUG domande')
+    print(f'quante domande appartengono al questionario: {len(domande)}')
     print(domande)
 
+    iterator = 0
+    for domanda in domande:
+        if domanda.type_id == 1:
+            setattr(CompilationForm, 'domanda' + str(iterator), TextAreaField('Risposta aperta',
+                                                                              render_kw={'class': 'form-control'})
+                    )
+        elif domanda.type_id == 3:
+            setattr(CompilationForm, 'domanda' + str(iterator), RadioField(
+                choices=[(q.id, q.text) for q in PossibileRisposta.query.filter_by(question_id=domanda.id)],
+                render_kw={'class': 'form-check', 'type': 'radio'}
+            ))
+        else:
+            setattr(CompilationForm, 'domanda' + str(iterator), SelectMultipleField(
+                choices=[(q.id, q.text) for q in PossibileRisposta.query.filter_by(question_id=domanda.id)],
+                render_kw={'class': 'form-select'}
+            ))
+        iterator += 1
+
+    risposte_possibili = PossibileRisposta.query.all()
+
+    form = CompilationForm()
+
+    if form.validate_on_submit():
+        iterator = 0
+        for dom in domande:
+            print(request.form.get('domanda' + str(iterator)))
+            if dom.type_id == 1:
+                db.session.add(RispostaDomanda(
+                    question_id=dom.id, is_open=True, text=request.form.get('domanda' + str(iterator))
+                ))
+            else:
+                db.session.add(RispostaDomanda(
+                    question_id=dom.id, is_open=False
+                ))
+            iterator += 1
+        # db.session.add(RisposteQuestionario(quiz_id=current_quiz.id))
+        # db.session.commit()
+
     return render_template('visualize.html', current_quiz=current_quiz, domande=domande,
-                           risposte_possibili=risposte_possibili)
+                           risposte_possibili=risposte_possibili, form=form, dim=len(domande))
