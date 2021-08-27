@@ -12,8 +12,8 @@ from sqlalchemy.dialects import postgresql
 @main.route('/')
 def index():
     if current_user.is_authenticated:
-        return render_template('index.html')
-    return render_template("index.html")
+        return render_template('main/index.html')
+    return render_template("main/index.html")
 
 
 @main.route('/delete/<quiz_uuid>', methods=['POST'])
@@ -46,7 +46,7 @@ def dashboard():
         db.session.commit()
         flash('Questionario creato con successo', 'success')
         return redirect(url_for('quiz.editor', edit_uuid=nuovo.uuid))
-    return render_template('dashboard.html', nuovo_questionario_form=nuovo_questionario_form, quizzes=display_quiz)
+    return render_template('main/dashboard.html', nuovo_questionario_form=nuovo_questionario_form, quizzes=display_quiz)
 
 
 @main.route('/profile/<username>')
@@ -54,7 +54,7 @@ def dashboard():
 def profile(username):
     user = User.query.filter_by(username=username)
 
-    return render_template('profile.html', user=user)
+    return render_template('main/profile.html', user=user)
 
 
 @main.route('/quizzes')
@@ -70,7 +70,7 @@ def quizzes():
         join(
             Questionario, User.id == Questionario.author_id)
 
-    return render_template('quizzes.html', questionari=query)
+    return render_template('main/quizzes.html', questionari=query)
 
 
 @main.route('/responses/<quiz_id>')
