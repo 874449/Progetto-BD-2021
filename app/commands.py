@@ -47,8 +47,7 @@ def populate_db():
 def fill_qtypes_table():
     tipologie = [TipologiaDomanda('Aperta', 'Domanda aperta'),
                  TipologiaDomanda('Multi-scelta', 'Domanda a risposta multipla'),
-                 TipologiaDomanda('Scelta', 'Domanda a scelta che prevede una singola scelta'),
-                 TipologiaDomanda('Numerica', 'Domanda che prevede una risposta numerica')]
+                 TipologiaDomanda('Scelta', 'Domanda a scelta che prevede una singola scelta')]
 
     for elem in tipologie:
         print(f'[INFO] Adding {elem} to db')

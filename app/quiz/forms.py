@@ -70,20 +70,3 @@ class NewQuestionnaire(FlaskForm):
     titolo = StringField('Titolo', validators=[Required()])
     descrizione = PageDownField('Descrizione')
     submit = SubmitField('Crea')
-
-
-# QUESTIONS
-class OpenQuestionForm(FlaskForm):
-    answer = TextAreaField('Email', validators=[Required(), Length(1, 64)])
-    remember_me = BooleanField('Keep me logged in')
-    submit = SubmitField('Log In')
-
-
-class NumericQuestionForm(Question):
-    answer = IntegerField('Inserisci un numero intero per rispondere')
-
-
-# TODO da implementare
-class MultipleChoiceForm(FlaskForm):
-    email = StringField('Email', validators=[Required(), Length(1, 64)])
-    submit = SubmitField('Register')
