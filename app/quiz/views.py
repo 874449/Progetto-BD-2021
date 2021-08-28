@@ -1,12 +1,13 @@
 from flask import render_template, flash, redirect, request, url_for, abort, jsonify
 from flask_login import login_required, current_user
+from sqlalchemy.exc import IntegrityError
 from .forms import Question, EditorForm, EditForm, SingleAnswerForm
 from . import quiz
 from ..models import *
 from .. import db, moment
 
 from flask_wtf import FlaskForm
-from wtforms import TextAreaField, SelectMultipleField, SubmitField, FormField, FieldList, RadioField
+from wtforms import TextAreaField, SelectMultipleField, SubmitField, RadioField
 from wtforms.validators import Required, Length
 from flask_pagedown.fields import PageDownField
 
@@ -140,21 +141,31 @@ def delete_answer(answer_id, quiz_uuid):
 def render(questionnaire_uuid):
     # query
     current_quiz = Questionario.query.filter_by(uuid=questionnaire_uuid).first()
-    domande = current_quiz.questions.all()
+    # TODO: bisogna decidere in che ordine far apparire le domande
+    domande = current_quiz.questions.order_by(Domanda.id)
 
     # creazione dinamica del form lato server
+
+    # prima di tutto viene creato il form vuoto con solo il campo submit
     class CompilationForm(FlaskForm):
         submit = SubmitField('Invia', render_kw={'class': 'btn btn-info'})
     iterator = 0
+
+    # poi per ogni domanda del quiz viene creato il campo da compilare corretto a seconda del type_id
+    # con setattr sono in grado di comporre dinamicamente il nome del campo che è
+    # 'domanda' + il numero attuale dell'iteratore
     for domanda in domande:
+        # se è una domanda aperta
         if domanda.type_id == 1:
             setattr(CompilationForm, 'domanda' + str(iterator), TextAreaField('Risposta aperta',
                                                                               render_kw={'class': 'form-control'}))
+        # se è una domanda a scelta singola
         elif domanda.type_id == 3:
             setattr(CompilationForm, 'domanda' + str(iterator), RadioField(
                 choices=[(q.id, q.text) for q in PossibileRisposta.query.filter_by(question_id=domanda.id)],
                 render_kw={'class': 'form-check', 'type': 'radio'}
             ))
+        # se è una domanda a scelta multipla
         else:
             setattr(CompilationForm, 'domanda' + str(iterator), SelectMultipleField(
                 choices=[(str(q.id), q.text) for q in PossibileRisposta.query.filter_by(question_id=domanda.id)],
@@ -162,19 +173,28 @@ def render(questionnaire_uuid):
             ))
         iterator += 1
 
+    # una volta aggiunti tutti i campi alla classe l'oggetto è pronto per essere istanziato
     form = CompilationForm()
 
     if form.validate_on_submit():
+        # sto registrando una risposta: aggiungo il record al db
         new_record = RisposteQuestionario(user_id=current_user.id, quiz_id=current_quiz.id)
         db.session.add(new_record)
         db.session.flush()
 
         iterator = 0
         for dom in domande:
+            # se è una domanda aperta viene registrato nel db il campo 'text'
             if dom.type_id == 1:
+                req = request.form.get('domanda' + str(iterator))
+                # il campo text è di tipo stringa e se viene lasciato vuoto è di tipo NoneType
+                # quindi per non incorrere in errori con il seguente if si converte l'input None in String
+                if req is None:
+                    req = ''
                 db.session.add(RispostaDomanda(
-                    id=new_record.id, question_id=dom.id, is_open=True, text=request.form.get('domanda' + str(iterator))
-                ))
+                    id=new_record.id, question_id=dom.id, is_open=True, text=req)
+                )
+            # se è una domanda a scelta invece viene salvata la scelta nella relazione molti-a-molti
             elif dom.type_id == 3:
                 risp = RispostaDomanda(id=new_record.id, question_id=dom.id, is_open=False)
                 db.session.add(risp)
@@ -195,7 +215,13 @@ def render(questionnaire_uuid):
                     db.session.execute(statement)
                     db.session.flush()
             iterator += 1
-        flash('Risposta inviata', 'success')
-        db.session.commit()
+        # alla fine dell'aggiunta di tutte le risposte si esegue un try per l'insert
+        try:
+            db.session.commit()
+            flash('Risposta inviata', 'success')
+        except IntegrityError:
+            # oppure si annulla tutto con un rollback
+            flash('Si è verificato un errore nella registrazione della risposta', 'warning')
+            db.session.rollback()
 
     return render_template('visualize.html', current_quiz=current_quiz, domande=domande, form=form)
