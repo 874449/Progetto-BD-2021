@@ -169,16 +169,20 @@ def get_singole(quiz_id):
 def download(uuid):
     # query
     current_quiz = Questionario.query.filter_by(uuid=uuid).first()
-    risposte = get_singole(current_quiz.id)
+    risposte = RisposteQuestionario.query.filter_by(quiz_id=current_quiz.id).all()
+    data = get_singole(current_quiz.id)
+
+    lista_risposte_id = [r.id for r in risposte]
 
     # stream output
     output = io.StringIO()
-    writer = csv.DictWriter(output, fieldnames=risposte[1].keys())
+    writer = csv.DictWriter(output, fieldnames=data[lista_risposte_id[0]].keys())
 
     writer.writeheader()
-    for i in range(1, len(risposte)+1):
-        writer.writerow(risposte[i])
+    for i in range(0, len(data)):
+        writer.writerow(data[lista_risposte_id[i]])
 
     output.seek(0)
-    return Response(output, mimetype="text/csv",
+    return Response(output,
+                    mimetype="text/csv",
                     headers={f"Content-Disposition": f"attachment;filename={current_quiz.title}.csv"})
