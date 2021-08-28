@@ -136,7 +136,17 @@ Per la Base di dati è stato sviluppato il seguente schema logico
 e relazionale che illustra le relazioni e gli attributi delle varie 
 tabelle
 
-# **Immagine con schema di michael qui**
+**Schema Concettuale:**
+
+![Schema concettuale](C:\Users\aleza\Desktop\schema concettuale.png)
+
+**Schema Logico:**
+
+![Schema logico](C:\Users\aleza\Desktop\schema logico.png)
+
+**Breve descrizione delle varie tabelle:**
+
+![Descrizione delle tabelle](C:\Users\aleza\Desktop\descr tabelle.png)
 
 **i.a. Implementazione delle relazioni**
 
