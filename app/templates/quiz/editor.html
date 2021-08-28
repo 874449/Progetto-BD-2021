@@ -46,7 +46,7 @@
                             <hr>
                             {{ form.type_id(class='form-select') }}
                             <hr>
-                            {{ form.is_activated.label }} {{ form.is_activated(class='form-check-inline', id='is_activated',onclick='visibile()') }}
+                            {{ form.is_activated.label }} {{ form.is_activated(class='form-check-inline', onclick='visibile()') }}
                             <div id="divInvis" style="visibility: hidden">
                                 <br>
                                 {{ form.activant.label }} {{ form.activant(class='form-select') }}
@@ -57,7 +57,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                            {{ form.submit(class='btn btn-primary') }}
+                            {{ form.invia(class='btn btn-primary') }}
                         </div>
                     </form>
                 </div>
@@ -119,7 +119,8 @@
                 </div>
             </div>
     </div>
-
+{% endblock %}
+{% block script_part %}
     <script>
     function visibile(){
         if (document.getElementById('is_activated').checked)
@@ -129,5 +130,46 @@
             document.getElementById('divInvis').style.visibility = 'hidden';
         }
     }
+    </script>
+    <script charset="utf-8" type="text/javascript">
+
+        $(function() {
+
+            // jQuery selection for the 2 select boxes
+            var dropdown = {
+                activant: $('#select_activant'),
+                activant_answer: $('#select_id_activant_answer')
+            };
+
+            // call to update on load
+            updatePossibleAnswers();
+
+            // function to call XHR and update county dropdown
+            function updatePossibleAnswers() {
+                var send = {
+                    activant: dropdown.activant.val()
+                };
+                dropdown.activant_answer.attr('disabled', 'disabled');
+                dropdown.activant_answer.empty();
+                $.getJSON("{{ url_for('quiz.get_possible_answers')}}", send, function(data) {
+                    data.forEach(function(item) {
+                        dropdown.activant_answer.append(
+                            $('<option>', {
+                                value: item[0],
+                                text: item[1]
+                            })
+                        );
+                    });
+                    dropdown.activant_answer.removeAttr('disabled');
+                });
+            }
+
+            // event listener to state dropdown change
+            dropdown.activant.on('change', function() {
+                updatePossibleAnswers();
+            });
+
+        });
+
     </script>
 {% endblock %}
