@@ -26,10 +26,14 @@ def delete(quiz_uuid):
     quiz = Questionario.query.filter_by(uuid=quiz_uuid).first()
     domande = Domanda.query.filter_by(quiz_id=quiz.id).all()
     for domanda in domande:
-        scelte = PossibileRisposta.query.filter_by(question_id=domanda.id).all()
-        for scelta in scelte:
-            db.session.delete(scelta)
-    db.session.commit()
+        statement = have_as_answer.delete().values(
+            question_id=domanda.id
+        )
+        db.session.execute(statement)
+        db.session.flush()
+        # PossibileRisposta.query.filter_by(question_id=domanda.id).delete()
+
+    RisposteQuestionario.query.filter_by(quiz_id=quiz.id).delete()
     db.session.delete(quiz)
     db.session.commit()
     flash('Questionario cancellato', 'success')
@@ -39,15 +43,20 @@ def delete(quiz_uuid):
 @main.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
+    # query per prendere tutti i questionari dell'utente
     display_quiz = Questionario.query.filter_by(author_id=current_user.id).order_by(Questionario.id.desc()).all()
+
+    # form
     nuovo_questionario_form = NewQuestionnaire()
     if nuovo_questionario_form.validate_on_submit():
+        # registrazione dei dati passati dal form al db
         title = nuovo_questionario_form.titolo.data
         description = nuovo_questionario_form.descrizione.data
         nuovo = Questionario(title=title, description=description, author_id=current_user.id)
         db.session.add(nuovo)
         db.session.commit()
         flash('Questionario creato con successo', 'success')
+        # una volta creato il questionario si viene reindirizzati all'editor
         return redirect(url_for('quiz.editor', edit_uuid=nuovo.uuid))
     return render_template('main/dashboard.html', nuovo_questionario_form=nuovo_questionario_form, quizzes=display_quiz)
 
@@ -80,8 +89,6 @@ def edit_profile():
 @main.route('/quizzes')
 @login_required
 def quizzes():
-    # TODO: DECIDERE SE CREARE LA CONDIVISIONE PRIVATA DEI QUIZ!
-
     query = db.session.\
         query(
             Questionario.title, Questionario.description, Questionario.description_html,
@@ -110,7 +117,6 @@ def responses_overview():
 
 def get_overview(quiz_id):
     subquery = db.session.query(RisposteQuestionario.id).filter(RisposteQuestionario.quiz_id == quiz_id)
-    # , RisposteQuestionario.id == 1)
     risposte = db.session.query(Domanda.text.label('Domanda'), Domanda.type_id.label('Tipo'),
                                 Domanda.id.label('Id_domanda'),
                                 case((RispostaDomanda.is_open, RispostaDomanda.text),
@@ -142,8 +148,6 @@ def get_overview(quiz_id):
 def get_singole(quiz_id):
     risposte_questionario = db.session.query(RisposteQuestionario.id).filter(RisposteQuestionario.quiz_id == quiz_id).all()
     risposte_singole = {}
-    print("RISPOSTE QUESTIONARIO: _------------------------------------------")
-    print(risposte_questionario)
     for r in risposte_questionario:
         i = r.id
         print(i)
@@ -168,11 +172,18 @@ def get_singole(quiz_id):
 @main.route('/download/csv/<uuid>')
 @login_required
 def download(uuid):
-    # query
+    # query per prendere il database e le risposte
     current_quiz = Questionario.query.filter_by(uuid=uuid).first()
     risposte = RisposteQuestionario.query.filter_by(quiz_id=current_quiz.id).all()
+
+    # get singole restituisce un dizionario con le risposte ad ogni domanda nel formato
+    # { key = risposta.id, value = dizionario{ domanda: risposta } }
     data = get_singole(current_quiz.id)
 
+    '''
+    generazione della lista con gli id delle risposte:
+        dal momento che la variabile
+    '''
     lista_risposte_id = [r.id for r in risposte]
 
     # stream output
