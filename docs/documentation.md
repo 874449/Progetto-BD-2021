@@ -138,15 +138,15 @@ tabelle
 
 **Schema Concettuale:**
 
-![Schema concettuale](C:\Users\aleza\Desktop\schema concettuale.png)
+![Schema concettuale](C:\Users\aleza\PycharmProjects\Progetto-BD-2021\docs\imgdocs\schema concettuale.png)
 
 **Schema Logico:**
 
-![Schema logico](C:\Users\aleza\Desktop\schema logico.png)
+![Schema logico](C:\Users\aleza\PycharmProjects\Progetto-BD-2021\docs\imgdocs\schema logico.png)
 
 **Breve descrizione delle varie tabelle:**
 
-![Descrizione delle tabelle](C:\Users\aleza\Desktop\descr tabelle.png)
+![Descrizione delle tabelle](C:\Users\aleza\PycharmProjects\Progetto-BD-2021\docs\imgdocs\descr tabelle.png)
 
 **i.a. Implementazione delle relazioni**
 
