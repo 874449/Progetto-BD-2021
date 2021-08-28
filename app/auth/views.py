@@ -50,9 +50,6 @@ def logout():
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
-    """
-    TODO: creare conferma attraverso token con invio della mail
-    """
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(email=form.email.data,

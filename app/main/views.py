@@ -78,8 +78,7 @@ def edit_profile():
 @main.route('/quizzes')
 @login_required
 def quizzes():
-    # TODO: view con la lista di tutti i questionari pubblici fatti dagli altri utenti.
-    #  DECIDERE SE CREARE LA CONDIVISIONE PRIVATA DEI QUIZ!
+    # TODO: DECIDERE SE CREARE LA CONDIVISIONE PRIVATA DEI QUIZ!
 
     query = db.session.\
         query(
