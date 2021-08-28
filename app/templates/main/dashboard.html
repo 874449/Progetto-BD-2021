@@ -149,7 +149,7 @@
                                 </div>
                                 <div class="row align-items-center no-gutters">
                                     <div class="col-lg-12 col-12 col-sm-12">
-                                        <form id="delete-quiz" method="GET" action="{{ url_for('main.responses', quiz_id=result.id) }}">
+                                        <form id="delete-quiz" method="GET" action="{{ url_for('main.responses', quiz_uuid=result.uuid) }}">
                                                 <button type="submit" class="btn btn-outline-primary">Visualizza risposte</button>
                                         </form>
                                     </div>
