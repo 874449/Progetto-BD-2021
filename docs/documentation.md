@@ -25,7 +25,7 @@ Composto da
 4. **Misure di sicurezza**
    1. Hash e passwords
    2. Autenticazione e Log-in
-   3. CSRF, SQL Injection, XSS
+   3. CSRF, SQL Injection
 5. **Sviluppo grafico del sito**
 
 ### 1. Introduzione al progetto
@@ -36,26 +36,34 @@ Ogni utente può creare innumerevoli questionari, ognuno formato da
 multiple domande che a loro volta possono essere di 
 diversa categoria (ad esempio, risposta aperta o scelta multipla).
 Ogni utente può inoltre vedere tutti i questionari fatti da altri utenti
-e rispondere alle domande in una schermata dedicata.
+e rispondere alle domande di ognuno di essi.
 Il proprietario di un questionario sarà poi in grado di visionare le
-risposte fornite dagli utenti 
+risposte fornite dagli utenti ed esportarle tramite file csv.
 
 **i. Strumenti e piattaforme usate per sviluppare il progetto**
 
 Il progetto è stato sviluppato utilizzando Python e SQLAlchemy,
 tutti i membri del gruppo hanno usato l'IDE PyCharm per 
-interfacciarsi con semplicità ed efficacia allo sviluppo del progetto.\
+interfacciarsi con semplicità ed efficacia allo sviluppo del progetto.  
 Il codice è stato condiviso tra i vari membri del gruppo tramite
 GitHub in modo che ognuno potesse lavorare sulla versione più recente
 possibile, inoltre il database è stato condiviso tramite Heroku, che
 ha permesso a tutti i membri di lanciare l'applicazione usando lo
-stessa base di dati per la fase di testing e sviluppo.\
+stessa base di dati per la fase di testing e sviluppo.  
 Il gruppo ha inoltre deciso di creare un gruppo Whatsapp dedicato al
 progetto in cui tutti i membri erano sempre raggiungibili per 
-eventuale necessità.\
+eventuale necessità.  
 Il gruppo ha fatto riferimento al libro di testo "Flask Web Development"
 di Miguel Grinberg come ulteriore fonte di esempi e spiegazioni riguardanti
-Flask e altre componenti del progetto
+Flask e altre componenti del progetto. 
+   
+**i.a. Librerie utilizzate**
+
+# Matteo qui per le librerie
+
+**i.b. ORM**
+
+# Matteo qui per ORM
 
 **ii. Gestione del gruppo e suddivisione del lavoro**
 
@@ -65,8 +73,8 @@ in cui ogni membro ha avuto la possibilità di esprimere le sue idee
 e opinioni, alla fine di ogni incontro ognuno si è autonomamente
 assegnato gli incarichi che si trovava più a suo agio a svolgere,
 nello specifico `Michael` ha preferito principalmente concentrarsi sulla
-creazione di triggers, `Matteo` ha deciso di
-concentrare i suoi sforzi principalmente sullo sviluppo di funzionalità
+creazione di triggers e gestione della base di dati, `Matteo` ha deciso di
+concentrare i suoi sforzi sullo sviluppo della Web App
 con Python mentre `Alessandro` ha curato la veste grafica 
 dell'applicazione e la documentazione. 
 Nonostante questo, ogni sviluppo è stato ampiamente discusso e trattato
@@ -128,26 +136,35 @@ Per la Base di dati è stato sviluppato il seguente schema logico
 e relazionale che illustra le relazioni e gli attributi delle varie 
 tabelle
 
-**a. Implementazione delle relazioni**
+# **Immagine con schema di michael qui**
+
+**i.a. Implementazione delle relazioni**
 
 riga 144 file models.py
 
-# **Immagine con schema di michael qui**
-
 **ii. Query sviluppate**
 
-```
-select q.text, case when(atq.is_open = true) then atq.text else b.text end as answer
+Di seguito sono riportate alcune delle query che abbiamo sviluppato 
+per il progetto:
 
-from answers_to_questions atq join questions q on atq.question_id=q.id left join 
-        (select haa.question_id,haa.answer_to_questions_id,pa.text 
-         from have_as_answer haa join possible_answers pa on haa.possible_answer_id=pa.id) b
-    on (b.answer_to_questions_id=atq.id and b.question_id=atq.question_id)
-    where atq.id in (select qa.id
-                 from quiz_answers qa
-                 where qa.id=1 and quiz_id=14)
+```
+ select q.text, case when(atq.is_open = true) then atq.text else b.text end as answer
+
+ from answers_to_questions atq join questions q on atq.question_id=q.id left join 
+     (select haa.question_id,haa.answer_to_questions_id,pa.text 
+     from have_as_answer haa join possible_answers pa on haa.possible_answer_id=pa.id) b
+   on (b.answer_to_questions_id=atq.id and b.question_id=atq.question_id)
+   where atq.id in (select qa.id
+     from quiz_answers qa
+     where qa.id=1 and quiz_id=14)
 order by q.id
 ```
+Dato un questionario e l'input fornito dall'utente, la query 
+prende i testi delle domande e la relativa risposta.  
+Siccome la risposta può avere tipi diversi (come risposta aperta o 
+a scelta multipla), la query fa una JOIN con la tabella delle possibili
+risposte, utilizzando una relazione molti a molti, per prelevare il 
+testo della risposta nel caso in cui la domanda sia a scelta multipla.
 
 **iii. Transazioni, Rollback, Triggers - Politiche d'integrità del database**
 
@@ -258,18 +275,41 @@ nel caso in cui abbia effettuato l'accesso in una
 sessione precedente e abbia chiuso il sito senza effettuare il 
 Log-Out, noterà di essere ancora collegato alla riapertura del
 sito, senza avere il bisogno di reinserire le informazioni del suo 
-profilo. I Cookies durano circa un anno, dopo tale periodo decadono e 
+profilo. I Cookies, situati nella cartella `flask_session`,
+durano circa un anno, dopo tale periodo decadono e 
 vengono eliminati.
 
-Cookies (flask_session) validi un anno 
-
-**iii. CSRF, SQL Injection, XSS**
+**iii. CSRF, SQLInjection**
 
 La gestione delle SQLInjection, ovvero quando un utente 
-malintenzionato sfrutta SQL per riprodurre codice in posti e modi che
+malintenzionato "inietta" codice SQL per estrapolare dati in posti e modi che
 non dovrebbero essergli permessi, è gestita quasi totalmente
-in autonomia da ORM, tanto che i controlli predisposti sono più 
-atti alla prevenzione di errori umani **_(esempio qui magari)_**
+in autonomia da SQLalchemy.orm, tanto che i controlli predisposti sono più 
+atti alla prevenzione di errori umani.
+
+Per quanto riguarda CSRF (Cross-Site Request Forgery), una vulnerabilità 
+che occorre quando un sito malizioso manda richieste 
+al server dell'applicazione in cui l'utente è attualmente connesso,
+Flask-WTF necessita di una chiave segreta per essere configurato,
+grazie ad essa infatti l'estensione è in grado di proteggere tutti 
+i forms da attacchi CSRF, grazie ad essa viene generato un token di 
+sicurezza salvato all'interno della sessione utente, a sua volta 
+protetta da una firma crittografica generata sempre dalla chiave segreta.
+
+Esempio di implementazione di queste protezioni:
+```
+<form action="" method="POST" role="form" class="user">
+      <div class="modal-body">
+          {{ form.hidden_tag() }}
+          {{ form.text(...) }}
+          <!-- qui in mezzo ci sono altri campi ma ho accorciato perché basta quello che si vede a fin di esempio -->
+          {{ form.submit(class='btn btn-primary') }}
+      </div>
+</form>
+```
+In questo snippet di codice, il form `hidden_tag` genera un token 
+che viene inviato insieme al resto dei dati e verifica che la 
+richiesta http sia autentica.
 
 Alcune vulnerabilità potrebbero nascere dalle librerie utilizzate che 
 potrebbero fornire da sorgente per exploit di diversa natura, tuttavia
