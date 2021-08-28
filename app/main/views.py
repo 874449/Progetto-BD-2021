@@ -56,7 +56,6 @@ def dashboard():
 @login_required
 def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
-
     return render_template('main/user.html', user=user)
 
 
@@ -92,12 +91,12 @@ def quizzes():
     return render_template('main/quizzes.html', questionari=query)
 
 
-@main.route('/responses/<quiz_id>')
+@main.route('/responses/<quiz_uuid>')
 @login_required
-def responses(quiz_id):
-    current_quiz = Questionario.query.filter_by(id=quiz_id).first()
-    overview = get_overview(quiz_id)
-    risposte = get_singole(quiz_id)
+def responses(quiz_uuid):
+    current_quiz = Questionario.query.filter_by(uuid=quiz_uuid).first()
+    overview = get_overview(current_quiz.id)
+    risposte = get_singole(current_quiz.id)
     return render_template('responses.html', current_quiz=current_quiz, overview=overview, risposte=risposte)
 
 
@@ -168,23 +167,18 @@ def get_singole(quiz_id):
 @main.route('/download/csv/<uuid>')
 @login_required
 def download(uuid):
+    # query
     current_quiz = Questionario.query.filter_by(uuid=uuid).first()
+    risposte = get_singole(current_quiz.id)
 
-    result = []
-    get_singole(current_quiz.id)
-
+    # stream output
     output = io.StringIO()
-    writer = csv.writer(output)
+    writer = csv.DictWriter(output, fieldnames=risposte[1].keys())
 
-    line = ['Emp Id, Emp First Name, Emp Last Name, Emp Designation']
-    writer.writerow(line)
-
-    for row in result:
-        line = [str(row['emp_id']) + ',' + row['emp_first_name'] + ',' + row['emp_last_name'] + ',' + row[
-            'emp_designation']]
-        writer.writerow(line)
+    writer.writeheader()
+    for i in range(1, len(risposte)+1):
+        writer.writerow(risposte[i])
 
     output.seek(0)
-
     return Response(output, mimetype="text/csv",
-                    headers={"Content-Disposition": "attachment;filename=questionario.csv"})
+                    headers={f"Content-Disposition": f"attachment;filename={current_quiz.title}.csv"})
