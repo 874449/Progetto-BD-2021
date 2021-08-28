@@ -8,7 +8,7 @@
             <div class="container">
                 {% if form.errors %}
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         <ul class="errors">
                             {% for field_name, field_errors in form.errors|dictsort if field_errors %}
                                 {% for error in field_errors %}
@@ -37,6 +37,7 @@
         {{ form.hidden_tag() }}
         {% for domanda in domande %}
             <div class="card-header">
+                {{ loop.index }}
                 {% if domanda.text_html %}
                     {{ domanda.text_html | safe }}
                 {% else %}
@@ -44,7 +45,32 @@
                 {% endif %}
             </div>
             <div class="card-body">
-                {{ getter(form, 'domanda' + to_str(loop.index0) ) }}
+                {% set dom = getter(form, 'domanda' + to_str(loop.index0)) %}
+                {% if domanda.is_activated %}
+                    {% if domanda.type_id == 3 %}
+                        {% for choiche in dom %}
+                        <tr>
+                            <td>{{ choiche(class='radio', disabled=True) }}</td>
+                            <td>{{ choiche.label(class='form-label') }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        {{ dom(disabled=True) }}
+                    {% endif %}
+                {% else %}
+                    {% if domanda.type_id == 3 %}
+                        <table>
+                        {% for choiche in dom %}
+                        <tr>
+                            <td>{{ choiche(class='radio') }}</td>
+                            <td>{{ choiche.label(class='form-label') }}</td>
+                        </tr>
+                        {% endfor %}
+                        </table>
+                    {% else %}
+                        {{ dom() }}
+                    {% endif %}
+                {% endif %}
             </div>
         {% endfor %}
         <div class="card-footer">
@@ -52,6 +78,24 @@
         </div>
     </form>
     </div>
+{% endblock %}
 
+{% block script_part %}
+<script>
+    $().ready(function() {
 
+        $('#clicker').click(function() {
+            $('input').each(function() {
+                if ($(this).attr('disabled')) {
+                    $(this).removeAttr('disabled');
+                }
+                else {
+                    $(this).attr({
+                        'disabled': 'disabled'
+                    });
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
