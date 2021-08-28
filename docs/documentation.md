@@ -330,14 +330,12 @@ sicurezza salvato all'interno della sessione utente, a sua volta
 protetta da una firma crittografica generata sempre dalla chiave segreta.
 
 Esempio di implementazione di queste protezioni:
-```
-<form action="" method="POST" role="form" class="user">
-      <div class="modal-body">
-          {{ form.hidden_tag() }}
-          {{ form.text(...) }}
-          <!-- qui in mezzo ci sono altri campi ma ho accorciato perché basta quello che si vede a fin di esempio -->
-          {{ form.submit(class='btn btn-primary') }}
-      </div>
+```html
+<form method="POST">    
+   {{ editor_form.hidden_tag() }}
+   <h3>{{ editor_form.title(class='form-input') }}</h3>
+   {{ editor_form.description(class='form-control') }}
+   {{ editor_form.submit(class="btn btn-info") }}
 </form>
 ```
 In questo snippet di codice, il form `hidden_tag` genera un token 
