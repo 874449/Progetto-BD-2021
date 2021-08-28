@@ -66,12 +66,14 @@ def edit_profile():
     if form.validate_on_submit():
         current_user.first_name = form.first_name.data
         current_user.last_name = form.last_name.data
+        current_user.location = form.location.data
         db.session.add(current_user._get_current_object())
         db.session.commit()
         flash('Modifiche salvate.', 'success')
         return redirect(url_for('.profile', username=current_user.username))
     form.first_name.data = current_user.first_name
     form.last_name.data = current_user.last_name
+    form.location.data = current_user.location
     return render_template('main/profile.html', form=form)
 
 

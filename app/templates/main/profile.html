@@ -17,14 +17,6 @@
                                 {{ form.hidden_tag() }}
                                 <div class="row">
                                     <div class="col">
-                                        <div class="mb-3"><label class="form-label" for="username"><strong>Nome Utente</strong></label><input class="form-control" type="text" id="username" placeholder="user.name" name="username"></div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="mb-3"><label class="form-label" for="email"><strong>Indirizzo E-Mail</strong></label><input class="form-control" type="email" id="email" placeholder="user@example.com" name="email"></div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
                                         <div class="mb-3">
                                             {{ form.first_name.label(class='form-label') }}
                                             {{ form.first_name(class='form-control') }}
@@ -35,6 +27,17 @@
                                             {{ form.last_name.label(class='form-label') }}
                                             {{ form.last_name(class='form-control') }}
                                         </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            {{ form.location.label(class='form-label') }}
+                                            {{ form.location(class='form-control') }}
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="mb-3"><label class="form-label" for="email"><strong>Indirizzo E-Mail</strong></label><input class="form-control" type="email" id="email" placeholder="user@example.com" name="email"></div>
+                                    </div>
                                 </div>
                                 <div class="mb-3">{{ form.submit(class='btn btn-primary btn-sm') }}</div>
                             </form>
