@@ -44,7 +44,7 @@ def dashboard():
     if nuovo_questionario_form.validate_on_submit():
         title = nuovo_questionario_form.titolo.data
         description = nuovo_questionario_form.descrizione.data
-        nuovo = Questionario(title, description, current_user.id)
+        nuovo = Questionario(title=title, description=description, author_id=current_user.id)
         db.session.add(nuovo)
         db.session.commit()
         flash('Questionario creato con successo', 'success')
