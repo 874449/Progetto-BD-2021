@@ -157,7 +157,7 @@ riga 144 file models.py
 Di seguito sono riportate alcune delle query che abbiamo sviluppato 
 per il progetto:
 
-```
+```sql
  select q.text, case when(atq.is_open = true) then atq.text else b.text end as answer
 
  from answers_to_questions atq join questions q on atq.question_id=q.id left join 
@@ -262,6 +262,30 @@ più volte non riproducesse lo stesso hash proprio per evitare
 che multipli utenti che utilizzano la stessa password
 potessero rappresentare una debolezza nella sicurezza della
 base di dati.
+
+Per ragioni di sicurezza, la password non è direttamente 
+accessibile, quindi la lettura e l'impostazione sono fatte
+tramite hash.
+
+Di seguito viene riportato il codice responsabile della gestione
+della password: 
+
+```python
+ @property
+ def password(self):
+     raise AttributeError('password is not a readable attribute')
+
+ @password.setter
+ def password(self, password):
+     self.password_hash = generate_password_hash(password)
+
+ def verify_password(self, password):
+     return check_password_hash(self.password_hash, password)
+
+ def generate_confirmation_token(self, expiration=3600):
+     s = Serializer(current_app.config['SECRET_KEY'], expiration)
+     return s.dumps({'confirm': self.id}).decode('utf-8')
+```
 
 magari mettiamo qualche riga di codice qui come esempio, ci penzo
 
