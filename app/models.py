@@ -135,9 +135,11 @@ class Questionario(db.Model):
 db.event.listen(Questionario.description, 'set', Questionario.on_changed_description)
 
 
+# TODO: un trigger per quando si aggiunge una risposta alla domanda viene registrata la risposta anche qua
 class RisposteQuestionario(db.Model):
     __tablename__ = 'quiz_answers'
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     date = db.Column(db.DateTime, default=datetime.utcnow())
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
 
@@ -163,10 +165,6 @@ class RispostaDomanda(db.Model):
     text_html = db.Column(db.Text)
     have_as_answers = db.relationship('PossibileRisposta', secondary=have_as_answer,
                                       backref=db.backref('answers_to_questions', lazy='joined'))
-
-    def __init__(self, is_open, text):
-        self.text = text
-        self.is_open = is_open
 
     def __repr__(self):
         return f'Risposta: {self.text}'
@@ -225,8 +223,6 @@ class Domanda(db.Model):
 db.event.listen(Domanda.text, 'set', Domanda.on_changed_text)
 
 
-# TODO: idea! non sarebbe possibile integrare questa tabella direttamente nelle risposteDomande
-#  e poi richiamare le domande per essere scelte dall'utente nel form?
 class PossibileRisposta(db.Model):
     __tablename__ = 'possible_answers'
     id = db.Column(db.Integer, primary_key=True)

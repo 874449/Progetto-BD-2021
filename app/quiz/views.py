@@ -112,7 +112,7 @@ def render(questionnaire_uuid):
     current_quiz = Questionario.query.filter_by(uuid=questionnaire_uuid).first()
     domande = current_quiz.questions.all()
 
-    # creazione dinamica del form
+    # creazione dinamica del form lato server
     class CompilationForm(FlaskForm):
         submit = SubmitField('Invia', render_kw={'class': 'btn btn-info'})
     iterator = 0
@@ -135,28 +135,36 @@ def render(questionnaire_uuid):
     form = CompilationForm()
 
     if form.validate_on_submit():
-        db.session.add(RisposteQuestionario(quiz_id=current_quiz.id))
+        new_record = RisposteQuestionario(user_id=current_user.id, quiz_id=current_quiz.id)
+        db.session.add(new_record)
         db.session.commit()
 
         iterator = 0
         for dom in domande:
             if dom.type_id == 1:
-                print(request.form.get('domanda' + str(iterator)))
-                # TODO: inserire nel db chiavi esterne che sono anche PK
-                # db.session.add(RispostaDomanda(id=1, question_id=dom.id, is_open=True, text=request.form.get('domanda' + str(iterator))))
+                db.session.add(RispostaDomanda(
+                    id=new_record.id, question_id=dom.id, is_open=True, text=request.form.get('domanda' + str(iterator))
+                ))
             elif dom.type_id == 3:
-                print('a scelta')
-            #    db.session.add(RispostaDomanda(
-            #        question_id=dom.id, is_open=False, have_as_answer=request.form.get('domanda' + str(iterator))
-            #    ))
+                risp = RispostaDomanda(id=new_record.id, question_id=dom.id, is_open=False)
+                db.session.add(risp)
+                db.session.commit()
+                statement = have_as_answer.insert().values(possible_answer_id=request.form.get('domanda' + str(iterator)),
+                                                           answer_to_questions_id=risp.id,
+                                                           question_id=dom.id)
+                db.session.execute(statement)
             else:
-                print(request.form.getlist('domanda' + str(iterator)))
-            #        db.session.add(RispostaDomanda(
-            #            question_id=dom.id, is_open=False, have_as_answer=risposta
-            #        ))
+                risp = RispostaDomanda(id=new_record.id, question_id=dom.id, is_open=False)
+                for elem in request.form.getlist('domanda' + str(iterator)):
+                    db.session.add(risp)
+                    db.session.commit()
+                    statement = have_as_answer.insert().values(
+                        possible_answer_id=elem,
+                        answer_to_questions_id=risp.id,
+                        question_id=dom.id)
+                    db.session.execute(statement)
             iterator += 1
         flash('Risposta inviata', 'success')
-        # db.session.add(RisposteQuestionario(quiz_id=current_quiz.id))
         db.session.commit()
 
     return render_template('visualize.html', current_quiz=current_quiz, domande=domande, form=form)
