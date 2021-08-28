@@ -192,12 +192,12 @@ class Domanda(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
     text_html = db.Column(db.Text)
-    activant = db.Column(db.Boolean)
-    activable_question = db.Column(db.Integer, db.ForeignKey('questions.id'))
+    is_activated = db.Column(db.Boolean)
+    activated_by = db.Column(db.Integer, db.ForeignKey('questions.id'))
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
     category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
     type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
-    activant_answer_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'))
+    activated_by_answer_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'))
     #possible_answers = db.relationship('PossibileRisposta', cascade="all,delete", backref='domanda_a_scelta',
     #                                   lazy='dynamic', primaryjoin=id == PossibileRisposta.question_id)
     answers = db.relationship('RispostaDomanda', cascade="all,delete", backref='domanda', lazy='dynamic',
@@ -226,7 +226,7 @@ class PossibileRisposta(db.Model):
     text_html = db.Column(db.Text)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
     active_question = db.relationship('Domanda', backref='risposta_attivante',
-                                      primaryjoin=id == Domanda.activant_answer_id)
+                                      primaryjoin=id == Domanda.activated_by_answer_id)
     #answers_to_questions = db.relationship('RispostaDomanda', secondary=have_as_answer,
     #                                       backref=db.backref('possible_answers', lazy='joined'))
 

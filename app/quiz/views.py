@@ -18,12 +18,8 @@ def editor(edit_uuid):
     current_quiz = Questionario.query.filter_by(uuid=edit_uuid).first()
     tipi_domanda = TipologiaDomanda.query.all()
     subquery = db.session.query(TipologiaDomanda.id).filter(TipologiaDomanda.name == "Scelta")
-    # attivante = db.session.query(Domanda.id, Domanda.text, PossibileRisposta.id, PossibileRisposta.text)\
-    #    .join(PossibileRisposta).filter(Domanda.type_id.in_(subquery), Domanda.quiz_id == current_quiz)
-    #print(current_quiz.id)
     attivante = db.session.query(Domanda.id, Domanda.text).filter(Domanda.type_id.in_(subquery),
                                                                   Domanda.quiz_id == current_quiz.id)
-
     attivante_list = [(-1, '')]
     for i in attivante:
         attivante_list.append((i.id, i.text))
@@ -39,8 +35,14 @@ def editor(edit_uuid):
     editor_form = EditorForm(obj=current_quiz)
 
     if question.invia.data and question.validate():
-        domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id,
-                          activant=question.is_activated.data, quiz_id=current_quiz.id)
+        if question.is_activated.data:
+            domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id,
+                              is_activated=question.is_activated.data, quiz_id=current_quiz.id,
+                              activated_by=question.activant.data,
+                              activated_by_answer_id=question.id_activant_answer.data)
+        else:
+            domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id, quiz_id=current_quiz.id)
+
         db.session.add(domanda)
         db.session.commit()
         flash('Nuova domanda creata', 'success')

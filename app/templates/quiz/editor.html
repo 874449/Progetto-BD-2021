@@ -99,7 +99,7 @@
                                             {{ domanda.text }}
                                         {% endif %}
                                     </td>
-                                    <td>{{ domanda.activant }}</td>
+                                    <td>{{ domanda.is_activated }}</td>
                                     <td>{{ tipi_domanda[domanda.type_id - 1].name }}</td>
                                     <td>
                                         <form id="edit-question" method="POST" action="{{ url_for('quiz.edit_question', question_id=domanda.id, quiz_uuid=current_quiz.uuid) }}">
