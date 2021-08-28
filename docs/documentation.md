@@ -283,6 +283,12 @@ La veste grafica della Web Application è stata inizialmente prototipata
 su Bootstrap Studio per poi essere esportata direttamente su 
 PyCharm, da qui sono state create le varie schermate dell'interfaccia
 tramite HTML e CSS.
+All'interno della cartella `Templates` si possono trovare tutti i file HTML
+che modificano la veste grafica del sito, suddivisi in sottocartelle in base
+alla loro sezione di appartenenza (nella cartella `auth` troviamo
+tutti i templates collegati alle pagine di accesso e registrazione, nella
+cartella `main` quelle che definiscono l'interfaccia complessiva ed infine nella
+cartella `quiz` sono situate tutti gli editor e affini dei quiz).
 
 L'applicazione si suddivide in multiple sezioni:
 1) **Pagina iniziale**: Questa è la pagina che viene aperta all'avvio della
