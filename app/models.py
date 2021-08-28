@@ -115,11 +115,6 @@ class Questionario(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     questions = db.relationship('Domanda', cascade="all,delete", backref='in', lazy='dynamic')
 
-    def __init__(self, title, description, owner_id):
-        self.title = title
-        self.description = description
-        self.author_id = owner_id
-
     def __repr__(self):
         return f'<Questionario: {self.title} with {self.id}, owned by: {self.author_id}>'
 

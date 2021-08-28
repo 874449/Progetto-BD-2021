@@ -12,6 +12,7 @@ fuori di flask, in quanto i comandi di questo modulo vengono eseguiti nel contes
 dell'applicazione flask.
 """
 import click
+from . import fake
 from flask.cli import with_appcontext
 
 from . models import *
@@ -55,3 +56,13 @@ def fill_qtypes_table():
 
     db.session.commit()
     print('[SUCCESS] TipologiaDomande table has been filled successfully')
+
+
+@click.command(name='faker')
+@with_appcontext
+def faker():
+    print('[INFO] generating fake users')
+    fake.users(100)
+    print('[INFO] generating fake quizzes')
+    fake.questionari(200)
+    print('[SUCCESS] DONE')
