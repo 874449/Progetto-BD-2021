@@ -35,18 +35,28 @@ def editor(edit_uuid):
     editor_form = EditorForm(obj=current_quiz)
 
     if question.invia.data and question.validate():
+        valida = False
         if question.is_activated.data:
-            domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id,
-                              is_activated=question.is_activated.data, quiz_id=current_quiz.id,
-                              activated_by=question.activant.data,
-                              activated_by_answer_id=question.id_activant_answer.data)
+            # TODO fare controllo che la risposta attivante e la domanda attivante esistano => è stato fatto ma deve essere testato più approfonditamente
+            insieme_valido = [(i.id, i.question_id) for i in PossibileRisposta.query.all()]
+            if (question.id_activant_answer.data, question.activant.data) in insieme_valido:
+                domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id,
+                                  is_activated=question.is_activated.data, quiz_id=current_quiz.id,
+                                  activated_by=question.activant.data,
+                                  activated_by_answer_id=question.id_activant_answer.data)
+                valida = True
+            else:
+                flash('Non è stato possibile creare la domanda: Errore nella scelta della domanda o risposta attivante',
+                      'warning')
         else:
             domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id, quiz_id=current_quiz.id)
+            valida = True
 
-        db.session.add(domanda)
-        db.session.commit()
-        flash('Nuova domanda creata', 'success')
-        return redirect(url_for('quiz.editor', edit_uuid=current_quiz.uuid))
+        if valida:
+            db.session.add(domanda)
+            db.session.commit()
+            flash('Nuova domanda creata', 'success')
+            return redirect(url_for('quiz.editor', edit_uuid=current_quiz.uuid))
 
     if editor_form.submit.data and editor_form.validate():
         editor_form.populate_obj(current_quiz)
