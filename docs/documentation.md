@@ -97,7 +97,7 @@ set FLASK_APP = runner.py
 set FLASK_ENV = development
 ```
 
-A questo punto si può scegliere se usare il database già preconfigurato su Heroku o crearne uno locale.
+Fatto ciò, si può scegliere se usare il database già preconfigurato su Heroku o crearne uno locale.
 Se si desidera creare un database locale si consiglia di utilizzare postgres tramite phppgadmin, per collegare il database
 creato basterà digitare nella shell:
 ```shell
@@ -136,8 +136,18 @@ riga 144 file models.py
 
 **ii. Query sviluppate**
 
-codice delle query e breve descrizione di dove è 
-stata usata e come
+```
+select q.text, case when(atq.is_open = true) then atq.text else b.text end as answer
+
+from answers_to_questions atq join questions q on atq.question_id=q.id left join 
+        (select haa.question_id,haa.answer_to_questions_id,pa.text 
+         from have_as_answer haa join possible_answers pa on haa.possible_answer_id=pa.id) b
+    on (b.answer_to_questions_id=atq.id and b.question_id=atq.question_id)
+    where atq.id in (select qa.id
+                 from quiz_answers qa
+                 where qa.id=1 and quiz_id=14)
+order by q.id
+```
 
 **iii. Transazioni, Rollback, Triggers - Politiche d'integrità del database**
 
@@ -283,41 +293,63 @@ e lo riapre in seguito) tramite l'utilizzo
 di cookies, per la durata di un anno.  
 Una volta eseguito l'accesso al sito, l'utente avrà accesso a tutte
 le sezioni del sito rimanenti.
+
+
 2) **"Crea un questionario"**: Cliccando su questo link si verrà indirizzati
-ad una pagina dove l'utente avra accesso ad un pulsante per creare 
+ad una pagina dove l'utente avrà accesso ad un pulsante per creare 
 nuovi quiz (il pulsante aprirà l'editor che permetterà l'inserimento
 di un titolo ed una descrizione, in seguito al salvataggio l'utente
 potrà continuare la creazione inserendo tutte le domande che vorrà).  
 L'utente, inoltre, ha a disposizione una lista di tutti i questionari
 che ha già creato, con la possibilità di cancellarli, modificarli oppure
 vederne le risposte.
+
+
 3) **"Compila un questionario"**: Su questa schermata sono visibili i 
 questionari creati da altri utenti in modo da poterli compilare.  
-Una volta cliccato sul pulsante "Compila", l'utente verrà portato su 
-un editor simile a quello di creazione delle domande dove potrà
-inserire e salvare la sua risposta.  
-Ci sono 4 tipologie di domande supportate dal sito:  
-Aperta, ovvero un campo di testo in cui l'utente è libero di
-scrivere tutto ciò che vuole;
-Scelta, dove l'utente deve selezionare una singola risposta tra quelle
-fornite.
-Multi-scelta, molto simile a Scelta, qui l'utente può selezionare
-multiple risposte invece di una sola;
-Numerica, accetta solo risposte numeriche.
+All'utente viene presentata una lista che mostra titolo, descrizione, data
+di creazione e autore di ciascun questionario.  
+Cliccando sul nome del quiz si verrà portati alla schermata di
+inserimento delle risposte, mentre cliccare sul nome dell'autore mostrerà
+il suo profilo e le informazioni ad esso collegate (ad esempio l'E-Mail).  
+La tabella presenta molte funzionalità attue a migliorare l'esperienza 
+utente quali pulsanti per riordinare la lista in ordine crescente/decrescente
+in base ad una delle categorie (Ad esempio ordinarle per ordine crescente
+dei titoli) ed una barra di ricerca per scremare i risultati proposti.  
+
+   Ci sono 4 tipologie di domande supportate dal sito:
+   - Aperta, ovvero un campo di testo in cui l'utente è libero di
+   scrivere tutto ciò che vuole;
+   - Scelta, dove l'utente deve selezionare una singola risposta tra quelle
+   fornite.
+   - Multi-scelta, molto simile a Scelta, qui l'utente può selezionare
+   multiple risposte invece di una sola;
+   - Numerica, accetta solo risposte numeriche.
+   
+
 4) **"Risposte ai tuoi questionari"**: Da qui, è possibile accedere
-direttamente alle risposte fornite dagli utenti sui propri questionari:
+direttamente alle risposte fornite dagli utenti sui propri questionari.  
 Una volta selezionato lo specifico quiz di cui si vogliono visionare i
 risultati si avrà la possibilità di visualizzare i risultati 
-in due diversi modi,
-una visualizzazione suddivisa, dove ogni domanda è separata
-e presenta subito sotto una lista delle sue risposte,
-oppure una visualizzazione generale suddivisa in due colonne, 
-sulla colonna di sinistra troviamo la domanda mentre su quella
-a destra abbiamo la risposta ad essa collegata.
-Come specificato in precedenza, anche nella schermata
-"Crea un questionario" è presente un pulsante "Visualizza risposte" 
-che porterà alla medesima schermata di visualizzazione delle risposte
-del questionario selezionato.
-5) **"Profilo"**: Quest'ultima pagina presenta delle impostazioni per
-l'account, come la possibilità di modificare la propria E-Mail oppure il
-Nome Utente.
+in due diversi modi:
+   - Per domanda: 
+   Ogni domanda è separata e presenta una lista delle sue risposte;
+   - Per compilazione: 
+   Mostra tutte la lista di risposte di ogni utente in ordine.
+
+   La prima visualizzazione è molto utile se vogliamo vedere le varie
+   risposte per una specifica domanda, mentre la seconda diventa fondamentale
+nei questionari dove le domande sono collegate tra di loro e diamo più
+importanza a tutte le risposte prese collettivamente invece che singolarmente.  
+   Come specificato in precedenza, anche nella schermata
+   "Crea un questionario" è presente un pulsante "Visualizza risposte" 
+   che porterà alla medesima schermata di visualizzazione delle risposte
+   del questionario selezionato.
+
+
+5) **"Profilo"**: Quest'ultima pagina presenta informazioni sul profilo
+dell'utente (il nome utente, la E-Mail collegata all'account, l'ultimo 
+accesso effettuato e il numero di questionari creati).
+La schermata presenta anche un pulsante "Modifica Profilo" che riporta
+a delle impostazioni per l'account, come la possibilità di modificare 
+la propria E-Mail oppure il Nome Utente.
