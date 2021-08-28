@@ -137,7 +137,7 @@ def render(questionnaire_uuid):
     if form.validate_on_submit():
         new_record = RisposteQuestionario(user_id=current_user.id, quiz_id=current_quiz.id)
         db.session.add(new_record)
-        db.session.commit()
+        db.session.flush()
 
         iterator = 0
         for dom in domande:
@@ -148,21 +148,22 @@ def render(questionnaire_uuid):
             elif dom.type_id == 3:
                 risp = RispostaDomanda(id=new_record.id, question_id=dom.id, is_open=False)
                 db.session.add(risp)
-                db.session.commit()
+                db.session.flush()
                 statement = have_as_answer.insert().values(possible_answer_id=request.form.get('domanda' + str(iterator)),
                                                            answer_to_questions_id=risp.id,
                                                            question_id=dom.id)
                 db.session.execute(statement)
             else:
                 risp = RispostaDomanda(id=new_record.id, question_id=dom.id, is_open=False)
+                db.session.add(risp)
+                db.session.flush()
                 for elem in request.form.getlist('domanda' + str(iterator)):
-                    db.session.add(risp)
-                    db.session.commit()
                     statement = have_as_answer.insert().values(
                         possible_answer_id=elem,
                         answer_to_questions_id=risp.id,
                         question_id=dom.id)
                     db.session.execute(statement)
+                    db.session.flush()
             iterator += 1
         flash('Risposta inviata', 'success')
         db.session.commit()
