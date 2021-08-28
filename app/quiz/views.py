@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, request, url_for, abort
+from flask import render_template, flash, redirect, request, url_for, abort, jsonify
 from flask_login import login_required, current_user
 from .forms import Question, EditorForm, EditForm, SingleAnswerForm
 from . import quiz
@@ -18,27 +18,37 @@ def editor(edit_uuid):
     current_quiz = Questionario.query.filter_by(uuid=edit_uuid).first()
     tipi_domanda = TipologiaDomanda.query.all()
     subquery = db.session.query(TipologiaDomanda.id).filter(TipologiaDomanda.name == "Scelta")
-    # attivante = db.session.query(Domanda.id, Domanda.text, PossibileRisposta.id, PossibileRisposta.text)\
-    #    .join(PossibileRisposta).filter(Domanda.type_id.in_(subquery), Domanda.quiz_id == current_quiz)
-    #print(current_quiz.id)
     attivante = db.session.query(Domanda.id, Domanda.text).filter(Domanda.type_id.in_(subquery),
                                                                   Domanda.quiz_id == current_quiz.id)
-    attivante_list = [(i.id, i.text) for i in attivante]
+    attivante_list = [(-1, '')]
+    for i in attivante:
+        attivante_list.append((i.id, i.text))
+
+    id_list = [(-1, '')]
+    for i in PossibileRisposta.query.all():
+        id_list.append((i.id, i.text))
 
     # forms
     question = Question()
     question.activant.choices = attivante_list
+    question.id_activant_answer.choices = id_list
     editor_form = EditorForm(obj=current_quiz)
 
-    if question.validate_on_submit():
-        domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id,
-                          activant=question.is_activated.data, quiz_id=current_quiz.id)
+    if question.invia.data and question.validate():
+        if question.is_activated.data:
+            domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id,
+                              is_activated=question.is_activated.data, quiz_id=current_quiz.id,
+                              activated_by=question.activant.data,
+                              activated_by_answer_id=question.id_activant_answer.data)
+        else:
+            domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id, quiz_id=current_quiz.id)
+
         db.session.add(domanda)
         db.session.commit()
         flash('Nuova domanda creata', 'success')
         return redirect(url_for('quiz.editor', edit_uuid=current_quiz.uuid))
 
-    if editor_form.validate_on_submit():
+    if editor_form.submit.data and editor_form.validate():
         editor_form.populate_obj(current_quiz)
         db.session.commit()
         flash("Modifiche salvate", 'success')
@@ -73,6 +83,16 @@ def edit_question(quiz_uuid, question_id):
     return render_template('quiz/question_editor.html', form=form_dom, risposte=risposte,
                            current_question=current_question, risposte_form=risposte_form,
                            quiz_uuid=quiz_uuid)
+
+
+@quiz.route('/get_possible_answers')
+def get_possible_answers():
+    id = request.args.get('activant', type=int)
+    print(id)
+    # print("\n----------------------------\n LA FUNZIONE è STATA CHIAMATA \n ----------------------------------------------------")
+    p_r = PossibileRisposta.query.filter_by(question_id=id).all()
+    possibili_risposte = [(i.id, i.text) for i in p_r]
+    return jsonify(possibili_risposte)
 
 
 @quiz.route('/delete/<domanda_id>', methods=['POST'])
