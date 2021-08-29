@@ -196,7 +196,7 @@ class Questionario(db.Model):
 Di seguito sono riportate alcune delle query che abbiamo sviluppato 
 per il progetto:
 
-si va dalle più standard (abbastanza ricorrenti) per elencare il contenuto delle tabelle:
+Si va dalle più standard (abbastanza ricorrenti) per elencare il contenuto delle tabelle:
 ```sql
 SELECT quizzes.title AS quizzes_title,
        quizzes.description AS quizzes_description,
@@ -205,7 +205,7 @@ SELECT quizzes.title AS quizzes_title,
        quizzes.uuid AS quizzes_uuid, users.username AS users_username 
 FROM users JOIN quizzes ON users.id = quizzes.author_id
 ```
-che in orm si traduce più elegantemente come :
+Tradotte in ORM più elegantemente come:
 ```python
 db.session.query(
             Questionario.title, Questionario.description,
@@ -215,7 +215,7 @@ db.session.query(
         join(
             Questionario, User.id == Questionario.author_id)
 ```
-**Semantica**: la query sopra riportata viene utilizzata per ottenere l'elenco di tutti i questionari creati
+**Semantica**: La query sopra riportata viene utilizzata per ottenere l'elenco di tutti i questionari creati
 nel database unendo i campi della tabella `Questionario` con la tabella `User`. La `JOIN` avviene tramite
 la chiave esterna.
 
@@ -239,7 +239,7 @@ che sono divise su più tabelle:
       WHERE quiz_answers.quiz_id = %(quiz_id_1)s)
       ORDER BY questions.id, answers_to_questions.id
 ```
-che in python diventa:
+Tradotta in Python diventa:
 ```python
   subquery = db.session.query(
      RisposteQuestionario.id).\
@@ -256,7 +256,7 @@ che in python diventa:
 Dato un questionario e l'input fornito dall'utente, la query 
 prende i testi delle domande e la relativa risposta.
 Dal momento che la risposta può avere tipi diversi (come risposta aperta o 
-a scelta multipla), la query fa una JOIN con la tabella delle possibili
+a scelta multipla), la query fa una `JOIN` con la tabella delle possibili
 risposte, utilizzando una relazione molti a molti, per prelevare il 
 testo della risposta nel caso in cui la domanda sia a scelta.
 
