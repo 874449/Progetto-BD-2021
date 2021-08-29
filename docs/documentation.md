@@ -240,9 +240,78 @@ testo della risposta nel caso in cui la domanda sia a scelta.
 
 ### **iii. Transazioni, Rollback, Triggers - Politiche d'integrità del database**
 
-usando orm ci stacchiamo da database di postgres,
-ovvero il database puro, con orm astrai e vai a lavorare
-con python,
+I Rollback vengono usati come strato di protezione dei dati nel caso 
+un operazione vada storta, riportando l'applicazione allo stato in cui era
+prima dell'operazione stessa. Sono molto utili quando si cerca di 
+aggiungere dati o informazioni che potrebbero venire corrotti o danneggiati,
+in questi casi infatti è sufficiente impostare un Rollback che salvi 
+l'integrità del database.
+
+Ad esempio, nel momento in cui un operazione di `submit`
+viene eseguita su una risposta ad un questionario, le informazioni da 
+registrare vengono salvate su due tabelle diverse: Una conterrà tutte le
+risposte del questionario, mentre l'altra prende la risposta singola e la
+raggruppa alle altre risposte per la medesima domanda fornite da altri utenti.  
+Queste due tabelle vengono poi utilizzate per le due differenti visualizzazioni
+delle risposte dei questionari che si può vedere all'interno della 
+Web App, ma ovviamente è possibile che questa operazione non vada a buon 
+fine.  
+Nel momento in cui il `commit` viene effettuato, se l'operazione è andata
+a buon fine viene eseguito l'aggiornamento della sessione, nel caso 
+in cui invece ci siano stati dei problemi che renderebbero quindi i dati
+parziali viene effettuato un Rollback:
+```python
+  # di seguito viene usata la seguente notazione [···] per riferirsi a parti di codice
+  # tralasciate perché superflue alla semantica del rollback
+  if form.validate_on_submit():
+          # sto registrando una risposta: aggiungo il record al db
+          new_record = RisposteQuestionario(user_id=current_user.id, quiz_id=current_quiz.id)
+          db.session.add(new_record) <--
+          db.session.flush()         <--
+      # [···]
+      # dom.type_id è il tipo di domanda che è stata compilata nel form 1=aperta, 3=a scelta singola, 2=multipla
+      if dom.type_id == 1:
+          # [···]
+          db.session.add(RispostaDomanda( <--
+              id=new_record.id, question_id=dom.id, is_open=True, text=req)
+          )
+      elif dom.type_id == 3:
+          risp = RispostaDomanda(id=new_record.id, question_id=dom.id, is_open=False)
+          db.session.add(risp)          <--
+          db.session.flush()            <--
+          db.session.execute(statement) <--
+      else:
+          # [···]
+          db.session.add(risp) <--
+          db.session.flush()
+          for elem in request.form.getlist('domanda' + str(iterator)):
+              statement = have_as_answer.insert().values([···]) <--
+                      db.session.execute(statement)             <--
+                      db.session.flush()                        <--
+          # alla fine dell'aggiunta di tutte le risposte si esegue un try per l'insert
+          try:
+              db.session.commit()   <--
+              flash('Risposta inviata', 'success')
+          except IntegrityError:
+              # oppure si annulla tutto con un rollback
+              flash('Si è verificato un errore nella registrazione della risposta', 'warning')
+              db.session.rollback() <--
+```
+Questo secondo Rollback, invece, viene usato nel processo di creazione
+di utenti fittizi per riempire il database con dati di prova.  
+Siccome questi dati sono creati in maniera casuale e potrebbero presentare
+errori, il Rollback garantisce che il progetto verrebbe riportato 
+ad uno stato funzionante:
+```python
+while i < count:
+    u = User(fake_datas)
+    db.session.add(u)
+    try:
+        db.session.commit()
+        i += 1
+    except IntegrityError:
+        db.session.rollback()
+```
 
 ### **iv. Routes in Flask**
 
