@@ -23,14 +23,6 @@
             </div>
         </div>
 
-    <!--
-        Refactoring del quiz editor:
-            al click sull'editor viene visualizzata la lista delle domande con il titolo e la descrizione editabili
-            per ogni domanda c'è il pulsante edit che reindirizza a una pagina per fare l'editing della domanda
-            per ogni domanda c'è il pulsante per cancellarla
-            alla fine della pagina il pulsante '+' fa apparire un modal per creare la domanda.
-    -->
-
         <!-- new qiestion Modal -->
         <div class="modal fade" id="newQuestion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -46,13 +38,13 @@
                             <hr>
                             {{ form.type_id(class='form-select') }}
                             <hr>
-                            {{ form.is_activated.label }} {{ form.is_activated(class='form-check-inline', onclick='visibile()') }}
+                            <!--{{ form.is_activated.label }} {{ form.is_activated(class='form-check-inline', onclick='visibile()') }}
                             <div id="divInvis" style="visibility: hidden">
                                 <br>
                                 {{ form.activant.label }} {{ form.activant(class='form-select') }}
                                 <br>
                                 {{ form.id_activant_answer.label }} {{ form.id_activant_answer(class='form-select') }}
-                            </div>
+                            </div>-->
 
                         </div>
                         <div class="modal-footer">
@@ -84,7 +76,7 @@
                             <tr>
                                 <th scope="col"></th>
                                 <th scope="col">Testo della domanda</th>
-                                <th scope="col">Viene attivata da una domanda</th>
+                                <!--<th scope="col">Viene attivata da una domanda</th>-->
                                 <th scope="col">Tipo di domanda</th>
                             </tr>
                         </thead>
@@ -99,7 +91,7 @@
                                             {{ domanda.text }}
                                         {% endif %}
                                     </td>
-                                    <td>{{ domanda.is_activated }}</td>
+                                    <!--<td>{{ domanda.is_activated }}</td>-->
                                     <td>{{ tipi_domanda[domanda.type_id - 1].name }}</td>
                                     <td>
                                         <form id="edit-question" method="POST" action="{{ url_for('quiz.edit_question', question_id=domanda.id, quiz_uuid=current_quiz.uuid) }}">
