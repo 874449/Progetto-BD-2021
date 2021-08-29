@@ -262,6 +262,16 @@ testo della risposta nel caso in cui la domanda sia a scelta.
 
 ### **2.iii. Transazioni, Rollback, Triggers - Politiche d'integrità del database**
 
+Le transazioni consistono in una sequenza di operazioni sulla base di 
+dati, sono caratterizzate da serializzabilità, che evita sovrapposizioni
+di esecuzione, atomicità, un annullamento di tutti gli effetti parziali
+in caso di interruzione e persistenza, ovvero la permanenza definitiva
+dei cambiamenti fatti al completamento di una transazione.  
+Per quanto riguarda il nostro progetto, nonostante le concorrenzie siano 
+sempre un evenienza da gestire, non abbiamo ritenuto problematiche 
+quelle che si presentano nella nostra base di dati, perciò non abbiamo 
+sviluppato vere transazioni per gestirle. Abbiamo, invece, posto 
+attenzione alla creazione di alcuni Rollbacks.  
 I Rollback vengono usati come strato di protezione dei dati nel caso 
 un operazione vada storta, riportando l'applicazione allo stato in cui era
 prima dell'operazione stessa. Sono molto utili quando si cerca di 
