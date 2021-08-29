@@ -7,25 +7,24 @@ Composto da
 
 ### Indice
 
-1. **Introduzione al progetto**
-   1. Strumenti e piattaforme usate per sviluppare il progetto
-      1. Librerie utilizzate
-   2. Gestione del gruppo e suddivisione del lavoro
-   3. Istruzioni per il setup dell'ambiente per eseguire il progetto in locale
-2. **Database**
-   1. Schema logico e relazionale della Base di Dati
-      1. Implementazione delle relazioni
-   2. Query sviluppate
-   3. Transazioni, Rollback, Triggers - Politiche d'integrità del database
-   4. Routes in Flask
-   5. Implementazione delle funzioni di Login/Sign-in
-   6. Analisi dei dati dei questionari
-   7. Definizione di ruoli
-4. **Misure di sicurezza**
-   1. Hash e passwords
-   2. Autenticazione e Log-in
-   3. CSRF, SQL Injection
-5. **Sviluppo grafico del sito**
+1. **Introduzione al progetto**.....................................................1
+   1. Strumenti e piattaforme usate per sviluppare il progetto......................1
+      1. Librerie utilizzate........................................................2
+   2. Gestione del gruppo e suddivisione del lavoro.................................2
+   3. Istruzioni per il setup dell'ambiente per eseguire il progetto in locale......2
+2. **Database**.....................................................................4
+   1. Schema logico e relazionale della Base di Dati................................4
+      1. Implementazione delle relazioni............................................6
+   2. Query sviluppate..............................................................6
+   3. Transazioni, Rollback, Triggers - Politiche d'integrità del database..........7
+   4. Routes in Flask...............................................................8
+   5. Implementazione delle funzioni di Login/Sign-in...............................9
+   6. Definizione di ruoli..........................................................9
+3. **Misure di sicurezza**..........................................................9
+   7. Hash e passwords..............................................................9
+   8. Autenticazione e Log-in.......................................................10
+   9. CSRF, SQL Injection...........................................................10
+4. **Sviluppo grafico del sito**....................................................10
 
 ## 1. Introduzione al progetto
 
@@ -69,7 +68,7 @@ delle query.
 - `flask-login` si occupa di gestire le sessioni degli utenti e viene usato principalmente
 per controllare l'accesso degli utenti registrati alle pagine.
 - `flask-mail` è la libreria utilizzata per l'invio della mail di conferma per la registrazione
-degli utenti
+degli utenti.
 - `flask-pagedown` consente l'input dell'utente in sintassi markdown e viene utilizzata nella creazioen
 dei questionari, rendendo possibile personalizzare il testo delle domande.
 
@@ -111,7 +110,6 @@ export FLASK_ENV = development
 set FLASK_APP = runner.py
 set FLASK_ENV = development
 ```
-
 Fatto ciò, si può scegliere se usare il database già preconfigurato su Heroku o crearne uno locale.
 Se si desidera creare un database locale si consiglia di utilizzare postgres tramite phppgadmin, per collegare il database
 creato basterà digitare nella shell:
@@ -158,7 +156,7 @@ fake.questionari(y) # con y numero di questionari generati
 
 Per la Base di dati è stato sviluppato il seguente schema logico
 e relazionale che illustra le relazioni e gli attributi delle varie 
-tabelle
+tabelle:
 
 **Schema Concettuale:**
 ![Schema concettuale](imgdocs/schema concettuale.png)
@@ -359,7 +357,7 @@ Infine, nel file `views.py` troviamo le effettive Routes
 che stabiliscono quando e come ciascuna pagina deve
 essere visualizzata (per esempio, potremmo voler avere
 pagine accessibili solo dopo una 
-POST come ad esempio `'/delete/<quiz_id>'`)
+POST come ad esempio `'/delete/<quiz_id>'`).
 
 ### **2.v. Implementazione delle funzioni di Login/Sign-in**
 
