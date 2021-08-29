@@ -31,7 +31,7 @@ def delete(quiz_uuid):
         )
         db.session.execute(statement)
         db.session.flush()
-        # PossibileRisposta.query.filter_by(question_id=domanda.id).delete()
+        PossibileRisposta.query.filter_by(question_id=domanda.id).delete()
 
     RisposteQuestionario.query.filter_by(quiz_id=quiz.id).delete()
     db.session.delete(quiz)
@@ -186,9 +186,14 @@ def download(uuid):
     '''
     lista_risposte_id = [r.id for r in risposte]
 
+    max_question_number = 0
+    for x in range(0, len(data)):
+        if len(data[lista_risposte_id[x]].keys()) > max_question_number:
+            max_question_number = x
+
     # stream output
     output = io.StringIO()
-    writer = csv.DictWriter(output, fieldnames=data[lista_risposte_id[0]].keys())
+    writer = csv.DictWriter(output, fieldnames=data[lista_risposte_id[max_question_number]].keys())
 
     writer.writeheader()
     for i in range(0, len(data)):

@@ -17,8 +17,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')
     MAIL_PORT = int(os.environ.get('MAIL_PORT', '587'))
-    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in \
-                   ['true', 'on', '1']
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     QUIZ_MAIL_SUBJECT_PREFIX = '[Quiz4All]'
@@ -40,7 +39,8 @@ class DevelopmentConfig(Config):
     DEBUG = True
     # per far girare il DB locale collegato a flask si deve cambiare la url con
     # 'postgresql://<pg_username>:<pg_password>@localhost/<db_name>'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
+        'postgresql://matteo:password@localhost/progetto-basi'
 
 
 class TestingConfig(Config):
