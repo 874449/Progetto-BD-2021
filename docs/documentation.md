@@ -40,7 +40,7 @@ e rispondere alle domande di ognuno di essi.
 Il proprietario di un questionario sarà poi in grado di visionare le
 risposte fornite dagli utenti ed esportarle in formato CSV.
 
-**i. Strumenti e piattaforme usate per sviluppare il progetto**
+### **i. Strumenti e piattaforme usate per sviluppare il progetto**
 
 Il progetto è stato sviluppato utilizzando Python e SQLAlchemy,
 tutti i membri del gruppo hanno usato l'IDE PyCharm per 
@@ -53,19 +53,19 @@ stessa base di dati per la fase di testing e sviluppo.
 Il gruppo ha inoltre deciso di creare un gruppo Whatsapp dedicato al
 progetto in cui tutti i membri erano sempre raggiungibili per 
 eventuale necessità.  
-Il gruppo ha fatto riferimento al libro di testo "Flask Web Development"
+Il gruppo ha fatto riferimento al libro di testo "_Flask Web Development_"
 di Miguel Grinberg come ulteriore fonte di esempi e spiegazioni riguardanti
-Flask e altre componenti del progetto. 
-   
-**i.a. Librerie utilizzate**
+Flask e altre componenti del progetto.
+
+### **i.a. Librerie utilizzate**
 
 # Matteo qui per le librerie
 
-**i.b. ORM**
+### **i.b. ORM**
 
 La scelta della gestione del database è ricaduta su SQLAlchemy.ORM gestito attraverso la libreria flask-sqlalchemy.
 
-**ii. Gestione del gruppo e suddivisione del lavoro**
+### **ii. Gestione del gruppo e suddivisione del lavoro**
 
 Il gruppo non ha ritenuto necessaria la definizione di ruoli precisi,
 ci sono stati molteplici incontri online tramite piattaforme come Discord
@@ -80,7 +80,7 @@ Nonostante questo, ogni sviluppo è stato ampiamente discusso e trattato
 con tutti i membri del gruppo che hanno dato il loro contributo ogni 
 qualvolta fosse richiesto.
 
-**iii. Istruzioni per il setup dell'ambiente per eseguire il progetto in locale**
+### **iii. Istruzioni per il setup dell'ambiente per eseguire il progetto in locale**
 
 Se ancora non si ha i file sorgente è necessario prima di tutto scaricarli da github con il comando
 ```shell
@@ -127,32 +127,49 @@ flask fill_qtypes_table
 ```
 A questo punto si può far partire l'applicazione con `flask run` e collegarsi all'indirizzo http://127.0.0.1:5000/.
 
+## 2. Database
 Non è essenziale per il funzionamento dell'applicazione
 
 ### 2. Database
 
-**i. Schema logico e relazionale della Base di Dati**
+### **i. Schema logico e relazionale della Base di Dati**
 
 Per la Base di dati è stato sviluppato il seguente schema logico
 e relazionale che illustra le relazioni e gli attributi delle varie 
 tabelle
 
 **Schema Concettuale:**
-
 ![Schema concettuale](imgdocs/schema concettuale.png)
-**Schema Logico:**
 
+**Schema Logico:**
 ![Schema logico](imgdocs/schema logico.png)
 
 **Breve descrizione delle varie tabelle:**
-
 ![Descrizione delle tabelle](imgdocs/descr tabelle.png)
 
-**i.a. Implementazione delle relazioni**
+### **i.a. Implementazione delle relazioni**
 
-riga 144 file models.py
+SQLAlchemy utilizza le relationships in modo da rendere le relazioni
+percorribili anche nel verso opposto a quello prestabilito.
+Un esempio di implementazione di relationships all'interno del nostro
+progetto è il campo questions della classe Questionario, all'interno di 
+questo campo definiamo come, in caso di delete, vengano eliminate a cascata
+anche tutte le domande collegate a suddetto questionario:
 
-**ii. Query sviluppate**
+```python
+class Questionario(db.Model):
+    __tablename__ = 'quizzes'
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String, default=uuid4())
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
+    title = db.Column(db.String(64))
+    description = db.Column(db.Text)
+    description_html = db.Column(db.Text)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    questions = db.relationship('Domanda', cascade="all,delete", backref='in', lazy='dynamic')
+```
+
+### **ii. Query sviluppate**
 
 Di seguito sono riportate alcune delle query che abbiamo sviluppato 
 per il progetto:
@@ -166,9 +183,7 @@ SELECT quizzes.title AS quizzes_title,
        quizzes.uuid AS quizzes_uuid, users.username AS users_username 
 FROM users JOIN quizzes ON users.id = quizzes.author_id
 ```
-
-che in orm si traduce più elegantemente come 
-
+che in orm si traduce più elegantemente come :
 ```python
 db.session.query(
             Questionario.title, Questionario.description,
@@ -178,46 +193,44 @@ db.session.query(
         join(
             Questionario, User.id == Questionario.author_id)
 ```
-Semantica: la query sopra riportata viene utilizzata per ottenere l'elenco di tutti i questionari creati
+**Semantica**: la query sopra riportata viene utilizzata per ottenere l'elenco di tutti i questionari creati
 nel database unendo i campi della tabella `Questionario` con la tabella `User`. La `JOIN` avviene tramite
 la chiave esterna.
 
 Di seguito invece si riporta la query utilizzata per raccogliere tutte le informazioni sulle risposte dei questionari
-che sono divise su più tabelle
-
+che sono divise su più tabelle:
 ```sql
-SELECT questions.text AS "Domanda", questions.type_id AS "Tipo",
-       questions.id AS "Id_domanda",
-       CASE WHEN answers_to_questions.is_open
-           THEN answers_to_questions.text
-           ELSE possible_answers.text
-           END AS "Risposta" 
-FROM questions JOIN answers_to_questions ON questions.id = answers_to_questions.question_id
-    LEFT OUTER JOIN (have_as_answer AS have_as_answer_1 JOIN possible_answers
-        ON possible_answers.id = have_as_answer_1.possible_answer_id)
-        ON answers_to_questions.id = have_as_answer_1.answer_to_questions_id
-               AND answers_to_questions.question_id = have_as_answer_1.question_id 
-WHERE answers_to_questions.id IN (
-    SELECT quiz_answers.id 
-    FROM quiz_answers 
-    WHERE quiz_answers.quiz_id = %(quiz_id_1)s)
-    ORDER BY questions.id, answers_to_questions.id
+  SELECT questions.text AS "Domanda", questions.type_id AS "Tipo",
+         questions.id AS "Id_domanda",
+         CASE WHEN answers_to_questions.is_open
+             THEN answers_to_questions.text
+             ELSE possible_answers.text
+             END AS "Risposta" 
+  FROM questions JOIN answers_to_questions ON questions.id = answers_to_questions.question_id
+      LEFT OUTER JOIN (have_as_answer AS have_as_answer_1 JOIN possible_answers
+          ON possible_answers.id = have_as_answer_1.possible_answer_id)
+          ON answers_to_questions.id = have_as_answer_1.answer_to_questions_id
+                 AND answers_to_questions.question_id = have_as_answer_1.question_id 
+  WHERE answers_to_questions.id IN (
+      SELECT quiz_answers.id 
+      FROM quiz_answers 
+      WHERE quiz_answers.quiz_id = %(quiz_id_1)s)
+      ORDER BY questions.id, answers_to_questions.id
 ```
-
 che in python diventa:
 ```python
-subquery = db.session.query(
-   RisposteQuestionario.id).\
-   filter(RisposteQuestionario.quiz_id == quiz_id, RisposteQuestionario.id == i)
+  subquery = db.session.query(
+     RisposteQuestionario.id).\
+     filter(RisposteQuestionario.quiz_id == quiz_id, RisposteQuestionario.id == i)
 
-db.session.query(
-    Domanda.text.label('Domanda'),
-    case((RispostaDomanda.is_open, RispostaDomanda.text),
-        else_=PossibileRisposta.text).label('Risposta')).join(RispostaDomanda) \
-            .outerjoin(RispostaDomanda.have_as_answers).filter(RispostaDomanda.id.in_(subquery)) \
-            .order_by(Domanda.id, RispostaDomanda.id)
+  db.session.query(
+      Domanda.text.label('Domanda'),
+      case((RispostaDomanda.is_open, RispostaDomanda.text),
+          else_=PossibileRisposta.text).label('Risposta')).join(RispostaDomanda) \
+              .outerjoin(RispostaDomanda.have_as_answers).filter(RispostaDomanda.id.in_(subquery)) \
+              .order_by(Domanda.id, RispostaDomanda.id)
 ```
-Semantica:
+**Semantica**:
 Dato un questionario e l'input fornito dall'utente, la query 
 prende i testi delle domande e la relativa risposta.
 Dal momento che la risposta può avere tipi diversi (come risposta aperta o 
@@ -225,29 +238,29 @@ a scelta multipla), la query fa una JOIN con la tabella delle possibili
 risposte, utilizzando una relazione molti a molti, per prelevare il 
 testo della risposta nel caso in cui la domanda sia a scelta.
 
-**iii. Transazioni, Rollback, Triggers - Politiche d'integrità del database**
+### **iii. Transazioni, Rollback, Triggers - Politiche d'integrità del database**
 
 usando orm ci stacchiamo da database di postgres,
 ovvero il database puro, con orm astrai e vai a lavorare
-con python, 
+con python,
 
-**iv. Routes in Flask**
+### **iv. Routes in Flask**
 
 Il Progetto si divide essenzialmente in 3 grandi sezioni: 
 Autenticazione, interfaccia
-del sito e infine modifica e renderizzazione dei questionari.\
+del sito e infine modifica e renderizzazione dei questionari.  
 Per ognuna di queste sezioni, chiamate Blueprint, troviamo
 un file `__init__.py` che funge da inizializzazione,
-nel secondo file (`forms.py` oppure `errors.py`) troviamo 
+nel secondo file invece (`forms.py` oppure `errors.py`) troviamo 
 utilità come la definizione di classi di dati che le pagine
-gestiranno, metodi/funzioni oppure pagine di errore comuni.
+gestiranno, metodi/funzioni oppure pagine di errore comuni.  
 Infine, nel file `views.py` troviamo le effettive Routes
 che stabiliscono quando e come ciascuna pagina deve
 essere visualizzata (per esempio, potremmo voler avere
 pagine accessibili solo dopo una 
 POST come ad esempio `'/delete/<quiz_id>'`)
 
-**v. Implementazione delle funzioni di Login/Sign-in**
+### **v. Implementazione delle funzioni di Login/Sign-in**
 
 Le funzionalità di Login e Sign-In sono trattate più
 nel dettaglio nella sezione 3.ii di questo documento, 
@@ -259,12 +272,7 @@ del server, evitando quindi che un utente malintenzionato
 possa trovare gli id degli utenti quando non dovrebbe 
 essere in grado di farlo.
 
-**vi. Analisi dei dati dei questionari**
-
-esperienza utilizzo analisi dei dati (google moduli) view 
-delle risposte del questionario (es grafico a torta o percentuali)
-
-**vii. Definizione di ruoli**
+### **vi. Definizione di ruoli**
 
 I ruoli sono una funzionalità senza dubbio molto efficiente, 
 permettono di conferire un gruppo di permessi senza 
@@ -297,9 +305,9 @@ clone dei ruoli, ovvero abbiamo creato all'interno del database
 una tabella chiamata, per l'appunto, ruoli, che 
 ne emula le funzionalità e i vantaggi.
 
-### 3. Misure di sicurezza
+## 3. Misure di sicurezza
 
-**i. Hash e passwords**
+### **i. Hash e passwords**
 
 All'interno del file `models.py` abbiamo creato una
 moltitudine di funzioni che ci hanno permesso di gestire
@@ -336,9 +344,7 @@ della password:
      return s.dumps({'confirm': self.id}).decode('utf-8')
 ```
 
-magari mettiamo qualche riga di codice qui come esempio, ci penzo
-
-**ii. Autenticazione e Log-in**
+### **ii. Autenticazione e Log-in**
 
 Come anticipato nella sezione 2.v del documento, tutto ciò che
 riguarda la sicurezza del sito e della base di dati è sviluppato
@@ -362,7 +368,7 @@ profilo. I Cookies, situati nella cartella `flask_session`,
 durano circa un anno, dopo tale periodo decadono e 
 vengono eliminati.
 
-**iii. CSRF, SQLInjection**
+### **iii. CSRF, SQLInjection**
 
 La gestione delle SQLInjection, ovvero quando un utente 
 malintenzionato "inietta" codice SQL per estrapolare dati in posti e modi che
@@ -398,7 +404,7 @@ tutte le librerie utilizzate nel progetto sono Open-Source, ovvero
 sono pubbliche ed eventuali errori potrebbero essere rapidamente 
 risolti dalla community online.
 
-### 4. Sviluppo grafico del sito
+## 4. Sviluppo grafico del sito
 
 La veste grafica della Web Application è stata inizialmente prototipata
 su Bootstrap Studio per poi essere esportata direttamente su 
@@ -451,7 +457,10 @@ dei titoli) ed una barra di ricerca per scremare i risultati proposti.
    fornite.
    - Multi-scelta, molto simile a Scelta, qui l'utente può selezionare
    multiple risposte invece di una sola;
-   - Numerica, accetta solo risposte numeriche.
+   - Attivabili, non un vero tipo di domanda ma più una funzionalità delle 
+   domande a Scelta, permettono di creare quesiti che vengono proposti
+   all'utente solo se viene selezionata una determinata risposta nella 
+   domanda a Scelta a cui sono collegate. 
    
 
 4) **"Risposte ai tuoi questionari"**: Da qui, è possibile accedere
