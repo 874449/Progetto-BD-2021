@@ -10,7 +10,6 @@ Composto da
 1. **Introduzione al progetto**
    1. Strumenti e piattaforme usate per sviluppare il progetto
       1. Librerie utilizzate
-      2. ORM
    2. Gestione del gruppo e suddivisione del lavoro
    3. Istruzioni per il setup dell'ambiente per eseguire il progetto in locale
 2. **Database**
@@ -59,11 +58,20 @@ Flask e altre componenti del progetto.
    
 **i.a. Librerie utilizzate**
 
-# Matteo qui per le librerie
+Le principali librerie utilizzate per implementare le funzionalità della Web App sono per la maggior parte dei wrapper,
+costruiti appositamente per flask, di altre librerie: in particolare flask_sqlalchemy, flask_login, flask_mail,
+flask_pagedown sono le librerie con cui si gli sviluppatori che gli utenti
+sono a più stretto contatto per l'interazione con l'applicazione.
 
-**i.b. ORM**
-
-La scelta della gestione del database è ricaduta su SQLAlchemy.ORM gestito attraverso la libreria flask-sqlalchemy.
+- `flask-sqlalchemy` è un ulteriore livello di astrazione che si interpone tra flask e sqlalchemy
+facilitando la gestione delle sessioni e connessioni al database, inoltre introduce una sintassi semplificata
+delle query.
+- `flask-login` si occupa di gestire le sessioni degli utenti e viene usato principalmente
+per controllare l'accesso degli utenti registrati alle pagine.
+- `flask-mail` è la libreria utilizzata per l'invio della mail di conferma per la registrazione
+degli utenti
+- `flask-pagedown` consente l'input dell'utente in sintassi markdown e viene utilizzata nella creazioen
+dei questionari, rendendo possibile personalizzare il testo delle domande.
 
 **ii. Gestione del gruppo e suddivisione del lavoro**
 
@@ -122,12 +130,27 @@ infine per creare le tabelle del database basterà digitare:
 ```shell
 # per creare lo schema del database si usa create_tables
 flask create_tables
-# populate_db riempie le tabelle con alcuni dati standard
+# fill_qtypes_table riempie le tabelle con alcuni dati standard
 flask fill_qtypes_table
 ```
 A questo punto si può far partire l'applicazione con `flask run` e collegarsi all'indirizzo http://127.0.0.1:5000/.
 
-Non è essenziale per il funzionamento dell'applicazione
+Non è essenziale per il funzionamento dell'applicazione ma è possibile inserise dei dati fittizzi per 
+osservare l'applicativo a pieno carico. Per generare i dati è stato utilizzato il modulo `faker`. Analogamente a quanto fatto prima
+per popolare il database è sufficiente lanciare il comando `flask faker` per generare 100 nuovi utenti e 200 questionari
+con relative domande.
+
+Volento si può personalizzare la quantità di dati generati, ma sarà necessario interagire
+tramite la shell:
+
+da terminale digitate `flask shell` e si aprirà un ambiente interattivo da cui si può interagire con l'applicazione.
+Da qui sarà sufficiente digitare:
+
+```python
+from app import fake
+fake.users(x) # con x numero degli utenti da generare
+fake.questionari(y) # con y numero di questionari generati
+```
 
 ### 2. Database
 
