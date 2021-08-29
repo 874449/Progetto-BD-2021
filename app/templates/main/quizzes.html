@@ -35,7 +35,7 @@
                 </thead>
                 <tbody>
                 {% for questionario in questionari %}
-                    {% if questionario.username != current_user.username %}
+                    {% if (questionario.username != current_user.username) and (questionario.id not in risposte_date) %}
                     <tr>
                         <td><a href="{{ url_for('quiz.render', questionnaire_uuid=questionario.uuid) }}">{{ questionario.title }}</a></td>
                         <td>

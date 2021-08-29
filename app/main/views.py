@@ -94,12 +94,15 @@ def edit_profile():
 def quizzes():
     query = db.session.\
         query(
+            Questionario.id,
             Questionario.title, Questionario.description, Questionario.description_html,
             Questionario.timestamp, Questionario.uuid, User.username).\
         join(
             Questionario, User.id == Questionario.author_id)
 
-    return render_template('main/quizzes.html', questionari=query)
+    lista_risposte = [risposta.quiz_id for risposta in RisposteQuestionario.query.filter_by(user_id=current_user.id).all()]
+
+    return render_template('main/quizzes.html', questionari=query, risposte_date=lista_risposte)
 
 
 @main.route('/responses/<quiz_uuid>')
