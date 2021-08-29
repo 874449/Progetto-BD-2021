@@ -17,3 +17,4 @@ app/main/__pycache__
 flask_session
 
 .env
+docs/.Rhistory
