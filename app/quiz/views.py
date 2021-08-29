@@ -1,15 +1,14 @@
 from flask import render_template, flash, redirect, request, url_for, abort, jsonify
 from flask_login import login_required, current_user
 from sqlalchemy.exc import IntegrityError
-from .forms import Question, EditorForm, EditForm, SingleAnswerForm
+from .forms import Question, EditorForm, EditForm, SingleAnswerForm, MultiCheckboxField
 from . import quiz
 from ..models import *
 from .. import db, moment
 
 from flask_wtf import FlaskForm
+
 from wtforms import TextAreaField, SelectMultipleField, SubmitField, RadioField
-from wtforms.validators import Required, Length
-from flask_pagedown.fields import PageDownField
 
 
 @quiz.route('/editor/<edit_uuid>', methods=['GET', 'POST'])
@@ -98,10 +97,9 @@ def edit_question(quiz_uuid, question_id):
 
 @quiz.route('/get_possible_answers')
 def get_possible_answers():
-    id = request.args.get('activant', type=int)
-    print(id)
-    # print("\n----------------------------\n LA FUNZIONE è STATA CHIAMATA \n ----------------------------------------------------")
-    p_r = PossibileRisposta.query.filter_by(question_id=id).all()
+    id_ = request.args.get('activant', type=int)
+    print(id_)
+    p_r = PossibileRisposta.query.filter_by(question_id=id_).all()
     possibili_risposte = [(i.id, i.text) for i in p_r]
     return jsonify(possibili_risposte)
 
@@ -167,7 +165,7 @@ def render(questionnaire_uuid):
             ))
         # se è una domanda a scelta multipla
         else:
-            setattr(CompilationForm, 'domanda' + str(iterator), SelectMultipleField(
+            setattr(CompilationForm, 'domanda' + str(iterator), MultiCheckboxField(
                 choices=[(str(q.id), q.text) for q in PossibileRisposta.query.filter_by(question_id=domanda.id)],
                 render_kw={'class': 'form-select'}
             ))

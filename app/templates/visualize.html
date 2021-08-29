@@ -68,8 +68,14 @@
                         {% endfor %}
                         </table>
                     {% elif domanda.type_id == 2 %}
-                        <p><em>Tieni premuto il tasto 'ctrl' per selezionare più risposte</em></p>
-                        {{ dom() }}
+                        <table>
+                        {% for choiche in dom %}
+                        <tr>
+                            <td>{{ choiche }}</td>
+                            <td>{{ choiche.label(class='form-label') }}</td>
+                        </tr>
+                        {% endfor %}
+                        </table>
                     {% else %}
                         {{ dom() }}
                     {% endif %}
