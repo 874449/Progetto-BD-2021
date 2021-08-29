@@ -192,6 +192,10 @@ def download(uuid):
     '''
     lista_risposte_id = [r.id for r in risposte]
 
+    if not lista_risposte_id:
+        flash('Il quiz non ha ancora ricevuto risposte, il file csv non verrà creato', 'warning')
+        return redirect(url_for('.responses_overview', quiz_uuid=uuid))
+
     max_question_number = 0
     for x in range(0, len(data)):
         if len(data[lista_risposte_id[x]].keys()) > max_question_number:

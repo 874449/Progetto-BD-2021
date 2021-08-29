@@ -46,7 +46,7 @@
             </div>
             <div class="card-body">
                 {% set dom = getter(form, 'domanda' + to_str(loop.index0)) %}
-                {% if domanda.is_activated %}
+                <!-- {% if domanda.is_activated %}
                     {% if domanda.type_id == 3 %}
                         {% for choiche in dom %}
                         <tr>
@@ -57,7 +57,7 @@
                     {% else %}
                         {{ dom(disabled=True) }}
                     {% endif %}
-                {% else %}
+                {% else %} -->
                     {% if domanda.type_id == 3 %}
                         <table>
                         {% for choiche in dom %}
@@ -67,6 +67,9 @@
                         </tr>
                         {% endfor %}
                         </table>
+                    {% elif domanda.type_id == 2 %}
+                        <p><em>Tieni premuto il tasto 'ctrl' per selezionare più risposte</em></p>
+                        {{ dom() }}
                     {% else %}
                         {{ dom() }}
                     {% endif %}
