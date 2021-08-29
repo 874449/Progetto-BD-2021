@@ -50,9 +50,8 @@ def create_app(config_name):
     app.register_blueprint(quiz, url_prefix='/quiz')
 
     # aggiungo ai comandi di flask quelli creati da me nel file commands.py
-    from .commands import create_tables, populate_db, fill_qtypes_table, delete_db, faker
+    from .commands import create_tables, fill_qtypes_table, delete_db, faker
     app.cli.add_command(create_tables)
-    app.cli.add_command(populate_db)
     app.cli.add_command(fill_qtypes_table)
     app.cli.add_command(delete_db)
     app.cli.add_command(faker)

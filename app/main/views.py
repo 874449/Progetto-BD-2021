@@ -22,7 +22,6 @@ def index():
 @main.route('/delete/<quiz_uuid>', methods=['POST'])
 @login_required
 def delete(quiz_uuid):
-    # TODO tripla query annidata, bisognerebbe sistemare il file models per far funzionare il delete on cascade...
     quiz = Questionario.query.filter_by(uuid=quiz_uuid).first()
     domande = Domanda.query.filter_by(quiz_id=quiz.id).all()
     query3 = RisposteQuestionario.query.filter_by(quiz_id=quiz.id).all()

@@ -34,15 +34,6 @@ def delete_db():
     print("DB Deleted")
 
 
-@click.command(name='populate_db')
-@with_appcontext
-def populate_db():
-    """funzione per aggiungere dati per riempire il database"""
-    # TODO crea la funzione
-    print('[INFO] populating TipologiaDomanda table')
-    fill_qtypes_table()
-
-
 @click.command(name='fill_qtypes_table')
 @with_appcontext
 def fill_qtypes_table():

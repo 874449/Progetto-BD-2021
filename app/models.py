@@ -24,10 +24,7 @@ ed è utilizzato per scopi di debug.
 '''
 
 
-# TODO: creare ruoli e permessi per:
-#  admin - l'amministratore che può fare tutte le query e controllare ciò che fanno gli utenti
-#  utente normale - può creare quiz, editarli e invitare al questionario gli altri utenti
-#  utente anonimo - può solo visualizzare e compilare i quiz a cui è invitato
+# classe non utilizzata, che però risulta utile nell'ottica di espandibilità del progetto.
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)

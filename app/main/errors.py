@@ -1,8 +1,6 @@
 from flask import render_template
 from . import main
 
-# TODO: aggiungere altre tipologie di errori
-
 
 @main.app_errorhandler(403)
 def forbidden(e):

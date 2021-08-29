@@ -37,7 +37,6 @@ def editor(edit_uuid):
     if question.invia.data and question.validate():
         valida = False
         if question.is_activated.data:
-            # TODO fare controllo che la risposta attivante e la domanda attivante esistano => è stato fatto ma deve essere testato più approfonditamente
             insieme_valido = [(i.id, i.question_id) for i in PossibileRisposta.query.all()]
             if (question.id_activant_answer.data, question.activant.data) in insieme_valido:
                 domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id,
@@ -107,7 +106,6 @@ def get_possible_answers():
 @quiz.route('/delete/<domanda_id>', methods=['POST'])
 @login_required
 def delete(domanda_id):
-    # TODO security check proprietary role
     query1 = Domanda.query.filter_by(id=domanda_id).first()
     query2 = Questionario.query.filter_by(id=query1.quiz_id).first()
     query3 = PossibileRisposta.query.filter_by(question_id=domanda_id).all()
@@ -136,10 +134,10 @@ def delete_answer(answer_id, quiz_uuid):
 
 
 @quiz.route('/view/<questionnaire_uuid>', methods=['GET', 'POST'])
+@login_required
 def render(questionnaire_uuid):
     # query
     current_quiz = Questionario.query.filter_by(uuid=questionnaire_uuid).first()
-    # TODO: bisogna decidere in che ordine far apparire le domande
     domande = current_quiz.questions.order_by(Domanda.id)
 
     # creazione dinamica del form lato server
@@ -217,6 +215,7 @@ def render(questionnaire_uuid):
         try:
             db.session.commit()
             flash('Risposta inviata', 'success')
+            return redirect(url_for('main.quizzes'))
         except IntegrityError:
             # oppure si annulla tutto con un rollback
             flash('Si è verificato un errore nella registrazione della risposta', 'warning')
