@@ -79,23 +79,3 @@
     </form>
     </div>
 {% endblock %}
-
-{% block script_part %}
-<script>
-    $().ready(function() {
-
-        $('#clicker').click(function() {
-            $('input').each(function() {
-                if ($(this).attr('disabled')) {
-                    $(this).removeAttr('disabled');
-                }
-                else {
-                    $(this).attr({
-                        'disabled': 'disabled'
-                    });
-                }
-            });
-        });
-    });
-</script>
-{% endblock %}

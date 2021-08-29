@@ -9,6 +9,8 @@ app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 migrate = Migrate(app, db)
 
 
+# make_shell_context dà la possibilità di interfacciarsi con l'applicazione da CLI con il comando flask shell
+# gli oggetti importati nel dizionario saranno visibili nella shell senza dover fare alcun import
 @app.shell_context_processor
 def make_shell_context():
     return dict(db=db, User=User, Questionario=Questionario, Role=Role,
@@ -17,6 +19,8 @@ def make_shell_context():
                 RisposteQuestionario=RisposteQuestionario)
 
 
+# le funzioni wrappate da 'utility_processor' servono a rendere disponibili dei metodi/funzioni
+# personalizzate per l'ambiente di jinja
 @app.context_processor
 def utility_processor():
     def to_str(x):
