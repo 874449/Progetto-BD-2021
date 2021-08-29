@@ -131,13 +131,12 @@ class Questionario(db.Model):
 db.event.listen(Questionario.description, 'set', Questionario.on_changed_description)
 
 
-# TODO: un trigger per quando si aggiunge una risposta alla domanda viene registrata la risposta anche qua
 class RisposteQuestionario(db.Model):
     __tablename__ = 'quiz_answers'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     date = db.Column(db.DateTime, default=datetime.utcnow())
-    quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id', ondelete="CASCADE"))
 
 
 have_as_answer = db.Table('have_as_answer',
@@ -146,20 +145,24 @@ have_as_answer = db.Table('have_as_answer',
                           db.Column('question_id', db.Integer, primary_key=True),
                           db.ForeignKeyConstraint(['answer_to_questions_id', 'question_id'],
                                                   ['answers_to_questions.id', 'answers_to_questions.question_id'],
-                                                  name='fk_answer_to_questions'),
+                                                  name='fk_answer_to_questions',
+                                                  ondelete="SET NULL"),
                           db.ForeignKeyConstraint(['possible_answer_id'], ['possible_answers.id'],
-                                                  name='fk_possible_answers')
+                                                  name='fk_possible_answers',
+                                                  ondelete="SET NULL")
                           )
 
 
 class RispostaDomanda(db.Model):
     __tablename__ = 'answers_to_questions'
-    id = db.Column(db.Integer, db.ForeignKey('quiz_answers.id'), primary_key=True)
-    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey('quiz_answers.id', ondelete="CASCADE"), primary_key=True)
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id', ondelete="CASCADE"), primary_key=True)
     is_open = db.Column(db.Boolean, nullable=False)
     text = db.Column(db.Text, nullable=True)
     text_html = db.Column(db.Text)
-    have_as_answers = db.relationship('PossibileRisposta', secondary=have_as_answer,
+    have_as_answers = db.relationship('PossibileRisposta',
+                                      secondary=have_as_answer,
+                                      cascade='all,delete',
                                       backref=db.backref('answers_to_questions', lazy='joined'))
 
     def __repr__(self):
@@ -193,8 +196,8 @@ class Domanda(db.Model):
     text = db.Column(db.Text, nullable=False)
     text_html = db.Column(db.Text)
     is_activated = db.Column(db.Boolean)
-    activated_by = db.Column(db.Integer, db.ForeignKey('questions.id'))
-    quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
+    activated_by = db.Column(db.Integer, db.ForeignKey('questions.id', ondelete="SET NULL"))
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id', ondelete="CASCADE"))
     category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
     type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
     activated_by_answer_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'))
@@ -204,7 +207,12 @@ class Domanda(db.Model):
                               primaryjoin=id == RispostaDomanda.question_id)
 
     def __repr__(self):
-        return f'<Domanda{self.id}: {self.text}>'
+        return f'<Domanda>\n' \
+               f'id:                 {self.id}\n' \
+               f'text:               {self.text}\n' \
+               f'is_activated:       {self.is_activated}\n' \
+               f'type:               {self.type_id}\n' \
+               f'activated_by_ans_i: {self.activated_by_answer_id}'
 
     @staticmethod
     def on_changed_text(target, value, oldvalue, initiator):
@@ -223,24 +231,12 @@ class PossibileRisposta(db.Model):
     __tablename__ = 'possible_answers'
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
-    text_html = db.Column(db.Text)
-    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id', ondelete="CASCADE"))
     active_question = db.relationship('Domanda', backref='risposta_attivante',
+                                      cascade='all,delete',
                                       primaryjoin=id == Domanda.activated_by_answer_id)
     #answers_to_questions = db.relationship('RispostaDomanda', secondary=have_as_answer,
     #                                       backref=db.backref('possible_answers', lazy='joined'))
-
-    @staticmethod
-    def on_changed_text(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
-                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p', 'math']
-        target.text_html = bleach.linkify(bleach.clean(
-            markdown(value, output_format='html'),
-            tags=allowed_tags, strip=True))
-
-
-db.event.listen(PossibileRisposta.text, 'set', PossibileRisposta.on_changed_text)
 
 
 class CategoriaDomanda(db.Model):

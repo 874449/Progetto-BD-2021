@@ -25,17 +25,20 @@ def delete(quiz_uuid):
     # TODO tripla query annidata, bisognerebbe sistemare il file models per far funzionare il delete on cascade...
     quiz = Questionario.query.filter_by(uuid=quiz_uuid).first()
     domande = Domanda.query.filter_by(quiz_id=quiz.id).all()
+    query3 = RisposteQuestionario.query.filter_by(quiz_id=quiz.id).all()
     for domanda in domande:
-        statement = have_as_answer.delete().values(
-            question_id=domanda.id
-        )
-        db.session.execute(statement)
+        query4 = PossibileRisposta.query.filter_by(question_id=domanda.id).all()
+        for elem in query4:
+            db.session.delete(elem)
         db.session.flush()
-        PossibileRisposta.query.filter_by(question_id=domanda.id).delete()
-
-    RisposteQuestionario.query.filter_by(quiz_id=quiz.id).delete()
+        db.session.delete(domanda)
+        db.session.flush()
+    for elem in query3:
+        db.session.delete(elem)
+    db.session.flush()
     db.session.delete(quiz)
     db.session.commit()
+
     flash('Questionario cancellato', 'success')
     return redirect(url_for('main.dashboard'))
 

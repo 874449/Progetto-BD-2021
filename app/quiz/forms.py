@@ -41,7 +41,7 @@ class Question(FlaskForm):
 
 
 class SingleAnswerForm(FlaskForm):
-    text = PageDownField('Testo della risposta...')
+    text = StringField('Testo della risposta...')
     add = SubmitField('Aggiungi')
 
 
