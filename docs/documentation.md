@@ -27,7 +27,7 @@ Composto da
    3. CSRF, SQL Injection
 5. **Sviluppo grafico del sito**
 
-### 1. Introduzione al progetto
+## 1. Introduzione al progetto
 
 Il progetto consiste nell'implementazione di una Web Application 
 dedicata alla creazione di questionari. 
@@ -39,7 +39,7 @@ e rispondere alle domande di ognuno di essi.
 Il proprietario di un questionario sarà poi in grado di visionare le
 risposte fornite dagli utenti ed esportarle in formato CSV.
 
-### **i. Strumenti e piattaforme usate per sviluppare il progetto**
+### **1.i. Strumenti e piattaforme usate per sviluppare il progetto**
 
 Il progetto è stato sviluppato utilizzando Python e SQLAlchemy,
 tutti i membri del gruppo hanno usato l'IDE PyCharm per 
@@ -56,6 +56,8 @@ Il gruppo ha fatto riferimento al libro di testo "_Flask Web Development_"
 di Miguel Grinberg come ulteriore fonte di esempi e spiegazioni riguardanti
 Flask e altre componenti del progetto.
 
+### **1.i.a. Librerie utilizzate**
+
 Le principali librerie utilizzate per implementare le funzionalità della Web App sono per la maggior parte dei wrapper,
 costruiti appositamente per flask, di altre librerie: in particolare flask_sqlalchemy, flask_login, flask_mail,
 flask_pagedown sono le librerie con cui si gli sviluppatori che gli utenti
@@ -71,7 +73,7 @@ degli utenti
 - `flask-pagedown` consente l'input dell'utente in sintassi markdown e viene utilizzata nella creazioen
 dei questionari, rendendo possibile personalizzare il testo delle domande.
 
-**ii. Gestione del gruppo e suddivisione del lavoro**
+### **1.ii. Gestione del gruppo e suddivisione del lavoro**
 
 Il gruppo non ha ritenuto necessaria la definizione di ruoli precisi,
 ci sono stati molteplici incontri online tramite piattaforme come Discord
@@ -86,7 +88,7 @@ Nonostante questo, ogni sviluppo è stato ampiamente discusso e trattato
 con tutti i membri del gruppo che hanno dato il loro contributo ogni 
 qualvolta fosse richiesto.
 
-### **iii. Istruzioni per il setup dell'ambiente per eseguire il progetto in locale**
+### **1.iii. Istruzioni per il setup dell'ambiente per eseguire il progetto in locale**
 
 Se ancora non si ha i file sorgente è necessario prima di tutto scaricarli da github con il comando
 ```shell
@@ -150,9 +152,9 @@ fake.users(x) # con x numero degli utenti da generare
 fake.questionari(y) # con y numero di questionari generati
 ```
 
-### 2. Database
+## 2. Database
 
-### **i. Schema logico e relazionale della Base di Dati**
+### **2.i. Schema logico e relazionale della Base di Dati**
 
 Per la Base di dati è stato sviluppato il seguente schema logico
 e relazionale che illustra le relazioni e gli attributi delle varie 
@@ -167,7 +169,7 @@ tabelle
 **Breve descrizione delle varie tabelle:**
 ![Descrizione delle tabelle](imgdocs/descr tabelle.png)
 
-### **i.a. Implementazione delle relazioni**
+### **2.i.a. Implementazione delle relazioni**
 
 SQLAlchemy utilizza le relationships in modo da rendere le relazioni
 percorribili anche nel verso opposto a quello prestabilito.
@@ -189,7 +191,7 @@ class Questionario(db.Model):
     questions = db.relationship('Domanda', cascade="all,delete", backref='in', lazy='dynamic')
 ```
 
-### **ii. Query sviluppate**
+### **2.ii. Query sviluppate**
 
 Di seguito sono riportate alcune delle query che abbiamo sviluppato 
 per il progetto:
@@ -258,7 +260,7 @@ a scelta multipla), la query fa una JOIN con la tabella delle possibili
 risposte, utilizzando una relazione molti a molti, per prelevare il 
 testo della risposta nel caso in cui la domanda sia a scelta.
 
-### **iii. Transazioni, Rollback, Triggers - Politiche d'integrità del database**
+### **2.iii. Transazioni, Rollback, Triggers - Politiche d'integrità del database**
 
 I Rollback vengono usati come strato di protezione dei dati nel caso 
 un operazione vada storta, riportando l'applicazione allo stato in cui era
@@ -333,7 +335,7 @@ while i < count:
         db.session.rollback()
 ```
 
-### **iv. Routes in Flask**
+### **2.iv. Routes in Flask**
 
 Il Progetto si divide essenzialmente in 3 grandi sezioni: 
 Autenticazione, interfaccia
@@ -349,7 +351,7 @@ essere visualizzata (per esempio, potremmo voler avere
 pagine accessibili solo dopo una 
 POST come ad esempio `'/delete/<quiz_id>'`)
 
-### **v. Implementazione delle funzioni di Login/Sign-in**
+### **2.v. Implementazione delle funzioni di Login/Sign-in**
 
 Le funzionalità di Login e Sign-In sono trattate più
 nel dettaglio nella sezione 3.ii di questo documento, 
@@ -361,7 +363,7 @@ del server, evitando quindi che un utente malintenzionato
 possa trovare gli id degli utenti quando non dovrebbe 
 essere in grado di farlo.
 
-### **vi. Definizione di ruoli**
+### **2.vi. Definizione di ruoli**
 
 I ruoli sono una funzionalità senza dubbio molto efficiente, 
 permettono di conferire un gruppo di permessi senza 
@@ -396,7 +398,7 @@ ne emula le funzionalità e i vantaggi.
 
 ## 3. Misure di sicurezza
 
-### **i. Hash e passwords**
+### **3.i. Hash e passwords**
 
 All'interno del file `models.py` abbiamo creato una
 moltitudine di funzioni che ci hanno permesso di gestire
@@ -433,7 +435,7 @@ della password:
      return s.dumps({'confirm': self.id}).decode('utf-8')
 ```
 
-### **ii. Autenticazione e Log-in**
+### **3.ii. Autenticazione e Log-in**
 
 Come anticipato nella sezione 2.v del documento, tutto ciò che
 riguarda la sicurezza del sito e della base di dati è sviluppato
@@ -457,7 +459,7 @@ profilo. I Cookies, situati nella cartella `flask_session`,
 durano circa un anno, dopo tale periodo decadono e 
 vengono eliminati.
 
-### **iii. CSRF, SQLInjection**
+### **3.iii. CSRF, SQLInjection**
 
 La gestione delle SQLInjection, ovvero quando un utente 
 malintenzionato "inietta" codice SQL per estrapolare dati in posti e modi che
