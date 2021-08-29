@@ -48,7 +48,8 @@ def editor(edit_uuid):
                 flash('Non è stato possibile creare la domanda: Errore nella scelta della domanda o risposta attivante',
                       'warning')
         else:
-            domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id, quiz_id=current_quiz.id)
+            domanda = Domanda(text=question.text.data, type_id=question.type_id.data.id, quiz_id=current_quiz.id,
+                              is_activated=question.is_activated.data)
             valida = True
 
         if valida:

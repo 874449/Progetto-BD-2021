@@ -143,10 +143,11 @@ def get_overview(quiz_id):
                 overview[(i.Domanda, i.Tipo)][j.text] = 0
     # valorizzazione delle riposte multiple nel dizionario
     for i in risposte:
-        if i.Tipo == 1:
-            overview[(i.Domanda, i.Tipo)][i.Risposta] = 1
-        else:
-            overview[(i.Domanda, i.Tipo)][i.Risposta] += 1
+        if i.Risposta is not None:
+            if i.Tipo == 1:
+                overview[(i.Domanda, i.Tipo)][i.Risposta] = 1
+            else:
+                overview[(i.Domanda, i.Tipo)][i.Risposta] += 1
     return overview
 
 
