@@ -146,10 +146,10 @@ have_as_answer = db.Table('have_as_answer',
                           db.ForeignKeyConstraint(['answer_to_questions_id', 'question_id'],
                                                   ['answers_to_questions.id', 'answers_to_questions.question_id'],
                                                   name='fk_answer_to_questions',
-                                                  ondelete="SET NULL"),
+                                                  ondelete="CASCADE"),
                           db.ForeignKeyConstraint(['possible_answer_id'], ['possible_answers.id'],
                                                   name='fk_possible_answers',
-                                                  ondelete="SET NULL")
+                                                  ondelete="CASCADE")
                           )
 
 
@@ -181,28 +181,17 @@ class RispostaDomanda(db.Model):
 db.event.listen(RispostaDomanda.text, 'set', RispostaDomanda.on_changed_text)
 
 
-#class HannoComeRisposta(db.Model):
-#    __tablename__ = 'have_as_answer'
-#    possible_answers_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'), primary_key=True)
-#    answers_to_questions_id = db.Column(db.Integer, primary_key=True)
-#    question_id = db.Column(db.Integer, primary_key=True)
-#    db.ForeignKeyConstraint(['answers_to_questions_id', 'question_id'],
-#                            ['answers_to_questions.id', 'answers_to_questions.question_id'])
-
-
 class Domanda(db.Model):
     __tablename__ = 'questions'
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
     text_html = db.Column(db.Text)
     is_activated = db.Column(db.Boolean)
-    activated_by = db.Column(db.Integer, db.ForeignKey('questions.id', ondelete="SET NULL"))
+    activated_by = db.Column(db.Integer, db.ForeignKey('questions.id', ondelete="CASCADE"))
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id', ondelete="CASCADE"))
     category_id = db.Column(db.Integer, db.ForeignKey('questions_category.id'))
     type_id = db.Column(db.Integer, db.ForeignKey('questions_type.id'))
     activated_by_answer_id = db.Column(db.Integer, db.ForeignKey('possible_answers.id'))
-    #possible_answers = db.relationship('PossibileRisposta', cascade="all,delete", backref='domanda_a_scelta',
-    #                                   lazy='dynamic', primaryjoin=id == PossibileRisposta.question_id)
     answers = db.relationship('RispostaDomanda', cascade="all,delete", backref='domanda', lazy='dynamic',
                               primaryjoin=id == RispostaDomanda.question_id)
 
@@ -235,8 +224,6 @@ class PossibileRisposta(db.Model):
     active_question = db.relationship('Domanda', backref='risposta_attivante',
                                       cascade='all,delete',
                                       primaryjoin=id == Domanda.activated_by_answer_id)
-    #answers_to_questions = db.relationship('RispostaDomanda', secondary=have_as_answer,
-    #                                       backref=db.backref('possible_answers', lazy='joined'))
 
 
 class CategoriaDomanda(db.Model):
