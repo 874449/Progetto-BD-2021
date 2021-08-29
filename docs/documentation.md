@@ -34,18 +34,18 @@ Il progetto consiste nell'implementazione di una Web Application
 dedicata alla creazione di questionari. 
 Ogni utente può creare innumerevoli questionari, ognuno formato da 
 multiple domande che a loro volta possono essere di 
-diversa categoria (ad esempio, risposta aperta o scelta multipla).
+diversa categoria (risposta aperta, scelta singola, scelta multipla).
 Ogni utente può inoltre vedere tutti i questionari fatti da altri utenti
 e rispondere alle domande di ognuno di essi.
 Il proprietario di un questionario sarà poi in grado di visionare le
-risposte fornite dagli utenti ed esportarle tramite file csv.
+risposte fornite dagli utenti ed esportarle in formato CSV.
 
 **i. Strumenti e piattaforme usate per sviluppare il progetto**
 
 Il progetto è stato sviluppato utilizzando Python e SQLAlchemy,
 tutti i membri del gruppo hanno usato l'IDE PyCharm per 
 interfacciarsi con semplicità ed efficacia allo sviluppo del progetto.  
-Il codice è stato condiviso tra i vari membri del gruppo tramite
+Il codice è stato condiviso tramite un repository
 GitHub in modo che ognuno potesse lavorare sulla versione più recente
 possibile, inoltre il database è stato condiviso tramite Heroku, che
 ha permesso a tutti i membri di lanciare l'applicazione usando lo
@@ -63,32 +63,31 @@ Flask e altre componenti del progetto.
 
 **i.b. ORM**
 
-# Matteo qui per ORM
+La scelta della gestione del database è ricaduta su SQLAlchemy.ORM gestito attraverso la libreria flask-sqlalchemy.
 
 **ii. Gestione del gruppo e suddivisione del lavoro**
 
 Il gruppo non ha ritenuto necessaria la definizione di ruoli precisi,
-ci sono stati multipli incontri online tramite piattaforme come Discord
+ci sono stati molteplici incontri online tramite piattaforme come Discord
 in cui ogni membro ha avuto la possibilità di esprimere le sue idee
 e opinioni, alla fine di ogni incontro ognuno si è autonomamente
 assegnato gli incarichi che si trovava più a suo agio a svolgere,
 nello specifico `Michael` ha preferito principalmente concentrarsi sulla
 creazione di triggers e gestione della base di dati, `Matteo` ha deciso di
-concentrare i suoi sforzi sullo sviluppo della Web App
-con Python mentre `Alessandro` ha curato la veste grafica 
-dell'applicazione e la documentazione. 
+concentrare i suoi sforzi sullo sviluppo delle routes gestite da Python,
+mentre `Alessandro` ha curato la veste grafica dell'applicazione e la documentazione. 
 Nonostante questo, ogni sviluppo è stato ampiamente discusso e trattato
 con tutti i membri del gruppo che hanno dato il loro contributo ogni 
 qualvolta fosse richiesto.
 
 **iii. Istruzioni per il setup dell'ambiente per eseguire il progetto in locale**
 
-Se ancora non si ha i file sorgente è necessario prima di tutto scaricarli da github con il comanda
+Se ancora non si ha i file sorgente è necessario prima di tutto scaricarli da github con il comando
 ```shell
 git clone https://github.com/matteospanio/Progetto-BD-2021.git
 ```
 
-Una volta scaricato il progetto si entri nella cartella principale con `mv Progetto-BD-2021`, una volta nel progetto
+Scaricato il progetto si entri nella cartella principale con `mv Progetto-BD-2021`, una volta cambiata cartella di lavoro
 è necessario installare un virtual environment con il comando `virtualenv venv` e per attivarlo basterà digitare
 `source venv/bin/activate` (per maggiori dettagli sull'installazione di un virtual environment si rimanda alla
 [documentazione ufficiale](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment).
@@ -124,9 +123,11 @@ infine per creare le tabelle del database basterà digitare:
 # per creare lo schema del database si usa create_tables
 flask create_tables
 # populate_db riempie le tabelle con alcuni dati standard
-flask populate_db
+flask fill_qtypes_table
 ```
 A questo punto si può far partire l'applicazione con `flask run` e collegarsi all'indirizzo http://127.0.0.1:5000/.
+
+Non è essenziale per il funzionamento dell'applicazione
 
 ### 2. Database
 
@@ -156,24 +157,73 @@ riga 144 file models.py
 Di seguito sono riportate alcune delle query che abbiamo sviluppato 
 per il progetto:
 
+si va dalle più standard (abbastanza ricorrenti) per elencare il contenuto delle tabelle:
 ```sql
- select q.text, case when(atq.is_open = true) then atq.text else b.text end as answer
-
- from answers_to_questions atq join questions q on atq.question_id=q.id left join 
-     (select haa.question_id,haa.answer_to_questions_id,pa.text 
-     from have_as_answer haa join possible_answers pa on haa.possible_answer_id=pa.id) b
-   on (b.answer_to_questions_id=atq.id and b.question_id=atq.question_id)
-   where atq.id in (select qa.id
-     from quiz_answers qa
-     where qa.id=1 and quiz_id=14)
-order by q.id
+SELECT quizzes.title AS quizzes_title,
+       quizzes.description AS quizzes_description,
+       quizzes.description_html AS quizzes_description_html,
+       quizzes.timestamp AS quizzes_timestamp,
+       quizzes.uuid AS quizzes_uuid, users.username AS users_username 
+FROM users JOIN quizzes ON users.id = quizzes.author_id
 ```
+
+che in orm si traduce più elegantemente come 
+
+```python
+db.session.query(
+            Questionario.title, Questionario.description,
+            Questionario.description_html,
+            Questionario.timestamp,
+            Questionario.uuid, User.username).\
+        join(
+            Questionario, User.id == Questionario.author_id)
+```
+Semantica: la query sopra riportata viene utilizzata per ottenere l'elenco di tutti i questionari creati
+nel database unendo i campi della tabella `Questionario` con la tabella `User`. La `JOIN` avviene tramite
+la chiave esterna.
+
+Di seguito invece si riporta la query utilizzata per raccogliere tutte le informazioni sulle risposte dei questionari
+che sono divise su più tabelle
+
+```sql
+SELECT questions.text AS "Domanda", questions.type_id AS "Tipo",
+       questions.id AS "Id_domanda",
+       CASE WHEN answers_to_questions.is_open
+           THEN answers_to_questions.text
+           ELSE possible_answers.text
+           END AS "Risposta" 
+FROM questions JOIN answers_to_questions ON questions.id = answers_to_questions.question_id
+    LEFT OUTER JOIN (have_as_answer AS have_as_answer_1 JOIN possible_answers
+        ON possible_answers.id = have_as_answer_1.possible_answer_id)
+        ON answers_to_questions.id = have_as_answer_1.answer_to_questions_id
+               AND answers_to_questions.question_id = have_as_answer_1.question_id 
+WHERE answers_to_questions.id IN (
+    SELECT quiz_answers.id 
+    FROM quiz_answers 
+    WHERE quiz_answers.quiz_id = %(quiz_id_1)s)
+    ORDER BY questions.id, answers_to_questions.id
+```
+
+che in python diventa:
+```python
+subquery = db.session.query(
+   RisposteQuestionario.id).\
+   filter(RisposteQuestionario.quiz_id == quiz_id, RisposteQuestionario.id == i)
+
+db.session.query(
+    Domanda.text.label('Domanda'),
+    case((RispostaDomanda.is_open, RispostaDomanda.text),
+        else_=PossibileRisposta.text).label('Risposta')).join(RispostaDomanda) \
+            .outerjoin(RispostaDomanda.have_as_answers).filter(RispostaDomanda.id.in_(subquery)) \
+            .order_by(Domanda.id, RispostaDomanda.id)
+```
+Semantica:
 Dato un questionario e l'input fornito dall'utente, la query 
-prende i testi delle domande e la relativa risposta.  
-Siccome la risposta può avere tipi diversi (come risposta aperta o 
+prende i testi delle domande e la relativa risposta.
+Dal momento che la risposta può avere tipi diversi (come risposta aperta o 
 a scelta multipla), la query fa una JOIN con la tabella delle possibili
 risposte, utilizzando una relazione molti a molti, per prelevare il 
-testo della risposta nel caso in cui la domanda sia a scelta multipla.
+testo della risposta nel caso in cui la domanda sia a scelta.
 
 **iii. Transazioni, Rollback, Triggers - Politiche d'integrità del database**
 
